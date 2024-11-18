@@ -1,2 +1,4 @@
 **/_history
 **/sim_build
+__pycache__/
+*.py[cod]

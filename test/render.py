@@ -19,7 +19,7 @@ def intersect_sphere(origin, direction, sphere):
         return None  # No intersection
     t1 = (-b - np.sqrt(discriminant)) / (2.0 * a)
     t2 = (-b + np.sqrt(discriminant)) / (2.0 * a)
-    return min(t1, t2) if t1 > 0 else (t2 if t2 > 0 else None)
+    return min(t1, t2)
 
 # Ray-cylinder intersection
 def intersect_cylinder(origin, direction, cylinder):
@@ -42,7 +42,9 @@ def intersect_cylinder(origin, direction, cylinder):
     t2 = (-b + sqrt_discriminant) / a
 
     # Find the closest valid intersection
-    t = min(t1, t2) if t1 > 0 else (t2 if t2 > 0 else None)
+    # t = min(t1, t2) if t1 > 0 else (t2 if t2 > 0 else None)
+    t = min(t1, t2)
+
     if t is None:
         return None
 
