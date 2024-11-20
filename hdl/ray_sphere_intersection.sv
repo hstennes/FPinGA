@@ -22,6 +22,9 @@ module ray_sphere_intersection #(parameter SIZE=64) (
   logic [2:0][SIZE-1:0] oc_result;
   logic oc_valid;
 
+  logic [SIZE-1:0] dd_result;
+  logic dd_valid;
+
   logic ocd_oc_ready;
   logic ocd_d_ready;
   logic [SIZE-1:0] ocd_result;
@@ -33,6 +36,10 @@ module ray_sphere_intersection #(parameter SIZE=64) (
 
   logic [2:0][SIZE-1:0] pipe_d_result;
   logic pipe_d_valid;
+
+  logic pipe_a_ready;
+  logic [SIZE-1:0] pipe_a_result;
+  logic pipe_a_valid;
 
   logic pipe_b_ready;
   logic [SIZE-1:0] pipe_b_result;
@@ -61,6 +68,20 @@ module ray_sphere_intersection #(parameter SIZE=64) (
     .m_axis_result_tdata(oc_result),
     .m_axis_result_tready(ocd_oc_ready),
     .m_axis_result_tvalid(oc_valid),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  vec_dot dd(
+    .s_axis_a_tdata(ray_axis_tdata[5:3]),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(ray_axis_tvalid),
+    .s_axis_b_tdata(ray_axis_tdata[5:3]),
+    .s_axis_b_tready(),
+    .s_axis_b_tvalid(ray_axis_tvalid),
+    .m_axis_result_tdata(dd_result),
+    .m_axis_result_tready(pipe_a_ready),
+    .m_axis_result_tvalid(dd_valid),
     .aclk(aclk),
     .aresetn(aresetn)
   );
@@ -118,6 +139,17 @@ module ray_sphere_intersection #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
+  axi_pipe #(.LATENCY(PIPE_A_LATENCY)) pipe_a(
+    .s_axis_a_tdata(dd_result),
+    .s_axis_a_tready(pipe_a_ready),
+    .s_axis_a_tvalid(dd_valid),
+    .m_axis_result_tdata(pipe_a_result),
+    .m_axis_result_tvalid(pipe_a_valid),
+    .m_axis_result_tready(quad_a_ready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
   logic [10:0] calc_b_temp;
   assign calc_b_temp = ocd_result[62:52] + 1;
 
@@ -133,9 +165,9 @@ module ray_sphere_intersection #(parameter SIZE=64) (
   );
 
   quadratic quad(
-    .s_axis_a_tdata(64'b0011111111110000000000000000000000000000000000000000000000000000),
-    .s_axis_a_tready(),
-    .s_axis_a_tvalid(1),
+    .s_axis_a_tdata(pipe_a_result),
+    .s_axis_a_tready(quad_a_ready),
+    .s_axis_a_tvalid(pipe_a_valid),
     .s_axis_b_tdata(pipe_b_result),
     .s_axis_b_tready(quad_b_ready),
     .s_axis_b_tvalid(pipe_b_valid),
