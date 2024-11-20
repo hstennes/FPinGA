@@ -11,9 +11,13 @@ def dot(v1, v2):
 # Ray-sphere intersection
 def intersect_sphere(origin, direction, sphere):
     oc = origin - sphere['center']
-    a = dot(direction, direction)
-    b = 2.0 * dot(oc, direction)
-    c = dot(oc, oc) - sphere['radius'] ** 2
+    a = dot(direction, direction)  #30
+    b = 2.0 * dot(oc, direction)   #39
+    print(oc, direction, dot(oc, direction))
+    c = dot(oc, oc) - sphere['radius'] ** 2 #48
+
+    # print(a, b, c)
+
     discriminant = b ** 2 - 4 * a * c
     if discriminant < 0:
         return None  # No intersection
@@ -78,6 +82,11 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
             for sphere in spheres:
                 dist = intersect_sphere(camera, direction, sphere)
                 if dist is not None and dist < min_dist:
+
+                    print("guys we found the sphere")
+                    print(camera, direction, sphere, dist)
+                    exit()
+
                     min_dist = dist
                     # Compute point of intersection
                     hit_point = camera + direction * dist

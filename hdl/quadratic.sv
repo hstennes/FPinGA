@@ -17,6 +17,8 @@ module quadratic #(parameter SIZE=64) (
   input wire aclk,
   input wire aresetn);
 
+  //TOTAL LATENCY: 91
+
   localparam PIPE_A_LATENCY = 62;
   localparam PIPE_B_LATENCY = 50;
 

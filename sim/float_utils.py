@@ -16,6 +16,9 @@ def concat_binary(vals, bit_width=64):
         result = (result << bit_width) | val
     return result
 
+def make_binary_vector(vals):
+    return concat_binary([float_to_binary(i) for i in vals])
+
 # Example usage
 # float_number = 1.5
 # binary_as_int = float_to_binary(float_number)
