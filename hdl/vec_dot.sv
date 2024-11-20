@@ -27,17 +27,9 @@ module vec_dot #(parameter SIZE=64) (
   logic [SIZE-1:0] mul_3_result;
   logic mul_3_valid;
 
-  logic add_ab_a_ready;
-  logic add_ab_b_ready;
-  logic [SIZE-1:0] add_ab_result;
-  logic add_ab_valid;
-
-  logic pipe_c_ready;
-  logic [SIZE-1:0] pipe_c_result;
-  logic pipe_c_valid;
-  
-  logic add_abc_ab_ready;
-  logic add_abc_c_ready;
+  logic sum_a_ready;
+  logic sum_b_ready;
+  logic sum_c_ready;
   
   float_mul mul_1(
     .s_axis_a_tdata(s_axis_a_tdata[0]),
@@ -47,7 +39,7 @@ module vec_dot #(parameter SIZE=64) (
     .s_axis_b_tready(s_axis_b_tready),
     .s_axis_b_tvalid(s_axis_b_tvalid),
     .m_axis_result_tdata(mul_1_result),
-    .m_axis_result_tready(add_ab_a_ready),
+    .m_axis_result_tready(sum_a_ready),
     .m_axis_result_tvalid(mul_1_valid),
     .aclk(aclk),
     .aresetn(aresetn)
@@ -61,7 +53,7 @@ module vec_dot #(parameter SIZE=64) (
     .s_axis_b_tready(),
     .s_axis_b_tvalid(s_axis_b_tvalid),
     .m_axis_result_tdata(mul_2_result),
-    .m_axis_result_tready(add_ab_b_ready),
+    .m_axis_result_tready(sum_b_ready),
     .m_axis_result_tvalid(mul_2_valid),
     .aclk(aclk),
     .aresetn(aresetn)
@@ -75,44 +67,22 @@ module vec_dot #(parameter SIZE=64) (
     .s_axis_b_tready(),
     .s_axis_b_tvalid(s_axis_b_tvalid),
     .m_axis_result_tdata(mul_3_result),
-    .m_axis_result_tready(pipe_c_ready),
+    .m_axis_result_tready(sum_c_ready),
     .m_axis_result_tvalid(mul_3_valid),
     .aclk(aclk),
     .aresetn(aresetn)
   );
 
-  float_add add_ab(
+  float_sum3 sum(
     .s_axis_a_tdata(mul_1_result),
-    .s_axis_a_tready(add_ab_a_ready),
+    .s_axis_a_tready(sum_a_ready),
     .s_axis_a_tvalid(mul_1_valid),
     .s_axis_b_tdata(mul_2_result),
-    .s_axis_b_tready(add_ab_b_ready),
+    .s_axis_b_tready(sum_b_ready),
     .s_axis_b_tvalid(mul_2_valid),
-    .m_axis_result_tdata(add_ab_result),
-    .m_axis_result_tvalid(add_ab_valid),
-    .m_axis_result_tready(add_abc_ab_ready),
-    .aclk(aclk),
-    .aresetn(aresetn)
-  );
-
-  axi_pipe #(.LATENCY(ADD_LATENCY)) pipe_c(
-    .s_axis_a_tdata(mul_3_result),
-    .s_axis_a_tready(pipe_c_ready),
-    .s_axis_a_tvalid(mul_3_valid),
-    .m_axis_result_tdata(pipe_c_result),
-    .m_axis_result_tvalid(pipe_c_valid),
-    .m_axis_result_tready(add_abc_c_ready),
-    .aclk(aclk),
-    .aresetn(aresetn)
-  );
-
-  float_add add_abc(
-    .s_axis_a_tdata(add_ab_result),
-    .s_axis_a_tready(add_abc_ab_ready),
-    .s_axis_a_tvalid(add_ab_valid),
-    .s_axis_b_tdata(pipe_c_result),
-    .s_axis_b_tready(add_abc_c_ready),
-    .s_axis_b_tvalid(pipe_c_valid),
+    .s_axis_c_tdata(mul_3_result),
+    .s_axis_c_tready(sum_c_ready),
+    .s_axis_c_tvalid(mul_3_valid),
     .m_axis_result_tdata(m_axis_result_tdata),
     .m_axis_result_tvalid(m_axis_result_tvalid),
     .m_axis_result_tready(m_axis_result_tready),
