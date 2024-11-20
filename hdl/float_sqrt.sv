@@ -14,7 +14,7 @@ module float_sqrt #(parameter SIZE=64) (
   input wire aclk,
   input wire aresetn);
 
-  localparam ARTIFICIAL_LATENCY = 12;
+  localparam ARTIFICIAL_LATENCY = 29;
   logic [SIZE-1:0] a_pipe [ARTIFICIAL_LATENCY-1:0];
   logic [SIZE-1:0] b_pipe [ARTIFICIAL_LATENCY-1:0];
   logic valid_pipe [ARTIFICIAL_LATENCY-1:0];

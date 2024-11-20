@@ -14,7 +14,7 @@ module vec_dot #(parameter SIZE=64) (
   input wire aclk,
   input wire aresetn);
 
-  localparam ADD_LATENCY = 12;
+  localparam ADD_LATENCY = 9;
 
   logic [SIZE-1:0] mul_1_result;
   logic mul_1_valid;

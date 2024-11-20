@@ -11,9 +11,8 @@ module axi_pipe #(parameter SIZE=64, LATENCY=12) (
   input wire aclk,
   input wire aresetn);
 
-  localparam ARTIFICIAL_LATENCY = 12;
-  logic [SIZE-1:0] a_pipe [ARTIFICIAL_LATENCY-1:0];
-  logic valid_pipe [ARTIFICIAL_LATENCY-1:0];
+  logic [SIZE-1:0] a_pipe [LATENCY-1:0];
+  logic valid_pipe [LATENCY-1:0];
   logic can_advance;
 
   always_comb begin
@@ -25,14 +24,15 @@ module axi_pipe #(parameter SIZE=64, LATENCY=12) (
 
   always_ff @(posedge aclk) begin
     if(aresetn) begin
-      for(int i = 0; i < ARTIFICIAL_LATENCY; i++) begin
+      for(int i = 0; i < LATENCY; i++) begin
         valid_pipe[i] <= 0;
+        a_pipe[i] <= 0;
       end
     end
     if(can_advance) begin
       a_pipe[0] <= s_axis_a_tdata;
       valid_pipe[0] <= s_axis_a_tvalid;
-      for(int i = 1; i < ARTIFICIAL_LATENCY; i++) begin
+      for(int i = 1; i < LATENCY; i++) begin
         a_pipe[i] <= a_pipe[i-1];
         valid_pipe[i] <= valid_pipe[i-1];
       end

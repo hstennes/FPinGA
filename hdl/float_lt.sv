@@ -1,28 +1,33 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module float_div #(parameter SIZE=64) (
+module float_lt #(parameter SIZE=64) (
   input wire [SIZE-1:0] s_axis_a_tdata,
   output logic s_axis_a_tready,
   input wire s_axis_a_tvalid,
   input wire [SIZE-1:0] s_axis_b_tdata,
   output logic s_axis_b_tready,
   input wire s_axis_b_tvalid,
-  output logic [SIZE-1:0] m_axis_result_tdata,
+  output logic [7:0] m_axis_result_tdata,
   input wire m_axis_result_tready,
   output logic m_axis_result_tvalid,
   input wire aclk,
   input wire aresetn);
 
-  localparam ARTIFICIAL_LATENCY = 29;
+  localparam ARTIFICIAL_LATENCY = 3;
   logic [SIZE-1:0] a_pipe [ARTIFICIAL_LATENCY-1:0];
   logic [SIZE-1:0] b_pipe [ARTIFICIAL_LATENCY-1:0];
   logic valid_pipe [ARTIFICIAL_LATENCY-1:0];
   logic can_advance;
 
+  logic [63:0] cmp_result;
+
+  assign m_axis_result_tdata = {7'b0, cmp_result[61]};
+
   always_comb begin
     m_axis_result_tvalid = valid_pipe[ARTIFICIAL_LATENCY-1];
-    m_axis_result_tdata = $realtobits($bitstoreal(a_pipe[ARTIFICIAL_LATENCY-1]) / $bitstoreal(b_pipe[ARTIFICIAL_LATENCY-1]));
+    cmp_result = $realtobits($bitstoreal(a_pipe[ARTIFICIAL_LATENCY-1]) < $bitstoreal(b_pipe[ARTIFICIAL_LATENCY-1]));
+    
     //to convert float 64 to float 32, most significant bit of exponent stays, take the bottom however many bits
     can_advance = m_axis_result_tready || !m_axis_result_tvalid;
     s_axis_a_tready = can_advance;
