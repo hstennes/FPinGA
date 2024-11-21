@@ -163,5 +163,5 @@ lights = [
 ]
 
 # Render and save the image
-image = render(camera, spheres, cylinders, lights, width=640, height=320)
+image = render(camera, spheres, cylinders, lights, width=640, height=360)
 image.show()

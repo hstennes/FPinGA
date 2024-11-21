@@ -25,10 +25,10 @@ async def test_ray_from_pixel(dut):
     dut.vcount_axis_tdata.value = 0
     dut.vcount_axis_tvalid.value = 0
     dut.ray_axis_tready.value = 0
-    await ClockCycles(dut.aclk, 20)
-    dut.hcount_axis_tdata.value = 0
+    await ClockCycles(dut.aclk, 30)
+    dut.hcount_axis_tdata.value = 5
     dut.hcount_axis_tvalid.value = 1
-    dut.vcount_axis_tdata.value = 0
+    dut.vcount_axis_tdata.value = 6
     dut.vcount_axis_tvalid.value = 1
     await ClockCycles(dut.aclk, 1)
     dut.hcount_axis_tdata.value = 0
@@ -36,9 +36,9 @@ async def test_ray_from_pixel(dut):
     dut.vcount_axis_tdata.value = 0
     dut.vcount_axis_tvalid.value = 0
     await ClockCycles(dut.aclk, 5)
-    dut.hcount_axis_tdata.value = 0
+    dut.hcount_axis_tdata.value = 5
     dut.hcount_axis_tvalid.value = 1
-    dut.vcount_axis_tdata.value = 0
+    dut.vcount_axis_tdata.value = 6
     dut.vcount_axis_tvalid.value = 1
     dut.ray_axis_tready.value = 1
     await ClockCycles(dut.aclk, 1)
@@ -46,7 +46,7 @@ async def test_ray_from_pixel(dut):
     dut.hcount_axis_tvalid.value = 0
     dut.vcount_axis_tdata.value = 0
     dut.vcount_axis_tvalid.value = 0
-    await ClockCycles(dut.aclk, 20)
+    await ClockCycles(dut.aclk, 50)
 
 def runner():
     """Simulate the counter using the Python runner."""
@@ -65,6 +65,7 @@ def runner():
     sources.append(proj_path / "hdl" / "vec_add.sv")
     sources.append(proj_path / "hdl" / "vec_dot.sv")
     sources.append(proj_path / "hdl" / "quadratic.sv")
+    sources.append(proj_path / "hdl" / "fixed_to_float.sv")
     sources.append(proj_path / "hdl" / "float_fused_mul_add.sv")
     build_test_args = ["-Wall"]#,"COCOTB_RESOLVE_X=ZEROS"]
     parameters = {} #!!! nice figured it out.
@@ -93,3 +94,5 @@ if __name__ == "__main__":
 # 0000000000000000 0000000000000000 bff5183f99f3dc86 0000000000000000 0000000000000000 4014000000000000
 
 # 0000000000000000 4014000000000000 4014000000000000
+
+# bffbffffffffffff 3feeeeeeeeeeeeee bff0000000000000
