@@ -107,6 +107,7 @@ def runner():
     sources.append(proj_path / "hdl" / "vec_add.sv")
     sources.append(proj_path / "hdl" / "vec_dot.sv")
     sources.append(proj_path / "hdl" / "quadratic.sv")
+    sources.append(proj_path / "hdl" / "float_mul_pow2.sv")
     sources.append(proj_path / "hdl" / "float_fused_mul_add.sv")
     sources.append(proj_path / "hdl" / "float_sum3.sv")
     build_test_args = ["-Wall"]#,"COCOTB_RESOLVE_X=ZEROS"]

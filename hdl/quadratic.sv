@@ -89,14 +89,18 @@ module quadratic #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  logic [10:0] calc_ac_temp;
-  assign calc_ac_temp = ac_result[62:52] + 2;
+  logic [SIZE-1:0] scale_ac_result;
+
+  float_mul_pow2 #(.SIZE(SIZE), .POW(2), .NEGATE(1)) scale_ac(
+    .in_float(ac_result),
+    .result(scale_ac_result)
+  );
 
   float_add disc(
     .s_axis_a_tdata(b_sq_result),
     .s_axis_a_tready(disc_b_sq_ready),
     .s_axis_a_tvalid(b_sq_valid),
-    .s_axis_b_tdata({~ac_result[63], calc_ac_temp, ac_result[51:0]}), //* -4
+    .s_axis_b_tdata(scale_ac_result), //* -4
     .s_axis_b_tready(disc_ac_ready),
     .s_axis_b_tvalid(ac_valid),
     .m_axis_result_tdata(disc_result),
@@ -140,7 +144,7 @@ module quadratic #(parameter SIZE=64) (
   );
 
   float_add pm_p (
-    .s_axis_a_tdata({~pipe_b_result[63], pipe_b_result[62:0]}),
+    .s_axis_a_tdata({~pipe_b_result[SIZE-1], pipe_b_result[SIZE-2:0]}),
     .s_axis_a_tready(pm_p_nb_ready),
     .s_axis_a_tvalid(pipe_b_valid),
     .s_axis_b_tdata(sqrt_result),
@@ -154,10 +158,10 @@ module quadratic #(parameter SIZE=64) (
   );
 
   float_add pm_m (
-    .s_axis_a_tdata({~pipe_b_result[63], pipe_b_result[62:0]}),
+    .s_axis_a_tdata({~pipe_b_result[SIZE-1], pipe_b_result[SIZE-2:0]}),
     .s_axis_a_tready(pm_m_nb_ready),
     .s_axis_a_tvalid(pipe_b_valid),
-    .s_axis_b_tdata({~sqrt_result[63], sqrt_result[62:0]}),
+    .s_axis_b_tdata({~sqrt_result[SIZE-1], sqrt_result[SIZE-2:0]}),
     .s_axis_b_tready(pm_m_sqrt_ready),
     .s_axis_b_tvalid(sqrt_valid),
     .m_axis_result_tdata(pm_m_result),
@@ -181,14 +185,18 @@ module quadratic #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  logic [10:0] calc_a_temp;
-  assign calc_a_temp = pipe_a_result[62:52] + 1;
+  logic [SIZE-1:0] scale_pipe_a_result;
+
+  float_mul_pow2 #(.SIZE(SIZE), .POW(1)) scale_pipe_a(
+    .in_float(pipe_a_result),
+    .result(scale_pipe_a_result)
+  );
 
   float_div div(
     .s_axis_a_tdata(cmp_result),
     .s_axis_a_tready(div_num_ready),
     .s_axis_a_tvalid(cmp_valid),
-    .s_axis_b_tdata({pipe_a_result[63], calc_a_temp, pipe_a_result[51:0]}), //* 2
+    .s_axis_b_tdata(scale_pipe_a_result), //* 2
     .s_axis_b_tready(div_den_ready),
     .s_axis_b_tvalid(pipe_a_valid),
     .m_axis_result_tdata(m_axis_result_tdata),

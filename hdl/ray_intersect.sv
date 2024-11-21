@@ -115,7 +115,7 @@ module ray_intersect #(parameter SIZE=64) (
   logic valid_is_cylinder;
 
   logic [SIZE*3-1:0] neg_obj_loc;
-  assign neg_obj_loc = {{~obj_axis_tdata[2][63], obj_axis_tdata[2][62:0]}, {~obj_axis_tdata[1][63], obj_axis_tdata[1][62:0]}, {~obj_axis_tdata[0][63], obj_axis_tdata[0][62:0]}};
+  assign neg_obj_loc = {{~obj_axis_tdata[2][SIZE-1], obj_axis_tdata[2][SIZE-2:0]}, {~obj_axis_tdata[1][SIZE-1], obj_axis_tdata[1][SIZE-2:0]}, {~obj_axis_tdata[0][SIZE-1], obj_axis_tdata[0][SIZE-2:0]}};
 
   vec_add oc(
     .s_axis_a_tdata(ray_axis_tdata[2:0]),
@@ -254,7 +254,7 @@ module ray_intersect #(parameter SIZE=64) (
   );
 
   float_fused_mul_add a(
-    .s_axis_a_tdata({~dca_result[63], dca_result[62:0]}),
+    .s_axis_a_tdata({~dca_result[SIZE-1], dca_result[SIZE-2:0]}),
     .s_axis_a_tready(a_dca_ready),
     .s_axis_a_tvalid(dca_valid),
     .s_axis_b_tdata(dca_result),
@@ -288,7 +288,7 @@ module ray_intersect #(parameter SIZE=64) (
     .s_axis_a_tdata(pipe_dca_result),
     .s_axis_a_tready(b_dca_ready),
     .s_axis_a_tvalid(pipe_dca_valid),
-    .s_axis_b_tdata({~occa_result[63], occa_result[62:0]}),
+    .s_axis_b_tdata({~occa_result[SIZE-1], occa_result[SIZE-2:0]}),
     .s_axis_b_tready(b_occa_ready),
     .s_axis_b_tvalid(occa_valid),
     .s_axis_c_tdata(ocd_result),
@@ -305,7 +305,7 @@ module ray_intersect #(parameter SIZE=64) (
     .s_axis_a_tdata(occa_result),
     .s_axis_a_tready(prec_occa_ready),
     .s_axis_a_tvalid(occa_valid),
-    .s_axis_b_tdata({~occa_result[63], occa_result[62:0]}),
+    .s_axis_b_tdata({~occa_result[SIZE-1], occa_result[SIZE-2:0]}),
     .s_axis_b_tready(),
     .s_axis_b_tvalid(occa_valid),
     .s_axis_c_tdata(pipe_flag_prec_result ? NEG_CYLINDER_RAD_SQ : NEG_SPHERE_RAD_SQ),
@@ -354,9 +354,6 @@ module ray_intersect #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  // logic [10:0] calc_b_temp;
-  // assign calc_b_temp = ocd_result[62:52] + 1;
-
   axi_pipe #(.LATENCY(PIPE_B_LATENCY)) pipe_b(
     .s_axis_a_tdata(b_result),
     .s_axis_a_tready(pipe_b_ready),
@@ -368,19 +365,30 @@ module ray_intersect #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  logic [10:0] calc_a_temp;
-  assign calc_a_temp = pipe_flag_quad_result ? pipe_a_result[62:52] - 2 : pipe_a_result[62:52];
-
-  logic [10:0] calc_b_temp;
-  assign calc_b_temp = pipe_flag_quad_result ? pipe_b_result[62:52] : pipe_b_result[62:52] + 1;
-
   logic [SIZE-1:0] quad_result;
 
+  logic [SIZE-1:0] scale_pipe_a_result;
+  float_mul_pow2 #(.SIZE(SIZE), .POW(-2)) scale_pipe_a(
+    .in_float(pipe_a_result),
+    .result(scale_pipe_a_result)
+  );
+
+  logic [SIZE-1:0] scale_pipe_b_result;
+  float_mul_pow2 #(.SIZE(SIZE), .POW(1)) scale_pipe_b(
+    .in_float(pipe_b_result),
+    .result(scale_pipe_b_result)
+  );
+
+  logic [SIZE-1:0] final_pipe_a_result;
+  logic [SIZE-1:0] final_pipe_b_result;
+  assign final_pipe_a_result = pipe_flag_quad_result ? scale_pipe_a_result : pipe_a_result;
+  assign final_pipe_b_result = pipe_flag_quad_result ? pipe_b_result : scale_pipe_b_result;
+
   quadratic quad(
-    .s_axis_a_tdata({pipe_a_result[63], calc_a_temp, pipe_a_result[51:0]}),
+    .s_axis_a_tdata(final_pipe_a_result),
     .s_axis_a_tready(quad_a_ready),
     .s_axis_a_tvalid(pipe_a_valid),
-    .s_axis_b_tdata({pipe_b_result[63], calc_b_temp, pipe_b_result[51:0]}),
+    .s_axis_b_tdata(final_pipe_b_result),
     .s_axis_b_tready(quad_b_ready),
     .s_axis_b_tvalid(pipe_b_valid),
     .s_axis_c_tdata(c_result),
@@ -393,9 +401,14 @@ module ray_intersect #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  logic [10:0] calc_final_temp;
-  assign calc_final_temp = pipe_flag_final_result ? quad_result[62:52] - 1 : quad_result[62:52];
-  assign t_axis_tdata = {quad_result[63], calc_final_temp, quad_result[51:0]};
+  logic [SIZE-1:0] scale_quad_result;
+  float_mul_pow2 #(.SIZE(SIZE), .POW(-1)) scale_quad(
+    .in_float(quad_result),
+    .result(scale_quad_result)
+  );
+
+  logic [SIZE-1:0] final_quad_result;
+  assign t_axis_tdata = pipe_flag_final_result ? scale_quad_result : quad_result;
 
 endmodule
 `default_nettype wire
