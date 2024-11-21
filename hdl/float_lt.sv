@@ -20,7 +20,7 @@ module float_lt #(parameter SIZE=64) (
   logic valid_pipe [ARTIFICIAL_LATENCY-1:0];
   logic can_advance;
 
-  logic [63:0] cmp_result;
+  logic [SIZE-1:0] cmp_result;
 
   assign m_axis_result_tdata = {7'b0, cmp_result[61]};
 

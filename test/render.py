@@ -14,6 +14,9 @@ def dot(v1, v2):
 # Ray-sphere intersection
 def intersect_sphere(origin, direction, sphere):
     oc = origin - sphere['center']
+
+    # print(oc)
+
     a = dot(direction, direction)  #30
     b = 2.0 * dot(oc, direction)   #39
     # print(oc, direction, dot(oc, direction))
@@ -30,27 +33,30 @@ def intersect_sphere(origin, direction, sphere):
 
 # Ray-cylinder intersection
 def intersect_cylinder(origin, direction, cylinder):
+
+    # print(origin, direction, cylinder["center"], cylinder["direction"])
+
     # Cylinder's direction should be normalized
     ca = cylinder['direction']
     oc = origin - cylinder['center']
     
     # Calculate the coefficients for the quadratic equation
-    a = dot(direction, direction) - dot(direction, ca) ** 2
+    a = (dot(direction, direction) - dot(direction, ca) ** 2) / 4
     b = dot(direction, oc) - dot(direction, ca) * dot(oc, ca)
     c = dot(oc, oc) - dot(oc, ca) ** 2 - cylinder['radius'] ** 2
-    discriminant = b ** 2 - a * c
+    discriminant = b ** 2 - 4 * a * c
     
     if discriminant < 0:
         return None  # No intersection
 
     # Solving the quadratic equation
     sqrt_discriminant = np.sqrt(discriminant)
-    t1 = (-b - sqrt_discriminant) / a
-    t2 = (-b + sqrt_discriminant) / a
+    t1 = (-b - sqrt_discriminant) / (2 * a)
+    t2 = (-b + sqrt_discriminant) / (2 * a)
 
     # Find the closest valid intersection
     # t = min(t1, t2) if t1 > 0 else (t2 if t2 > 0 else None)
-    t = min(t1, t2)
+    t = min(t1 / 2, t2 / 2)
 
     if t is None:
         return None
@@ -95,7 +101,7 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                 dist = intersect_sphere(camera, direction, sphere)
                 if dist is not None and dist < min_dist:
 
-                    # print("guys we found the sphere")
+                    # print("guys we found the sphere", dist)
                     # print(camera, direction, sphere, dist)
                     # exit()
 
@@ -117,6 +123,10 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
             for cylinder in cylinders:
                 dist = intersect_cylinder(camera, direction, cylinder)
                 if dist is not None and dist < min_dist:
+
+                    print("guys we found the cylinder", dist)
+                    exit()
+
                     min_dist = dist
                     # Compute point of intersection
                     hit_point = camera + direction * dist

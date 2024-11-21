@@ -52,9 +52,9 @@ async def test_quadratic(dut):
     dut.s_axis_a_tvalid.value = 1
     dut.s_axis_b_tvalid.value = 1
     dut.s_axis_c_tvalid.value = 1
-    dut.s_axis_a_tdata.value = float_to_binary(1.0)
-    dut.s_axis_b_tdata.value = float_to_binary(5.0)
-    dut.s_axis_c_tdata.value = float_to_binary(7.0)
+    dut.s_axis_a_tdata.value = float_to_binary(1.1558641975308643)
+    dut.s_axis_b_tdata.value = float_to_binary(-23.944444444444443)
+    dut.s_axis_c_tdata.value = float_to_binary(124)
     await ClockCycles(dut.aclk, 1)
     dut.s_axis_a_tvalid.value = 0
     dut.s_axis_a_tdata.value = 0
