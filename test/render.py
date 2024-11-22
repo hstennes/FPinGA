@@ -101,10 +101,6 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                 dist = intersect_sphere(camera, direction, sphere)
                 if dist is not None and dist < min_dist:
 
-                    # print("guys we found the sphere", dist)
-                    # print(camera, direction, sphere, dist)
-                    # exit()
-
                     min_dist = dist
                     # Compute point of intersection
                     hit_point = camera + direction * dist
@@ -118,6 +114,10 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                         final_color += intensity * sphere_color
 
                     color = np.clip(final_color, 0, 255).astype(int)
+
+                    # print("guys we found the sphere")
+                    # print(hit_point, normal, color)
+                    # exit()
 
             # Check intersections with cylinders
             for cylinder in cylinders:
@@ -145,6 +145,8 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                         final_color += intensity * cylinder_color
 
                     color = np.clip(final_color, 0, 255).astype(int)
+                    
+                    pass
 
             # Set the pixel color
             pixels[x, y] = tuple(color)

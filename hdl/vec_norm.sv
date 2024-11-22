@@ -18,7 +18,7 @@ module vec_norm #(parameter SIZE) (
 
   logic sqrt_ready;
   
-  vec_dot dot(
+  vec_dot #(.SIZE(SIZE)) dot(
     .s_axis_a_tdata(s_axis_a_tdata),
     .s_axis_a_tready(s_axis_a_tready),
     .s_axis_a_tvalid(s_axis_a_tvalid),

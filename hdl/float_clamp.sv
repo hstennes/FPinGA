@@ -22,7 +22,7 @@ module float_clamp #(parameter SIZE) (
     .s_axis_a_tvalid(s_axis_a_tvalid),
     .s_axis_b_tdata(MAX),
     .s_axis_b_tready(),
-    .s_axis_b_tvalid(1),
+    .s_axis_b_tvalid(1'b1),
     .m_axis_result_tdata(min_result),
     .m_axis_result_tvalid(m_axis_result_tvalid),
     .m_axis_result_tready(m_axis_result_tready),

@@ -16,11 +16,11 @@ module vec_to_pixel_color #(parameter SIZE) (
 
   logic fltofi_ready;
 
-  logic fltofi1_result;
+  logic [SIZE-1:0] fltofi1_result;
 
-  logic fltofi2_result;
+  logic [SIZE-1:0] fltofi2_result;
 
-  logic fltofi3_result;
+  logic [SIZE-1:0] fltofi3_result;
   
   vec_clamp #(.SIZE(SIZE)) clamp(
     .s_axis_a_tdata(s_axis_a_tdata),
