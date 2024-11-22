@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module lambert #(parameter SIZE=64) (
+module lambert #(parameter SIZE) (
   input wire [2:0][SIZE-1:0] hit_point_axis_tdata,
   input wire hit_point_axis_tvalid,
   output logic hit_point_axis_tready,
@@ -21,11 +21,13 @@ module lambert #(parameter SIZE=64) (
   localparam PIPE_DOT_LATENCY = 38;
   localparam PIPE_IS_CYLINDER_LATENCY = 112;
 
-  localparam [3*SIZE] LIGHT_LOC = 192'h0000000000000000401C000000000000401C000000000000;
+  // localparam [3*SIZE-1:0] LIGHT_LOC = 192'h0000000000000000401C000000000000401C000000000000;
+  // localparam [3*SIZE-1:0] SPHERE_COLOR = 192'h0000000000000000406FE000000000000000000000000000;
+  // localparam [3*SIZE-1:0] CYLINDER_COLOR = 192'h406FE00000000000406FE00000000000406FE00000000000;
 
-  localparam [3*SIZE] SPHERE_COLOR = 192'h0000000000000000406FE000000000000000000000000000;
-
-  localparam [3*SIZE] CYLINDER_COLOR = 192'h406FE00000000000406FE00000000000406FE00000000000;
+  localparam [3*SIZE-1:0] LIGHT_LOC = 192'h0000000040e0000040e00000;
+  localparam [3*SIZE-1:0] SPHERE_COLOR = 192'h00000000437f000000000000;
+  localparam [3*SIZE-1:0] CYLINDER_COLOR = 192'h437f0000437f0000437f0000;
 
   logic [2:0][SIZE-1:0] light_dir_result;
   logic light_dir_valid;

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module hit_point #(parameter SIZE=64) (
+module hit_point #(parameter SIZE) (
   input wire [5:0][SIZE-1:0] obj_axis_tdata,
   input wire obj_axis_is_cylinder,
   output logic obj_axis_tready,

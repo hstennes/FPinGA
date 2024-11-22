@@ -3,22 +3,22 @@
 # SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
 # IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
 # SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-# Start of session at: Thu Nov 21 15:45:07 2024
-# Process ID: 8563
-# Current directory: /home/fpga/worker_place/temp/715f1664beef43f1843917712c9b2eaf
+# Start of session at: Fri Nov 22 16:27:23 2024
+# Process ID: 2357
+# Current directory: /home/fpga/worker_place/temp/888c1fc42dde44c0bf375f511a0d3f44
 # Command line: vivado -mode batch -source build.tcl
-# Log file: /home/fpga/worker_place/temp/715f1664beef43f1843917712c9b2eaf/vivado.log
-# Journal file: /home/fpga/worker_place/temp/715f1664beef43f1843917712c9b2eaf/vivado.jou
-# Running On        :eecs-digital-37
+# Log file: /home/fpga/worker_place/temp/888c1fc42dde44c0bf375f511a0d3f44/vivado.log
+# Journal file: /home/fpga/worker_place/temp/888c1fc42dde44c0bf375f511a0d3f44/vivado.jou
+# Running On        :eecs-digital-48
 # Platform          :Ubuntu
 # Operating System  :Ubuntu 24.04.1 LTS
 # Processor Detail  :AMD Ryzen 7 2700X Eight-Core Processor
-# CPU Frequency     :2319.596 MHz
+# CPU Frequency     :4208.380 MHz
 # CPU Physical cores:8
 # CPU Logical cores :16
-# Host memory       :16686 MB
+# Host memory       :16688 MB
 # Swap memory       :4294 MB
-# Total Virtual     :20981 MB
-# Available Virtual :19981 MB
+# Total Virtual     :20983 MB
+# Available Virtual :20035 MB
 #-----------------------------------------------------------
 source build.tcl
