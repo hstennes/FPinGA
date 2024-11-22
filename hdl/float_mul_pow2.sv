@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module float_mul_pow2 #(parameter SIZE=64, POW=1, NEGATE=0) (
+module float_mul_pow2 #(parameter SIZE, POW=1, NEGATE=0) (
   input wire [SIZE-1:0] in_float,
   output logic [SIZE-1:0] result);
 

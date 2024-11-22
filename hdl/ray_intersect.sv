@@ -117,7 +117,7 @@ module ray_intersect #(parameter SIZE=64) (
   logic [SIZE*3-1:0] neg_obj_loc;
   assign neg_obj_loc = {{~obj_axis_tdata[2][SIZE-1], obj_axis_tdata[2][SIZE-2:0]}, {~obj_axis_tdata[1][SIZE-1], obj_axis_tdata[1][SIZE-2:0]}, {~obj_axis_tdata[0][SIZE-1], obj_axis_tdata[0][SIZE-2:0]}};
 
-  vec_add oc(
+  vec_add #(.SIZE(SIZE)) oc(
     .s_axis_a_tdata(ray_axis_tdata[2:0]),
     .s_axis_a_tready(ray_axis_tready),
     .s_axis_a_tvalid(ray_axis_tvalid),
@@ -131,7 +131,7 @@ module ray_intersect #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  vec_dot dd(
+  vec_dot #(.SIZE(SIZE)) dd(
     .s_axis_a_tdata(ray_axis_tdata[5:3]),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(ray_axis_tvalid),
@@ -145,7 +145,7 @@ module ray_intersect #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  vec_dot dca(
+  vec_dot #(.SIZE(SIZE)) dca(
     .s_axis_a_tdata(ray_axis_tdata[5:3]),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(ray_axis_tvalid),
@@ -225,7 +225,7 @@ module ray_intersect #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  vec_dot ocd(
+  vec_dot #(.SIZE(SIZE)) ocd(
     .s_axis_a_tdata(oc_result),
     .s_axis_a_tready(ocd_oc_ready),
     .s_axis_a_tvalid(oc_valid),
@@ -239,7 +239,7 @@ module ray_intersect #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  vec_dot occa(
+  vec_dot #(.SIZE(SIZE)) occa(
     .s_axis_a_tdata(oc_result),
     .s_axis_a_tready(occa_oc_ready),
     .s_axis_a_tvalid(oc_valid),
@@ -270,7 +270,7 @@ module ray_intersect #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  vec_dot ococ(
+  vec_dot #(.SIZE(SIZE)) ococ(
     .s_axis_a_tdata(oc_result),
     .s_axis_a_tready(ococ_ready),
     .s_axis_a_tvalid(oc_valid),
@@ -384,7 +384,7 @@ module ray_intersect #(parameter SIZE=64) (
   assign final_pipe_a_result = pipe_flag_quad_result ? scale_pipe_a_result : pipe_a_result;
   assign final_pipe_b_result = pipe_flag_quad_result ? pipe_b_result : scale_pipe_b_result;
 
-  quadratic quad(
+  quadratic #(.SIZE(SIZE)) quad(
     .s_axis_a_tdata(final_pipe_a_result),
     .s_axis_a_tready(quad_a_ready),
     .s_axis_a_tvalid(pipe_a_valid),

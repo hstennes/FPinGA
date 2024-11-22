@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module quadratic #(parameter SIZE=64) (
+module quadratic #(parameter SIZE) (
   input wire [SIZE-1:0] s_axis_a_tdata,
   output logic s_axis_a_tready,
   input wire s_axis_a_tvalid,
@@ -171,7 +171,7 @@ module quadratic #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  float_min cmp (
+  float_min #(.SIZE(SIZE)) cmp (
     .s_axis_a_tdata(pm_p_result),
     .s_axis_a_tready(cmp_a_ready),
     .s_axis_a_tvalid(pm_p_valid),

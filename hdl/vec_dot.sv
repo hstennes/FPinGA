@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module vec_dot #(parameter SIZE=64) (
+module vec_dot #(parameter SIZE) (
   input wire [2:0][SIZE-1:0] s_axis_a_tdata,
   output logic s_axis_a_tready,
   input wire s_axis_a_tvalid,
@@ -73,7 +73,7 @@ module vec_dot #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
-  float_sum3 sum(
+  float_sum3 #(.SIZE(SIZE)) sum(
     .s_axis_a_tdata(mul_1_result),
     .s_axis_a_tready(sum_a_ready),
     .s_axis_a_tvalid(mul_1_valid),

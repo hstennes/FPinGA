@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module float_sum3 #(parameter SIZE=64) (
+module float_sum3 #(parameter SIZE) (
   input wire [SIZE-1:0] s_axis_a_tdata,
   output logic s_axis_a_tready,
   input wire s_axis_a_tvalid,
