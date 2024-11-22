@@ -125,7 +125,7 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                 if dist is not None and dist < min_dist:
 
                     # print("guys we found the cylinder", dist)
-                    # exit()
+                    # exit() 29
 
                     min_dist = dist
                     # Compute point of intersection
