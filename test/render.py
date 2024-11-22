@@ -114,7 +114,7 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                     final_color = np.zeros(3)
                     for light in lights:
                         light_dir = light['position'] - hit_point
-                        intensity = max(dot(normal, light_dir), 0) / (magnitude(light_dir) * magnitude(normal)) * light['intensity']
+                        intensity = dot(normal, light_dir) / (magnitude(light_dir) * magnitude(normal))
                         final_color += intensity * sphere_color
 
                     color = np.clip(final_color, 0, 255).astype(int)
@@ -124,23 +124,24 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                 dist = intersect_cylinder(camera, direction, cylinder)
                 if dist is not None and dist < min_dist:
 
-                    print("guys we found the cylinder", dist)
-                    exit()
+                    # print("guys we found the cylinder", dist)
+                    # exit()
 
                     min_dist = dist
                     # Compute point of intersection
                     hit_point = camera + direction * dist
                     hit_height = hit_point[1] - cylinder["center"][1]
                     ca = cylinder['direction']
-                    normal = normalize((hit_point - cylinder['center']) - dot(hit_point - cylinder['center'], ca) * ca)
+                    pre_normal = hit_point - cylinder['center']
+                    normal = pre_normal - dot(pre_normal, ca) * ca
 
                     # Accumulate light contribution from each source
                     cylinder_color = np.array(cylinder['color'])
                     if 2 < hit_height < 2.2: cylinder_color = np.array([255, 0, 0])
                     final_color = np.zeros(3)
                     for light in lights:
-                        light_dir = normalize(light['position'] - hit_point)
-                        intensity = max(dot(normal, light_dir), 0) * light['intensity']
+                        light_dir = light['position'] - hit_point
+                        intensity = dot(normal, light_dir) / (magnitude(light_dir) * magnitude(normal))
                         final_color += intensity * cylinder_color
 
                     color = np.clip(final_color, 0, 255).astype(int)

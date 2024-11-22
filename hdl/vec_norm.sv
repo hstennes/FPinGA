@@ -11,7 +11,7 @@ module vec_norm #(parameter SIZE) (
   input wire aclk,
   input wire aresetn);
 
-  //TOTAL LATENCY: 59
+  //TOTAL LATENCY: 62
 
   logic [SIZE-1:0] dot_result;
   logic dot_valid;

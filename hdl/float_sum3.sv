@@ -17,9 +17,9 @@ module float_sum3 #(parameter SIZE) (
   input wire aclk,
   input wire aresetn);
 
-  //TOTAL LATENCY: 18
+  //TOTAL LATENCY: 24
 
-  localparam PIPE_LATENCY = 9;
+  localparam PIPE_LATENCY = 12;
 
   logic [SIZE-1:0] sum1_result;
   logic sum1_valid;

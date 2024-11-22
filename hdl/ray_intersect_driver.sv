@@ -1,19 +1,20 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module ray_intersect #(parameter SIZE=64) (
-  input wire [5:0][SIZE-1:0] obj_axis_tdata,
-  input wire obj_axis_is_cylinder,
-  output logic obj_axis_tready,
-  input wire obj_axis_tvalid,
+module ray_intersect_driver #(parameter SIZE=64) (
+  input wire [2:0][SIZE-1:0] sphere,
+  input wire [9:0][5:0][SIZE-1:0] cylinders,
   input wire [5:0][SIZE-1:0] ray_axis_tdata,
   output logic ray_axis_tready,
   input wire ray_axis_tvalid,
-  output logic [SIZE-1:0] t_axis_tdata,
-  input wire t_axis_tready,
-  output logic t_axis_tvalid,
+  output logic [2:0][SIZE-1:0] hit_point_axis_tdata,
+  output logic [2:0][SIZE-1:0] normal_axis_tdata,
+  output logic hit_normal_valid;
+  input wire hit_normal_ready;
+  output logic is_cylinder,
   input wire aclk,
-  input wire aresetn);
+  input wire aresetn
+  );
 
   //TOTAL LATENCY: 156
 
