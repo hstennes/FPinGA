@@ -19,7 +19,7 @@ module vec_fused_mul_add #(parameter SIZE) (
 
   //TOTAL LATENCY: 9
   
-  float_fused_mul_add #(.SIZE(SIZE)) mul1(
+  float_fused_mul_add mul1(
     .s_axis_a_tdata(s_axis_a_tdata[0]),
     .s_axis_a_tready(s_axis_a_tready),
     .s_axis_a_tvalid(s_axis_a_tvalid),
@@ -36,7 +36,7 @@ module vec_fused_mul_add #(parameter SIZE) (
     .aresetn(aresetn)
   );
 
-  float_fused_mul_add #(.SIZE(SIZE)) mul2(
+  float_fused_mul_add mul2(
     .s_axis_a_tdata(s_axis_a_tdata[1]),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(s_axis_a_tvalid),
@@ -53,7 +53,7 @@ module vec_fused_mul_add #(parameter SIZE) (
     .aresetn(aresetn)
   );
 
-  float_fused_mul_add #(.SIZE(SIZE)) mul3(
+  float_fused_mul_add mul3(
     .s_axis_a_tdata(s_axis_a_tdata[2]),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(s_axis_a_tvalid),

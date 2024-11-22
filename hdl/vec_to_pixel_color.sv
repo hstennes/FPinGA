@@ -33,7 +33,7 @@ module vec_to_pixel_color #(parameter SIZE) (
     .aresetn(aresetn)
   );
 
-  float_to_fixed #(.SIZE(SIZE)) ff1 (
+  float_to_fixed ff1 (
     .s_axis_a_tdata(clamp_result[0]),
     .s_axis_a_tready(fltofi_ready),
     .s_axis_a_tvalid(clamp_valid),
@@ -44,7 +44,7 @@ module vec_to_pixel_color #(parameter SIZE) (
     .aresetn(aresetn)
   );
 
-  float_to_fixed #(.SIZE(SIZE)) ff2 (
+  float_to_fixed ff2 (
     .s_axis_a_tdata(clamp_result[1]),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(clamp_valid),
@@ -55,7 +55,7 @@ module vec_to_pixel_color #(parameter SIZE) (
     .aresetn(aresetn)
   );
 
-  float_to_fixed #(.SIZE(SIZE)) ff3 (
+  float_to_fixed ff3 (
     .s_axis_a_tdata(clamp_result[2]),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(clamp_valid),

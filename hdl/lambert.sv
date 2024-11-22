@@ -11,7 +11,7 @@ module lambert #(parameter SIZE) (
   input wire is_cylinder,
   output logic [23:0] pixel_axis_tdata,
   output logic pixel_axis_tvalid,
-  input logic pixel_axis_tready,
+  input wire pixel_axis_tready,
   input wire aclk,
   input wire aresetn);
 
@@ -136,7 +136,7 @@ module lambert #(parameter SIZE) (
     .aresetn(aresetn)
   );
 
-  float_mul #(.SIZE(SIZE)) mul(
+  float_mul mul(
     .s_axis_a_tdata(norm_normal_result),
     .s_axis_a_tready(mul_normal_ready),
     .s_axis_a_tvalid(norm_normal_valid),
@@ -161,7 +161,7 @@ module lambert #(parameter SIZE) (
     .aresetn(aresetn)
   );
 
-  float_div #(.SIZE(SIZE)) div(
+  float_div div(
     .s_axis_a_tdata(pipe_dot_result),
     .s_axis_a_tready(int_num_ready),
     .s_axis_a_tvalid(pipe_dot_valid),

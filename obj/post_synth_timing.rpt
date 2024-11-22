@@ -1,0 +1,37 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
+| Date         : Fri Nov 22 17:54:39 2024
+| Host         : eecs-digital-47 running 64-bit Ubuntu 24.04.1 LTS
+| Command      : report_timing -file obj/post_synth_timing.rpt
+| Design       : renderer
+| Device       : 7s50-csga324
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Synthesized
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack:                    inf
+  Source:                 rfp/float_hcount/inst/i_synth/need_combiner.use_2to1.skid_buffer_combiner/gen_has_z_tready.reg1_a_ready_reg/C
+                            (rising edge-triggered cell FDRE)
+  Destination:            hcount_axis_tready
+                            (output port)
+  Path Group:             (none)
+  Path Type:              Max at Slow Process Corner
+  Data Path Delay:        3.999ns  (logic 3.199ns (80.001%)  route 0.800ns (19.999%))
+  Logic Levels:           2  (FDRE=1 OBUF=1)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         FDRE                         0.000     0.000 r  rfp/float_hcount/inst/i_synth/need_combiner.use_2to1.skid_buffer_combiner/gen_has_z_tready.reg1_a_ready_reg/C
+                         FDRE (Prop_fdre_C_Q)         0.456     0.456 r  rfp/float_hcount/inst/i_synth/need_combiner.use_2to1.skid_buffer_combiner/gen_has_z_tready.reg1_a_ready_reg/Q
+                         net (fo=4, unplaced)         0.800     1.256    hcount_axis_tready_OBUF
+                         OBUF (Prop_obuf_I_O)         2.743     3.999 r  hcount_axis_tready_OBUF_inst/O
+                         net (fo=0)                   0.000     3.999    hcount_axis_tready
+                                                                      r  hcount_axis_tready (OUT)
+  -------------------------------------------------------------------    -------------------
+
+
+
+

@@ -14,10 +14,10 @@ module hit_point #(parameter SIZE) (
   input wire ray_axis_tvalid,
   output logic [2:0][SIZE-1:0] hit_point_axis_tdata,
   output logic hit_point_axis_tvalid,
-  input logic hit_point_axis_tready,
+  input wire hit_point_axis_tready,
   output logic [2:0][SIZE-1:0] normal_axis_tdata,
   output logic normal_axis_tvalid,
-  input logic normal_axis_tready,
+  input wire normal_axis_tready,
   input wire aclk,
   input wire aresetn);
 

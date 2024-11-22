@@ -12,7 +12,7 @@ module renderer #(parameter SIZE=32) (
   input wire [9:0][5:0][SIZE-1:0] cylinders,
   output logic [23:0] pixel_axis_tdata,
   output logic pixel_axis_tvalid,
-  input logic pixel_axis_tready,
+  input wire pixel_axis_tready,
   input wire aclk,
   input wire aresetn
   );
