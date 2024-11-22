@@ -9,7 +9,7 @@ module lambert #(parameter SIZE=64) (
   input wire normal_axis_tvalid,
   output logic normal_axis_tready,
   input wire is_cylinder,
-  output logic [24:0] pixel_axis_tdata;
+  output logic [23:0] pixel_axis_tdata;
   output logic pixel_axis_tvalid;
   input logic pixel_axis_tready;
   input wire aclk,
@@ -23,68 +23,158 @@ module lambert #(parameter SIZE=64) (
   localparam [SIZE-1:0] PY_ADD = 64'h3FEFFFFFFFFFFFFF;
   localparam [SIZE-1:0] PZ = 64'hBFF0000000000000;
 
-  logic [SIZE-1:0] float_hcount_result;
-  logic float_hcount_valid;
+  logic [SIZE-1:0] light_dir_result;
+  logic light_dir_valid;
 
-  logic [SIZE-1:0] float_vcount_result;
-  logic float_vcount_valid;
+  logic [SIZE-1:0] pipe_normal_result;
+  logic pipe_normal_valid;
 
-  logic px_ready;
-  
-  logic py_ready;
+  logic norm_normal_ready;
+  logic [SIZE-1:0] norm_normal_result;
+  logic norm_normal_valid;
 
-  fixed_to_float float_hcount(
-    .s_axis_a_tdata(hcount_axis_tdata),
-    .s_axis_a_tready(hcount_axis_tready),
-    .s_axis_a_tvalid(hcount_axis_tvalid),
-    .m_axis_result_tdata(float_hcount_result),
-    .m_axis_result_tready(px_ready),
-    .m_axis_result_tvalid(float_hcount_valid),
+  logic norm_light_dir_ready;
+  logic [SIZE-1:0] norm_light_dir_result;
+  logic norm_light_dir_valid;
+
+  logic dot_light_dir_ready;
+  logic dot_normal_ready;
+  logic [SIZE-1:0] dot_result;
+  logic dot_valid;
+
+  logic mul_normal_ready;
+  logic mul_light_dir_ready;
+  logic [SIZE-1:0] mul_result;
+  logic mul_valid;
+
+  logic int_num_ready;
+  logic int_den_ready;
+  logic [SIZE-1:0] int_result;
+  logic int_valid;
+
+  logic color_int_ready;
+  logic color_paint_ready;
+  logic [SIZE-1:0] color_result;
+  logic color_valid;
+
+  logic pixel_ready;
+
+  logic [2:0][SIZE-1:0] neg_hit_point;
+  assign neg_hit_point = {}
+
+  vec_add light_dir (
+    .s_axis_a_tdata(b_sq_result),
+    .s_axis_a_tready(disc_b_sq_ready),
+    .s_axis_a_tvalid(b_sq_valid),
+    .s_axis_b_tdata(scale_ac_result), //* -4
+    .s_axis_b_tready(disc_ac_ready),
+    .s_axis_b_tvalid(ac_valid),
+    .m_axis_result_tdata(disc_result),
+    .m_axis_result_tready(sqrt_ready),
+    .m_axis_result_tvalid(disc_valid),
     .aclk(aclk),
     .aresetn(aresetn)
   );
 
-  fixed_to_float float_vcount(
-    .s_axis_a_tdata(vcount_axis_tdata),
-    .s_axis_a_tready(vcount_axis_tready),
-    .s_axis_a_tvalid(vcount_axis_tvalid),
-    .m_axis_result_tdata(float_vcount_result),
-    .m_axis_result_tready(py_ready),
-    .m_axis_result_tvalid(float_vcount_valid),
+  axi_pipe #(.LATENCY(PIPE_A_LATENCY)) pipe_a(
+    .s_axis_a_tdata(s_axis_a_tdata),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(s_axis_a_tvalid),
+    .m_axis_result_tdata(pipe_a_result),
+    .m_axis_result_tvalid(pipe_a_valid),
+    .m_axis_result_tready(div_den_ready),
     .aclk(aclk),
     .aresetn(aresetn)
   );
 
-  float_fused_mul_add px(
-    .s_axis_a_tdata(float_hcount_result),
-    .s_axis_a_tready(px_ready),
-    .s_axis_a_tvalid(float_hcount_valid),
-    .s_axis_b_tdata(PX_MUL),
+  vec_norm #(.LATENCY(PIPE_A_LATENCY)) pipe_a(
+    .s_axis_a_tdata(s_axis_a_tdata),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(s_axis_a_tvalid),
+    .m_axis_result_tdata(pipe_a_result),
+    .m_axis_result_tvalid(pipe_a_valid),
+    .m_axis_result_tready(div_den_ready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  vec_norm #(.LATENCY(PIPE_A_LATENCY)) pipe_a(
+    .s_axis_a_tdata(s_axis_a_tdata),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(s_axis_a_tvalid),
+    .m_axis_result_tdata(pipe_a_result),
+    .m_axis_result_tvalid(pipe_a_valid),
+    .m_axis_result_tready(div_den_ready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  vec_dot #(.SIZE(SIZE)) dd(
+    .s_axis_a_tdata(ray_axis_tdata[5:3]),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(ray_axis_tvalid),
+    .s_axis_b_tdata(ray_axis_tdata[5:3]),
     .s_axis_b_tready(),
-    .s_axis_b_tvalid(1),
-    .s_axis_c_tdata(PX_ADD),
-    .s_axis_c_tready(),
-    .s_axis_c_tvalid(1),
-    .m_axis_result_tdata(ray_axis_tdata[2]),
-    .m_axis_result_tready(ray_axis_tready),
-    .m_axis_result_tvalid(ray_axis_tvalid),
+    .s_axis_b_tvalid(ray_axis_tvalid),
+    .m_axis_result_tdata(dd_result),
+    .m_axis_result_tready(pipe_a_ready),
+    .m_axis_result_tvalid(dd_valid),
     .aclk(aclk),
     .aresetn(aresetn)
   );
 
-  float_fused_mul_add py(
-    .s_axis_a_tdata(float_vcount_result),
-    .s_axis_a_tready(py_ready),
-    .s_axis_a_tvalid(float_vcount_valid),
-    .s_axis_b_tdata(PY_MUL),
-    .s_axis_b_tready(),
-    .s_axis_b_tvalid(1),
-    .s_axis_c_tdata(PY_ADD),
-    .s_axis_c_tready(),
-    .s_axis_c_tvalid(1),
-    .m_axis_result_tdata(ray_axis_tdata[1]),
-    .m_axis_result_tready(ray_axis_tready),
-    .m_axis_result_tvalid(),
+  float_mul ac(
+    .s_axis_a_tdata(s_axis_a_tdata),
+    .s_axis_a_tready(s_axis_a_tready),
+    .s_axis_a_tvalid(s_axis_a_tvalid),
+    .s_axis_b_tdata(s_axis_c_tdata),
+    .s_axis_b_tready(s_axis_c_tready),
+    .s_axis_b_tvalid(s_axis_c_tvalid),
+    .m_axis_result_tdata(ac_result),
+    .m_axis_result_tready(disc_ac_ready),
+    .m_axis_result_tvalid(ac_valid),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  float_div div(
+    .s_axis_a_tdata(cmp_result),
+    .s_axis_a_tready(div_num_ready),
+    .s_axis_a_tvalid(cmp_valid),
+    .s_axis_b_tdata(scale_pipe_a_result), //* 2
+    .s_axis_b_tready(div_den_ready),
+    .s_axis_b_tvalid(pipe_a_valid),
+    .m_axis_result_tdata(m_axis_result_tdata),
+    .m_axis_result_tvalid(m_axis_result_tvalid),
+    .m_axis_result_tready(m_axis_result_tready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  vec_mul color(
+    .s_axis_a_tdata(cmp_result),
+    .s_axis_a_tready(div_num_ready),
+    .s_axis_a_tvalid(cmp_valid),
+    .s_axis_b_tdata(scale_pipe_a_result), //* 2
+    .s_axis_b_tready(div_den_ready),
+    .s_axis_b_tvalid(pipe_a_valid),
+    .m_axis_result_tdata(m_axis_result_tdata),
+    .m_axis_result_tvalid(m_axis_result_tvalid),
+    .m_axis_result_tready(m_axis_result_tready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  vec_to_pixel_color div(
+    .s_axis_a_tdata(cmp_result),
+    .s_axis_a_tready(div_num_ready),
+    .s_axis_a_tvalid(cmp_valid),
+    .s_axis_b_tdata(scale_pipe_a_result), //* 2
+    .s_axis_b_tready(div_den_ready),
+    .s_axis_b_tvalid(pipe_a_valid),
+    .m_axis_result_tdata(m_axis_result_tdata),
+    .m_axis_result_tvalid(m_axis_result_tvalid),
+    .m_axis_result_tready(m_axis_result_tready),
     .aclk(aclk),
     .aresetn(aresetn)
   );
