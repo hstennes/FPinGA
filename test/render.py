@@ -133,6 +133,7 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                     hit_height = hit_point[1] - cylinder["center"][1]
                     ca = cylinder['direction']
                     pre_normal = hit_point - cylinder['center']
+                    print(dot(pre_normal, ca))
                     normal = pre_normal - dot(pre_normal, ca) * ca
 
                     # Accumulate light contribution from each source
@@ -141,7 +142,10 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                     final_color = np.zeros(3)
                     for light in lights:
                         light_dir = light['position'] - hit_point
-                        intensity = dot(normal, light_dir) / (magnitude(light_dir) * magnitude(normal))
+                        intensity = dot(normal, light_dir) / 14
+
+                        # print(magnitude(light_dir) * magnitude(normal))
+
                         final_color += intensity * cylinder_color
 
                     color = np.clip(final_color, 0, 255).astype(int)
@@ -171,7 +175,7 @@ cylinders = [
     {'center': np.array([0, -5, -10]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
 ]
 lights = [
-    {'position': np.array([0, 7, 7]), 'intensity': 1},
+    {'position': np.array([0, 0, 7]), 'intensity': 1},
     # {'position': np.array([0, 10, -5]), 'intensity': 0.5},
 ]
 

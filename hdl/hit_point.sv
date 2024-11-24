@@ -21,7 +21,7 @@ module hit_point #(parameter SIZE) (
   input wire aclk,
   input wire aresetn);
 
-  //TOTAL LATENCY: 17
+  //TOTAL LATENCY: 83
 
   localparam PIPE_CENTER_LATENCY = 17;
   localparam PIPE_CA_LATENCY = 29;

@@ -14,12 +14,19 @@ module renderer #(parameter SIZE=32) (
   output logic pixel_axis_tvalid,
   input wire pixel_axis_tready,
   input wire aclk,
+  output logic [10:0] hcount_out,
+  output logic [9:0] vcount_out,
   input wire aresetn
   );
 
-  localparam [3*SIZE-1:0] CAMERA_LOC = 192'h000000000000000000000000000000004014000000000000;
+  //TOTAL LATENCY = 406
+
+  // localparam [3*SIZE-1:0] CAMERA_LOC = 192'h000000000000000000000000000000004014000000000000;
+  localparam [3*SIZE-1:0] CAMERA_LOC = 96'h000000000000000040a00000;
 
   localparam PIPE_RAY_LATENCY = 168;
+  localparam PIPE_UNDEF_LATENCY = 214;
+  localparam TOTAL_LATENCY = 406;
 
   logic [2:0][SIZE-1:0] ray_data;
   logic ray_valid;
@@ -30,6 +37,7 @@ module renderer #(parameter SIZE=32) (
 
   logic pipe_ray_ready;
   logic [5:0][SIZE-1:0] pipe_ray_result;
+  logic undef_result;
   logic pipe_ray_valid;
 
   logic hit_point_t_ready;
@@ -41,6 +49,34 @@ module renderer #(parameter SIZE=32) (
 
   logic lambert_hit_point_ready;
   logic lambert_normal_ready;
+
+  logic pipe_undef_ready;
+  logic pipe_undef_result;
+  logic pipe_undef_valid;
+
+  logic [23:0] output_pixel;
+
+  axi_pipe #(.LATENCY(TOTAL_LATENCY), .SIZE(11)) pipe_hcount (
+    .s_axis_a_tdata(hcount_axis_tdata),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(hcount_axis_tvalid),
+    .m_axis_result_tdata(hcount_out),
+    .m_axis_result_tvalid(),
+    .m_axis_result_tready(pixel_axis_tready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  axi_pipe #(.LATENCY(TOTAL_LATENCY), .SIZE(10)) pipe_vcount (
+    .s_axis_a_tdata(vcount_axis_tdata),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(vcount_axis_tvalid),
+    .m_axis_result_tdata(vcount_out),
+    .m_axis_result_tvalid(),
+    .m_axis_result_tready(pixel_axis_tready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
 
   ray_from_pixel #(.SIZE(SIZE)) rfp(
     .hcount_axis_tdata(hcount_axis_tdata),
@@ -76,8 +112,20 @@ module renderer #(parameter SIZE=32) (
     .ray_axis_tvalid(ray_valid),
     .ray_axis_tready(ray_intersect_ready),
     .t_axis_tdata(t_result),
+    .undef_axis_tdata(undef_result),
     .t_axis_tvalid(t_valid),
     .t_axis_tready(hit_point_t_ready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  axi_pipe #(.LATENCY(PIPE_UNDEF_LATENCY), .SIZE(1)) pipe_undef (
+    .s_axis_a_tdata(undef_result),
+    .s_axis_a_tready(pipe_undef_ready),
+    .s_axis_a_tvalid(t_valid),
+    .m_axis_result_tdata(pipe_undef_result),
+    .m_axis_result_tvalid(pipe_undef_valid),
+    .m_axis_result_tready(pixel_axis_tready),
     .aclk(aclk),
     .aresetn(aresetn)
   );
@@ -111,12 +159,14 @@ module renderer #(parameter SIZE=32) (
     .normal_axis_tvalid(normal_valid),
     .normal_axis_tready(lambert_normal_ready),
     .is_cylinder(1'b0),
-    .pixel_axis_tdata(pixel_axis_tdata),
+    .pixel_axis_tdata(output_pixel),
     .pixel_axis_tvalid(pixel_axis_tvalid),
     .pixel_axis_tready(pixel_axis_tready),
     .aclk(aclk),
     .aresetn(aresetn)
   );
+
+  assign pixel_axis_tdata = pipe_undef_result ? 24'b0 : output_pixel;
 
 endmodule
 `default_nettype wire

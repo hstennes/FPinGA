@@ -14,7 +14,7 @@ module ray_from_pixel #(parameter SIZE) (
   input wire aclk,
   input wire aresetn);
 
-  //TOTAL LATENCY: 17
+  //TOTAL LATENCY: 24
 
   // localparam [SIZE-1:0] PX_MUL = 64'h3F76C16C16C16C16;
   // localparam [SIZE-1:0] PX_ADD = 64'hBFFC71C71C71C71B;

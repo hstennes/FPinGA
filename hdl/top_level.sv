@@ -99,10 +99,8 @@ module top_level
   logic [15:0] camera_pixel;
   logic        camera_valid;
 
-  // your pixel_reconstruct module, from week 5 and 6
+  // your pixel_reconstruct module, from the exercise!
   // hook it up to buffered inputs.
-  //same as it ever was.
-
   pixel_reconstruct
     (.clk_in(clk_camera),
      .rst_in(sys_rst_camera),
@@ -115,228 +113,35 @@ module top_level
      .pixel_vcount_out(camera_vcount),
      .pixel_data_out(camera_pixel));
 
-  //----------------BEGIN NEW STUFF FOR LAB 07------------------
 
-  //clock domain cross (from clk_camera to clk_pixel)
-  //switching from camera clock domain to pixel clock domain early
-  //this lets us do convolution on the 74.25 MHz clock rather than the
-  //200 MHz clock domain that the camera lives on.
-  logic empty;
-  logic cdc_valid;
-  logic [15:0] cdc_pixel;
-  logic [10:0] cdc_hcount;
-  logic [9:0] cdc_vcount;
-
-  //cdc fifo (AXI IP). Remember to include that IP folder.
-  fifo cdc_fifo
-    (.wr_clk(clk_camera),
-     .full(),
-     .din({camera_hcount, camera_vcount, camera_pixel}),
-     .wr_en(camera_valid),
-
-     .rd_clk(clk_pixel),
-     .empty(empty),
-     .dout({cdc_hcount, cdc_vcount, cdc_pixel}),
-     .rd_en(1) //always read
-    );
-  assign cdc_valid = ~empty; //watch when empty. Ready immediately if something there
-
-  //----
-  //Filter 0: 1280x720 convolution of gaussian blur
-  logic [10:0] f0_hcount;  //hcount from filter0 module
-  logic [9:0] f0_vcount; //vcount from filter0 module
-  logic [15:0] f0_pixel; //pixel data from filter0 module
-  logic f0_valid; //valid signals for filter0 module
-  //full resolution filter
-  filter #(.K_SELECT(1),.HRES(1280),.VRES(720))
-    filtern(
-    .clk_in(clk_pixel),
-    .rst_in(sys_rst_pixel),
-    .data_valid_in(cdc_valid),
-    .pixel_data_in(cdc_pixel),
-    .hcount_in(cdc_hcount),
-    .vcount_in(cdc_vcount),
-    .data_valid_out(f0_valid),
-    .pixel_data_out(f0_pixel),
-    .hcount_out(f0_hcount),
-    .vcount_out(f0_vcount)
-  );
-
-  //----
-  logic [10:0] lb_hcount;  //hcount to filter modules
-  logic [9:0] lb_vcount; //vcount to filter modules
-  logic [15:0] lb_pixel; //pixel data to filter modules
-  logic lb_valid; //valid signals to filter modules
-
-  //selection logic to either go through (btn[1]=1)
-  //or bypass (btn[1]==0) the first filter
-  //in the first part of lab as you develop line buffer, you'll want to bypass
-  //since your filter won't be working, but it would be good to test the
-  //downsampling line buffer below on its own
-  always_ff @(posedge clk_pixel) begin
-    if (btn[1])begin
-      ds_hcount = cdc_hcount;
-      ds_vcount = cdc_vcount;
-      ds_pixel = cdc_pixel;
-      ds_valid = cdc_valid;
-    end else begin
-      ds_hcount = f0_hcount;
-      ds_vcount = f0_vcount;
-      ds_pixel = f0_pixel;
-      ds_valid = f0_valid;
-    end
-  end
- //float to real, multiply with reals
-  //----
-  //A line buffer that, in conjunction with the control signal will down sample
-  //the camera (or f0 filter) values from 1280x720 to 320x180
-  //in reality we could get by without this, but it does make things a little easier
-  //and we've also added it since it gives us a means of testing the line buffer
-  //design outside of the filter.
-  logic [2:0][15:0] lb_buffs; //grab output of down sample line buffer
-  logic ds_control; //controlling when to write (every fourth pixel and line)
-  logic [10:0] ds_hcount;  //hcount to downsample line buffer
-  logic [9:0] ds_vcount; //vcount to downsample line buffer
-  logic [15:0] ds_pixel; //pixel data to downsample line buffer
-  logic ds_valid; //valid signals to downsample line buffer
-  assign ds_control = ds_valid&&(ds_hcount[1:0]==2'b0)&&(ds_vcount[1:0]==2'b0);
-  line_buffer #(.HRES(320),
-                .VRES(180))
-    ds_lbuff (
-    .clk_in(clk_pixel),
-    .rst_in(sys_rst_pixel),
-    .data_valid_in(ds_control),
-    .pixel_data_in(ds_pixel),
-    .hcount_in(ds_hcount[10:2]),
-    .vcount_in(ds_vcount[9:2]),
-    .data_valid_out(lb_valid),
-    .line_buffer_out(lb_buffs),
-    .hcount_out(lb_hcount),
-    .vcount_out(lb_vcount)
-  );
-
-  assign lb_pixel = lb_buffs[1]; //pass on only the middle one.
-
-  //----
-  //Create six different filters that all exist in parallel
-  //The outputs of all six filters are fed into the unpacked arrays below:
-  logic [10:0] f_hcount [5:0];  //hcount from filter modules
-  logic [9:0] f_vcount [5:0]; //vcount from filter modules
-  logic [15:0] f_pixel [5:0]; //pixel data from filter modules
-  logic f_valid [5:0]; //valid signals for filter modules
-
-  //using generate/genvar, create five *Different* instances of the
-  //filter module (you'll write that).  Each filter will implement a different
-  //kernel
-  generate
-    genvar i;
-    for (i=0; i<6; i=i+1)begin
-      filter #(.K_SELECT(i),.HRES(320),.VRES(180))
-        filterm(
-        .clk_in(clk_pixel),
-        .rst_in(sys_rst_pixel),
-        .data_valid_in(lb_valid),
-        .pixel_data_in(lb_pixel),
-        .hcount_in(lb_hcount),
-        .vcount_in(lb_vcount),
-        .data_valid_out(f_valid[i]),
-        .pixel_data_out(f_pixel[i]),
-        .hcount_out(f_hcount[i]),
-        .vcount_out(f_vcount[i])
-      );
-    end
-  endgenerate
-
-  //combine hor and vert signals from filters 4 and 5 for special signal:
-  logic [7:0] fcomb_r, fcomb_g, fcomb_b;
-  assign fcomb_r = (f_pixel[4][15:11]+f_pixel[5][15:11])>>1;
-  assign fcomb_g = (f_pixel[4][10:5]+f_pixel[5][10:5])>>1;
-  assign fcomb_b = (f_pixel[4][4:0]+f_pixel[5][4:0])>>1;
-
-  //------
-  //Choose which filter to use
-  //based on values of sw[2:0] select which filter output gets handed on to the
-  //next module. We must make sure to route hcount, vcount, pixels and valid signal
-  // for each module.  Could have done this with a for loop as well!  Think
-  // about it!
-  logic [10:0] fmux_hcount; //hcount from filter mux
-  logic [9:0]  fmux_vcount; //vcount from filter mux
-  logic [15:0] fmux_pixel; //pixel data from filter mux
-  logic fmux_valid; //data valid from filter mux
-
-  //000 Identity Kernel
-  //001 Gaussian Blur
-  //010 Sharpen
-  //011 Ridge Detection
-  //100 Sobel Y-axis Edge Detection
-  //101 Sobel X-axis Edge Detection
-  //110 Total Sobel Edge Detection
-  //111 Output of Line Buffer Directly (Helpful for debugging line buffer in first part)
-  always_ff @(posedge clk_pixel)begin
-    case (sw[2:0])
-      3'b000: begin
-        fmux_hcount <= f_hcount[0];
-        fmux_vcount <= f_vcount[0];
-        fmux_pixel <= f_pixel[0];
-        fmux_valid <= f_valid[0];
-      end
-      3'b001: begin
-        fmux_hcount <= f_hcount[1];
-        fmux_vcount <= f_vcount[1];
-        fmux_pixel <= f_pixel[1];
-        fmux_valid <= f_valid[1];
-      end
-      3'b010: begin
-        fmux_hcount <= f_hcount[2];
-        fmux_vcount <= f_vcount[2];
-        fmux_pixel <= f_pixel[2];
-        fmux_valid <= f_valid[2];
-      end
-      3'b011: begin
-        fmux_hcount <= f_hcount[3];
-        fmux_vcount <= f_vcount[3];
-        fmux_pixel <= f_pixel[3];
-        fmux_valid <= f_valid[3];
-      end
-      3'b100: begin
-        fmux_hcount <= f_hcount[4];
-        fmux_vcount <= f_vcount[4];
-        fmux_pixel <= f_pixel[4];
-        fmux_valid <= f_valid[4];
-      end
-      3'b101: begin
-        fmux_hcount <= f_hcount[5];
-        fmux_vcount <= f_vcount[5];
-        fmux_pixel <= f_pixel[5];
-        fmux_valid <= f_valid[5];
-      end
-      3'b110: begin
-        fmux_hcount <= f_hcount[4];
-        fmux_vcount <= f_vcount[4];
-        fmux_pixel <= {fcomb_r[4:0],fcomb_g[5:0],fcomb_b[4:0]};
-        fmux_valid <= f_valid[4]&&f_valid[5];
-      end
-      default: begin
-        fmux_hcount <= lb_hcount;
-        fmux_vcount <= lb_vcount;
-        fmux_pixel <= lb_pixel;
-        fmux_valid <= lb_valid;
-      end
-    endcase
-  end
-
+  //two-port BRAM used to hold image from camera.
+  //The camera is producing video at 720p and 30fps, but we can't store all of that
+  //we're going to down-sample by a factor of 4 in both dimensions
+  //so we have 320 by 180.  this is kinda a bummer, but we'll fix it
+  //in future weeks by using off-chip DRAM.
+  //even with the down-sample, because our camera is producing data at 30fps
+  //and  our display is running at 720p at 60 fps, there's no hope to have the
+  //production and consumption of information be synchronized in this system.
+  //even if we could line it up once, the clocks of both systems will drift over time
+  //so to avoid this sync issue, we use a conflict-resolution device...the frame buffer
+  //instead we use a frame buffer as a go-between. The camera sends pixels in at
+  //its own rate, and we pull them out for display at the 720p rate/requirement
+  //this avoids the whole sync issue. It will however result in artifacts when you
+  //introduce fast motion in front of the camera. These lines/tears in the image
+  //are the result of unsynced frame-rewriting happening while displaying. It won't
+  //matter for slow movement
   localparam FB_DEPTH = 320*180;
   localparam FB_SIZE = $clog2(FB_DEPTH);
   logic [FB_SIZE-1:0] addra; //used to specify address to write to in frame buffer
+
   logic valid_camera_mem; //used to enable writing pixel data to frame buffer
   logic [15:0] camera_mem; //used to pass pixel data into frame buffer
 
-  //because the down sampling already happened upstream, there's no need to do here.
-  always_ff @(posedge clk_pixel) begin
-    if(fmux_valid) begin
-      addra <= fmux_hcount + fmux_vcount * 320;
-      camera_mem <= fmux_pixel;
-      valid_camera_mem <= 1;
+  always_ff @(posedge clk_camera) begin
+    if(camera_valid) begin
+      addra <= (camera_hcount[10:2]) + camera_vcount[9:2] * 320;
+      camera_mem <= camera_pixel;
+      valid_camera_mem <= camera_hcount[1:0] == 2'b0 && camera_vcount[1:0] == 2'b0;
     end else begin
       valid_camera_mem <= 0;
     end
@@ -345,7 +150,7 @@ module top_level
   //frame buffer from IP
   blk_mem_gen_0 frame_buffer (
     .addra(addra), //pixels are stored using this math
-    .clka(clk_pixel),
+    .clka(clk_camera),
     .wea(valid_camera_mem),
     .dina(camera_mem),
     .ena(1'b1),
@@ -360,13 +165,24 @@ module top_level
   logic [15:0] frame_buff_raw; //data out of frame buffer (565)
   logic [FB_SIZE-1:0] addrb; //used to lookup address in memory for reading from buffer
   logic good_addrb; //used to indicate within valid frame for scaling
-  //brought in from lab 5...just do 4X upscale
-  always_ff @(posedge clk_pixel)begin
-    addrb <= (319-(hcount_hdmi >> 2)) + 320*(vcount_hdmi >> 2);
-    good_addrb <= (hcount_hdmi<1280)&&(vcount_hdmi<720);
-  end
 
-  //--------------------------END NEW STUFF-------------------
+
+  //TO DO in camera part 1:
+  // Scale pixel coordinates from HDMI to the frame buffer to grab the right pixel
+  //scaling logic!!! You need to complete!!! We want 1X, 2X, and 4X!
+  always_ff @(posedge clk_pixel)begin
+    //use structure below to do scaling
+    if (btn[1])begin //1X scaling from frame buffer
+     addrb <= (319-hcount_hdmi) + 320*vcount_hdmi;
+     good_addrb <= (hcount_hdmi<320)&&(vcount_hdmi<180);
+    end else if (!sw[0])begin //2X scaling from frame buffer
+     addrb <= (319-(hcount_hdmi >> 1)) + 320*(vcount_hdmi >> 1);
+     good_addrb <= (hcount_hdmi<640)&&(vcount_hdmi<360);
+    end else begin //4X scaling from frame buffer
+     addrb <= (319-(hcount_hdmi >> 2)) + 320*(vcount_hdmi >> 2);
+     good_addrb <= (hcount_hdmi<1280)&&(vcount_hdmi<720);
+    end
+  end
 
   //split fame_buff into 3 8 bit color channels (5:6:5 adjusted accordingly)
   //remapped frame_buffer outputs with 8 bits for r, g, b
@@ -418,11 +234,10 @@ module top_level
   assign cr = {!cr_full[7],cr_full[6:0]};
   assign cb = {!cb_full[7],cb_full[6:0]};
 
-  assign channel_sel = {1'b1, sw[4:3]}; //[3:1];
-  //modified from before...ignoring red, green, blue
-  // * 3'b000: green (not possible now)
-  // * 3'b001: red (not possible now)
-  // * 3'b010: blue (not possible now)
+  assign channel_sel = sw[3:1];
+  // * 3'b000: green
+  // * 3'b001: red
+  // * 3'b010: blue
   // * 3'b011: not valid
   // * 3'b100: y (luminance)
   // * 3'b101: Cr (Chroma Red)
@@ -430,11 +245,20 @@ module top_level
   // * 3'b111: not valid
   //Channel Select: Takes in the full RGB and YCrCb information and
   // chooses one of them to output as an 8 bit value
+
+  logic [23:0] fb_rgb_pipe [8-1:0];
+  always_ff @(posedge clk_pixel)begin
+    fb_rgb_pipe[0] <= {fb_red, fb_green, fb_blue};
+    for (int i=1; i<8; i = i+1)begin
+      fb_rgb_pipe[i] <= fb_rgb_pipe[i-1];
+    end
+  end
+
   channel_select mcs(
      .sel_in(channel_sel),
-     .r_in(fb_red),    //TODO: needs to use pipelined signal (PS1)
-     .g_in(fb_green),  //TODO: needs to use pipelined signal (PS1)
-     .b_in(fb_blue),   //TODO: needs to use pipelined signal (PS1)
+     .r_in(fb_rgb_pipe[2][23:16]),    //TODO: needs to use pipelined signal (PS1)
+     .g_in(fb_rgb_pipe[2][15:8]),  //TODO: needs to use pipelined signal (PS1)
+     .b_in(fb_rgb_pipe[2][7:0]),   //TODO: needs to use pipelined signal (PS1)
      .y_in(y),
      .cr_in(cr),
      .cb_in(cb),
@@ -474,14 +298,30 @@ module top_level
   assign ss0_c = ss_c; //control upper four digit's cathodes!
   assign ss1_c = ss_c; //same as above but for lower four digits!
 
+  logic [10:0] hcount_pipe [8-1:0];
+  always_ff @(posedge clk_pixel)begin
+    hcount_pipe[0] <= hcount_hdmi;
+    for (int i=1; i<8; i = i+1)begin
+      hcount_pipe[i] <= hcount_pipe[i-1];
+    end
+  end
+
+  logic [9:0] vcount_pipe [8-1:0];
+  always_ff @(posedge clk_pixel)begin
+    vcount_pipe[0] <= vcount_hdmi;
+    for (int i=1; i<8; i = i+1)begin
+      vcount_pipe[i] <= vcount_pipe[i-1];
+    end
+  end
+
   //Center of Mass Calculation: (you need to do)
   //using x_com_calc and y_com_calc values
   //Center of Mass:
   center_of_mass com_m(
     .clk_in(clk_pixel),
     .rst_in(sys_rst_pixel),
-    .x_in(hcount_hdmi),  //TODO: needs to use pipelined signal! (PS3)
-    .y_in(vcount_hdmi), //TODO: needs to use pipelined signal! (PS3)
+    .x_in(hcount_pipe[7]),  //TODO: needs to use pipelined signal! (PS3)
+    .y_in(vcount_pipe[7]), //TODO: needs to use pipelined signal! (PS3)
     .valid_in(mask), //aka threshold
     .tabulate_in((nf_hdmi)),
     .x_out(x_com_calc),
@@ -502,18 +342,30 @@ module top_level
 
   //image_sprite output:
   logic [7:0] img_red, img_green, img_blue;
-  assign img_red =0;
-  assign img_green =0;
-  assign img_blue =0;
-  //image sprite removed to keep builds focused.
 
+  // TODO: image sprite using hdmi hcount/vcount, x_com y_com to draw image or nothing
+  //bring in an instance of your popcat image sprite! remember the correct mem files too!
+  image_sprite_2 #(
+    .WIDTH(256),
+    .HEIGHT(256))
+    com_sprite_m (
+    .pixel_clk_in(clk_pixel),
+    .rst_in(sys_rst_pixel),
+    .pop_in(0),
+    .hcount_in(hcount_hdmi),   //TODO: needs to use pipelined signal (PS1) No piplined signal according to diagram?
+    .vcount_in(vcount_hdmi),   //TODO: needs to use pipelined signal (PS1) No piplined signal according to diagram?
+    .x_in(x_com-128),
+    .y_in(y_com-128),
+    .red_out(img_red),
+    .green_out(img_green),
+    .blue_out(img_blue));
 
   //crosshair output:
   logic [7:0] ch_red, ch_green, ch_blue;
 
   //Create Crosshair patter on center of mass:
   //0 cycle latency
-  //TODO: Should be using output of (PS3)
+  //TODO: Should be using output of (PS3) No pipelined signal according to diagram
   always_comb begin
     ch_red   = ((vcount_hdmi==y_com) || (hcount_hdmi==x_com))?8'hFF:8'h00;
     ch_green = ((vcount_hdmi==y_com) || (hcount_hdmi==x_com))?8'hFF:8'h00;
@@ -541,8 +393,8 @@ module top_level
   logic [1:0] display_choice;
   logic [1:0] target_choice;
 
-  assign display_choice = sw[6:5]; //was [5:4]; not anymore
-  assign target_choice =  {1'b0,sw[7]}; //was [7:6]; not anymore
+  assign display_choice = sw[5:4];
+  assign target_choice =  sw[7:6];
 
   //choose what to display from the camera:
   // * 'b00:  normal camera out
@@ -556,16 +408,99 @@ module top_level
   // * 'b10: sprite on top
   // * 'b11: nothing
 
-  video_mux mvm(
-    .bg_in(display_choice), //choose background
-    .target_in(target_choice), //choose target
-    .camera_pixel_in({fb_red, fb_green, fb_blue}), //TODO: needs (PS2)
-    .camera_y_in(y), //luminance TODO: needs (PS6)
-    .channel_in(selected_channel), //current channel being drawn TODO: needs (PS5)
-    .thresholded_pixel_in(mask), //one bit mask signal TODO: needs (PS4)
-    .crosshair_in({ch_red, ch_green, ch_blue}), //TODO: needs (PS8)
-    .com_sprite_pixel_in({img_red, img_green, img_blue}), //TODO: needs (PS9) maybe?
-    .pixel_out({red,green,blue}) //output to tmds
+  logic [7:0] y_pipe;
+  always_ff @(posedge clk_pixel)begin
+    y_pipe <= y;
+  end
+
+  logic [7:0] selected_channel_pipe;
+  always_ff @(posedge clk_pixel) begin
+    selected_channel_pipe <= selected_channel;
+  end
+
+  logic [23:0] ch_pipe [8-1:0];
+  always_ff @(posedge clk_pixel)begin
+    ch_pipe[0] <= {ch_red, ch_green, ch_blue};
+    for (int i=1; i<8; i = i+1)begin
+      ch_pipe[i] <= ch_pipe[i-1];
+    end
+  end
+
+  logic [23:0] img_pipe [4-1:0];
+  always_ff @(posedge clk_pixel)begin
+    img_pipe[0] <= {img_red, img_green, img_blue};
+    for (int i=1; i<4; i = i+1)begin
+      img_pipe[i] <= img_pipe[i-1];
+    end
+  end
+
+  // video_mux mvm(
+  //   .bg_in(display_choice), //choose background
+  //   .target_in(target_choice), //choose target
+  //   .camera_pixel_in(fb_rgb_pipe[3]), //TODO: needs (PS2)
+  //   .camera_y_in(y_pipe), //luminance TODO: needs (PS6)
+  //   .channel_in(selected_channel_pipe), //current channel being drawn TODO: needs (PS5)
+  //   .thresholded_pixel_in(mask), //one bit mask signal TODO: needs (PS4) //pipe length 0 from diagram
+  //   .crosshair_in(ch_pipe[7]), //TODO: needs (PS8)
+  //   .com_sprite_pixel_in(img_pipe[3]), //TODO: needs (PS9) maybe?
+  //   .pixel_out({red,green,blue}) //output to tmds
+  // );
+
+   // HDMI Output: just like before!
+
+   renderer render (
+    .hcount_axis_tdata(hcount_hdmi),
+    .hcount_axis_tvalid(1'b1),
+    .hcount_axis_tready(),
+    .vcount_axis_tdata(vcount_hdmi),
+    .vcount_axis_tvalid(1'b1),
+    .vcount_axis_tready(),
+    .sphere(192'h00000000000000000000000000000000c0a00000c0a00000),
+    .cylinders(),
+    .pixel_axis_tdata({red,green,blue}),
+    .pixel_axis_tvalid(),
+    .pixel_axis_tready(1'b1),
+    .aclk(clk_pixel),
+    .hcount_out(),
+    .vcount_out(),
+    .aresetn(sys_rst_pixel)
+  );
+
+  logic pipe_hsync_hdmi;
+  logic pipe_vsync_hdmi;
+  logic pipe_active_draw_hdmi;
+
+  axi_pipe #(.LATENCY(406), .SIZE(1)) pipe_hsync (
+    .s_axis_a_tdata(hsync_hdmi),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(1'b1),
+    .m_axis_result_tdata(pipe_hsync_hdmi),
+    .m_axis_result_tvalid(),
+    .m_axis_result_tready(1'b1),
+    .aclk(clk_pixel),
+    .aresetn(sys_rst_pixel)
+  );
+
+  axi_pipe #(.LATENCY(406), .SIZE(1)) pipe_vsync (
+    .s_axis_a_tdata(vsync_hdmi),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(1'b1),
+    .m_axis_result_tdata(pipe_vsync_hdmi),
+    .m_axis_result_tvalid(),
+    .m_axis_result_tready(1'b1),
+    .aclk(clk_pixel),
+    .aresetn(sys_rst_pixel)
+  );
+
+  axi_pipe #(.LATENCY(406), .SIZE(1)) pipe_active_draw (
+    .s_axis_a_tdata(active_draw_hdmi),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(1'b1),
+    .m_axis_result_tdata(pipe_active_draw_hdmi),
+    .m_axis_result_tvalid(),
+    .m_axis_result_tready(1'b1),
+    .aclk(clk_pixel),
+    .aresetn(sys_rst_pixel)
   );
 
    // HDMI Output: just like before!
@@ -584,7 +519,7 @@ module top_level
        .rst_in(sys_rst_pixel),
        .data_in(red),
        .control_in(2'b0),
-       .ve_in(active_draw_hdmi),
+       .ve_in(pipe_active_draw_hdmi),
        .tmds_out(tmds_10b[2]));
 
    tmds_encoder tmds_green(
@@ -592,15 +527,15 @@ module top_level
          .rst_in(sys_rst_pixel),
          .data_in(green),
          .control_in(2'b0),
-         .ve_in(active_draw_hdmi),
+         .ve_in(pipe_active_draw_hdmi),
          .tmds_out(tmds_10b[1]));
 
    tmds_encoder tmds_blue(
         .clk_in(clk_pixel),
         .rst_in(sys_rst_pixel),
         .data_in(blue),
-        .control_in({vsync_hdmi,hsync_hdmi}),
-        .ve_in(active_draw_hdmi),
+        .control_in({pipe_vsync_hdmi,pipe_hsync_hdmi}),
+        .ve_in(pipe_active_draw_hdmi),
         .tmds_out(tmds_10b[0]));
 
 

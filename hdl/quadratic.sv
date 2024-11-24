@@ -12,6 +12,7 @@ module quadratic #(parameter SIZE) (
   output logic s_axis_c_tready,
   input wire s_axis_c_tvalid,
   output logic [SIZE-1:0] m_axis_result_tdata,
+  output logic m_axis_result_undef,
   input wire m_axis_result_tready,
   output logic m_axis_result_tvalid,
   input wire aclk,
@@ -21,6 +22,7 @@ module quadratic #(parameter SIZE) (
 
   localparam PIPE_A_LATENCY = 65;
   localparam PIPE_B_LATENCY = 50;
+  localparam PIPE_UNDEF_LATENCY = 73;
 
   logic [SIZE-1:0] b_sq_result;
   logic b_sq_valid;
@@ -60,6 +62,8 @@ module quadratic #(parameter SIZE) (
 
   logic div_num_ready;
   logic div_den_ready;
+
+  logic pipe_undef_ready;
   
   float_mul b_sq(
     .s_axis_a_tdata(s_axis_b_tdata),
@@ -106,6 +110,17 @@ module quadratic #(parameter SIZE) (
     .m_axis_result_tdata(disc_result),
     .m_axis_result_tready(sqrt_ready),
     .m_axis_result_tvalid(disc_valid),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  axi_pipe #(.LATENCY(PIPE_UNDEF_LATENCY), .SIZE(1)) pipe_undef (
+    .s_axis_a_tdata(disc_result[SIZE-1]),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(disc_valid),
+    .m_axis_result_tdata(m_axis_result_undef),
+    .m_axis_result_tvalid(),
+    .m_axis_result_tready(m_axis_result_tready),
     .aclk(aclk),
     .aresetn(aresetn)
   );

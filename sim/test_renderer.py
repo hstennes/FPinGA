@@ -27,27 +27,21 @@ async def test_hit_point(dut):
     dut.sphere.value = make_binary_vector([0, 0, 0, 0, -5, -5])
     dut.pixel_axis_tready.value = 0
     await ClockCycles(dut.aclk, 300)
-    dut.hcount_axis_tdata.value = 317
-    dut.hcount_axis_tvalid.value = 1
-    dut.vcount_axis_tdata.value = 251
-    dut.vcount_axis_tvalid.value = 1
-    await ClockCycles(dut.aclk, 1)
-    dut.hcount_axis_tdata.value = 0
-    dut.hcount_axis_tvalid.value = 0
-    dut.vcount_axis_tdata.value = 0
-    dut.vcount_axis_tvalid.value = 0
-    await ClockCycles(dut.aclk, 5)
-    dut.hcount_axis_tdata.value = 318
-    dut.hcount_axis_tvalid.value = 1
-    dut.vcount_axis_tdata.value = 251
-    dut.vcount_axis_tvalid.value = 1
-    await ClockCycles(dut.aclk, 1)
-    dut.hcount_axis_tdata.value = 0
-    dut.hcount_axis_tvalid.value = 0
-    dut.vcount_axis_tdata.value = 0
-    dut.vcount_axis_tvalid.value = 0
     dut.pixel_axis_tready.value = 1
-    await ClockCycles(dut.aclk, 500)
+
+    for x in range(0, 1280):
+        dut.hcount_axis_tdata.value = x
+        dut.hcount_axis_tvalid.value = 1
+        dut.vcount_axis_tdata.value = 251
+        dut.vcount_axis_tvalid.value = 1
+        await ClockCycles(dut.aclk, 1)
+
+    dut.hcount_axis_tdata.value = 0
+    dut.hcount_axis_tvalid.value = 0
+    dut.vcount_axis_tdata.value = 0
+    dut.vcount_axis_tvalid.value = 0
+    
+    await ClockCycles(dut.aclk, 2000)
 
     #should be 106 and 124
 

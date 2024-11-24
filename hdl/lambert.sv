@@ -15,7 +15,7 @@ module lambert #(parameter SIZE) (
   input wire aclk,
   input wire aresetn);
 
-  //TOTAL LATENCY: 17
+  //TOTAL LATENCY: 131
 
   localparam PIPE_NORMAL_LATENCY = 12;
   localparam PIPE_DOT_LATENCY = 38;
