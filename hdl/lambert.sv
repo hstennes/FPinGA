@@ -15,19 +15,18 @@ module lambert #(parameter SIZE) (
   input wire aclk,
   input wire aresetn);
 
-  //TOTAL LATENCY: 131
+  //TOTAL LATENCY: 64
 
   localparam PIPE_NORMAL_LATENCY = 12;
-  localparam PIPE_DOT_LATENCY = 38;
-  localparam PIPE_IS_CYLINDER_LATENCY = 112;
+  localparam PIPE_IS_CYLINDER_LATENCY = 45;
 
   // localparam [3*SIZE-1:0] LIGHT_LOC = 192'h0000000000000000401C000000000000401C000000000000;
   // localparam [3*SIZE-1:0] SPHERE_COLOR = 192'h0000000000000000406FE000000000000000000000000000;
   // localparam [3*SIZE-1:0] CYLINDER_COLOR = 192'h406FE00000000000406FE00000000000406FE00000000000;
 
-  localparam [3*SIZE-1:0] LIGHT_LOC = 192'h0000000040e0000040e00000;
-  localparam [3*SIZE-1:0] SPHERE_COLOR = 192'h00000000437f000000000000;
-  localparam [3*SIZE-1:0] CYLINDER_COLOR = 192'h437f0000437f0000437f0000;
+  localparam [3*SIZE-1:0] LIGHT_LOC = 96'h0000000040e0000040e00000;
+  localparam [3*SIZE-1:0] SPHERE_COLOR = 96'h00000000437f000000000000;
+  localparam [3*SIZE-1:0] CYLINDER_COLOR = 96'h437f0000437f0000437f0000;
 
   logic [2:0][SIZE-1:0] light_dir_result;
   logic light_dir_valid;
@@ -35,37 +34,15 @@ module lambert #(parameter SIZE) (
   logic [2:0][SIZE-1:0] pipe_normal_result;
   logic pipe_normal_valid;
 
-  logic norm_normal_ready;
-  logic [SIZE-1:0] norm_normal_result;
-  logic norm_normal_valid;
-
-  logic norm_light_dir_ready;
-  logic [SIZE-1:0] norm_light_dir_result;
-  logic norm_light_dir_valid;
-
   logic dot_light_dir_ready;
   logic dot_normal_ready;
   logic [SIZE-1:0] dot_result;
   logic dot_valid;
 
-  logic pipe_dot_ready;
-  logic [SIZE-1:0] pipe_dot_result;
-  logic pipe_dot_valid;
-
-  logic mul_normal_ready;
-  logic mul_light_dir_ready;
-  logic [SIZE-1:0] mul_result;
-  logic mul_valid;
-
-  logic int_num_ready;
-  logic int_den_ready;
-  logic [SIZE-1:0] int_result;
-  logic int_valid;
-
   logic pipe_is_cylinder_result;
   logic pipe_is_cylinder_valid;
 
-  logic color_int_ready;
+  logic color_dot_ready;
   logic color_paint_ready;
   logic [2:0][SIZE-1:0] color_result;
   logic color_valid;
@@ -100,28 +77,6 @@ module lambert #(parameter SIZE) (
     .aresetn(aresetn)
   );
 
-  vec_norm #(.SIZE(SIZE)) norm_normal(
-    .s_axis_a_tdata(pipe_normal_result),
-    .s_axis_a_tready(norm_normal_ready),
-    .s_axis_a_tvalid(pipe_normal_valid),
-    .m_axis_result_tdata(norm_normal_result),
-    .m_axis_result_tvalid(norm_normal_valid),
-    .m_axis_result_tready(mul_normal_ready),
-    .aclk(aclk),
-    .aresetn(aresetn)
-  );
-
-  vec_norm #(.SIZE(SIZE)) norm_light_dir(
-    .s_axis_a_tdata(light_dir_result),
-    .s_axis_a_tready(norm_light_dir_ready),
-    .s_axis_a_tvalid(light_dir_valid),
-    .m_axis_result_tdata(norm_light_dir_result),
-    .m_axis_result_tvalid(norm_light_dir_valid),
-    .m_axis_result_tready(mul_light_dir_ready),
-    .aclk(aclk),
-    .aresetn(aresetn)
-  );
-
   vec_dot #(.SIZE(SIZE)) dot(
     .s_axis_a_tdata(light_dir_result),
     .s_axis_a_tready(dot_light_dir_ready),
@@ -130,47 +85,8 @@ module lambert #(parameter SIZE) (
     .s_axis_b_tready(dot_normal_ready),
     .s_axis_b_tvalid(pipe_normal_valid),
     .m_axis_result_tdata(dot_result),
-    .m_axis_result_tready(pipe_dot_ready),
+    .m_axis_result_tready(color_dot_ready),
     .m_axis_result_tvalid(dot_valid),
-    .aclk(aclk),
-    .aresetn(aresetn)
-  );
-
-  float_mul mul(
-    .s_axis_a_tdata(norm_normal_result),
-    .s_axis_a_tready(mul_normal_ready),
-    .s_axis_a_tvalid(norm_normal_valid),
-    .s_axis_b_tdata(norm_light_dir_result),
-    .s_axis_b_tready(mul_light_dir_ready),
-    .s_axis_b_tvalid(norm_light_dir_valid),
-    .m_axis_result_tdata(mul_result),
-    .m_axis_result_tready(int_den_ready),
-    .m_axis_result_tvalid(mul_valid),
-    .aclk(aclk),
-    .aresetn(aresetn)
-  );
-
-  axi_pipe #(.LATENCY(PIPE_DOT_LATENCY), .SIZE(SIZE)) pipe_dot(
-    .s_axis_a_tdata(dot_result),
-    .s_axis_a_tready(pipe_dot_ready),
-    .s_axis_a_tvalid(dot_valid),
-    .m_axis_result_tdata(pipe_dot_result),
-    .m_axis_result_tvalid(pipe_dot_valid),
-    .m_axis_result_tready(int_num_ready),
-    .aclk(aclk),
-    .aresetn(aresetn)
-  );
-
-  float_div div(
-    .s_axis_a_tdata(pipe_dot_result),
-    .s_axis_a_tready(int_num_ready),
-    .s_axis_a_tvalid(pipe_dot_valid),
-    .s_axis_b_tdata(mul_result),
-    .s_axis_b_tready(int_den_ready),
-    .s_axis_b_tvalid(mul_valid),
-    .m_axis_result_tdata(int_result),
-    .m_axis_result_tvalid(int_valid),
-    .m_axis_result_tready(color_int_ready),
     .aclk(aclk),
     .aresetn(aresetn)
   );
@@ -186,13 +102,20 @@ module lambert #(parameter SIZE) (
     .aresetn(aresetn)
   );
 
+  logic [SIZE-1:0] scale_dot_result;
+
+  float_mul_pow2 #(.SIZE(SIZE), .POW(-4)) scale_pipe_a(
+    .in_float(dot_result),
+    .result(scale_dot_result)
+  );
+
   vec_mul #(.SIZE(SIZE)) color(
     .s_axis_a_tdata(pipe_is_cylinder_result ? CYLINDER_COLOR : SPHERE_COLOR),
     .s_axis_a_tready(color_paint_ready),
     .s_axis_a_tvalid(pipe_is_cylinder_valid),
-    .s_axis_b_tdata(int_result),
-    .s_axis_b_tready(color_int_ready),
-    .s_axis_b_tvalid(int_valid),
+    .s_axis_b_tdata(scale_dot_result),
+    .s_axis_b_tready(color_dot_ready),
+    .s_axis_b_tvalid(dot_valid),
     .m_axis_result_tdata(color_result),
     .m_axis_result_tvalid(color_valid),
     .m_axis_result_tready(pixel_ready),

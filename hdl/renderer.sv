@@ -19,14 +19,14 @@ module renderer #(parameter SIZE=32) (
   input wire aresetn
   );
 
-  //TOTAL LATENCY = 406
+  //TOTAL LATENCY = 339
 
   // localparam [3*SIZE-1:0] CAMERA_LOC = 192'h000000000000000000000000000000004014000000000000;
   localparam [3*SIZE-1:0] CAMERA_LOC = 96'h000000000000000040a00000;
 
   localparam PIPE_RAY_LATENCY = 168;
-  localparam PIPE_UNDEF_LATENCY = 214;
-  localparam TOTAL_LATENCY = 406;
+  localparam PIPE_UNDEF_LATENCY = 147;
+  localparam TOTAL_LATENCY = 339;
 
   logic [2:0][SIZE-1:0] ray_data;
   logic ray_valid;

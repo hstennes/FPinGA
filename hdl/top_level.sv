@@ -470,7 +470,7 @@ module top_level
   logic pipe_vsync_hdmi;
   logic pipe_active_draw_hdmi;
 
-  axi_pipe #(.LATENCY(406), .SIZE(1)) pipe_hsync (
+  axi_pipe #(.LATENCY(339), .SIZE(1)) pipe_hsync (
     .s_axis_a_tdata(hsync_hdmi),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(1'b1),
@@ -481,7 +481,7 @@ module top_level
     .aresetn(sys_rst_pixel)
   );
 
-  axi_pipe #(.LATENCY(406), .SIZE(1)) pipe_vsync (
+  axi_pipe #(.LATENCY(339), .SIZE(1)) pipe_vsync (
     .s_axis_a_tdata(vsync_hdmi),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(1'b1),
@@ -492,7 +492,7 @@ module top_level
     .aresetn(sys_rst_pixel)
   );
 
-  axi_pipe #(.LATENCY(406), .SIZE(1)) pipe_active_draw (
+  axi_pipe #(.LATENCY(339), .SIZE(1)) pipe_active_draw (
     .s_axis_a_tdata(active_draw_hdmi),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(1'b1),

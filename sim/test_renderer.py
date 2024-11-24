@@ -9,41 +9,42 @@ from cocotb.clock import Clock
 from cocotb.triggers import Timer, ClockCycles, RisingEdge, FallingEdge, ReadOnly
 from cocotb.utils import get_sim_time as gst
 from cocotb.runner import get_runner
+from PIL import Image
+
+def decode_pixel(encoded):
+    try:
+        encoded = encoded.integer
+        return (encoded & 0xFF0000) >> 16, (encoded & 0x00FF00) >> 8, (encoded & 0x0000FF)
+    except:
+        return (0, 0, 0)
 
 @cocotb.test()
 async def test_hit_point(dut):
     """cocotb test?"""
+    im_output = Image.new('RGB', (1280, 720))
+
     dut._log.info("Starting...")
     cocotb.start_soon(Clock(dut.aclk, 10, units="ns").start())
-
     await ClockCycles(dut.aclk, 3)
     dut.aresetn.value = 1
-    await ClockCycles(dut.aclk, 1)
+    await ClockCycles(dut.aclk, 3)
     dut.aresetn.value = 0
-    dut.hcount_axis_tdata.value = 0
-    dut.hcount_axis_tvalid.value = 0
-    dut.vcount_axis_tdata.value = 0
-    dut.vcount_axis_tvalid.value = 0
-    dut.sphere.value = make_binary_vector([0, 0, 0, 0, -5, -5])
-    dut.pixel_axis_tready.value = 0
-    await ClockCycles(dut.aclk, 300)
+    # dut.sphere.value = make_binary_vector([0, 0, 0, 0, -5, -5])
+    dut.sphere.value = make_binary_vector([0.0, 1.0, 0.0, -6, -5, -16])
     dut.pixel_axis_tready.value = 1
 
-    for x in range(0, 1280):
-        dut.hcount_axis_tdata.value = x
-        dut.hcount_axis_tvalid.value = 1
-        dut.vcount_axis_tdata.value = 251
-        dut.vcount_axis_tvalid.value = 1
-        await ClockCycles(dut.aclk, 1)
+    for y in range(320):
+        print("Row", y)
+        for x in range(640):
+            dut.hcount_axis_tdata.value = x
+            dut.hcount_axis_tvalid.value = 1
+            dut.vcount_axis_tdata.value = y
+            dut.vcount_axis_tvalid.value = 1
+            if dut.pixel_axis_tvalid == 1:
+                im_output.putpixel((dut.hcount_out.value.integer, dut.vcount_out.value.integer), decode_pixel(dut.pixel_axis_tdata.value))
+            await ClockCycles(dut.aclk, 1)
 
-    dut.hcount_axis_tdata.value = 0
-    dut.hcount_axis_tvalid.value = 0
-    dut.vcount_axis_tdata.value = 0
-    dut.vcount_axis_tvalid.value = 0
-    
-    await ClockCycles(dut.aclk, 2000)
-
-    #should be 106 and 124
+    im_output.save('output.png','PNG')
 
 def runner():
     """Simulate the counter using the Python runner."""

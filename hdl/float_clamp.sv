@@ -12,7 +12,8 @@ module float_clamp #(parameter SIZE) (
   input wire aclk,
   input wire aresetn);
 
-  localparam [SIZE-1:0] MAX = 64'h406FE00000000000;
+  // localparam [SIZE-1:0] MAX = 64'h406FE00000000000;
+  localparam [SIZE-1:0] MAX = 32'h437f0000;
 
   logic [SIZE-1:0] min_result;
 

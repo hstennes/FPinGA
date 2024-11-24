@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Sun Nov 24 00:22:44 2024
-| Host         : eecs-digital-12 running 64-bit Ubuntu 24.04.1 LTS
+| Date         : Sun Nov 24 15:52:53 2024
+| Host         : eecs-digital-10 running 64-bit Ubuntu 24.04.1 LTS
 | Command      : report_timing_summary -file obj/post_synth_timing_summary.rpt
 | Design       : top_level
 | Device       : 7s50-csga324
@@ -138,7 +138,7 @@ Table of Contents
 
     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-     -1.221       -6.611                      8               135551        0.003        0.000                      0               135551        0.538        0.000                       0                 60565  
+     -1.221       -6.611                      8               119747        0.003        0.000                      0               119747        0.538        0.000                       0                 54489  
 
 
 Timing constraints are not met.
@@ -171,7 +171,7 @@ Clock                      WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Tota
 -----                      -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
 gclk                                                                                                                                                                     2.000        0.000                       0                     1  
   clk_100_cw_fast                                                                                                                                                        3.000        0.000                       0                     3  
-    clk_pixel_cw_hdmi        5.025        0.000                      0               134681        0.003        0.000                      0               134681        5.754        0.000                       0                 60361  
+    clk_pixel_cw_hdmi        5.025        0.000                      0               118877        0.003        0.000                      0               118877        5.754        0.000                       0                 54285  
     clk_tmds_cw_hdmi                                                                                                                                                     0.538        0.000                       0                     8  
     clkfbout_cw_hdmi                                                                                                                                                    47.845        0.000                       0                     3  
   clk_camera_cw_fast        -1.221       -6.611                      8                  870        0.091        0.000                      0                  870        2.000        0.000                       0                   182  
@@ -302,7 +302,7 @@ Slack (MET) :             5.025ns  (required time - arrival time)
                                                      -1.480    -4.587 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.800    -3.788    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.096    -3.692 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=60361, unplaced)     0.800    -2.892    render/lam/pixel/ff2/inst/i_synth/FLT_TO_FIX_OP.SPD.OP/aclk
+                         net (fo=54285, unplaced)     0.800    -2.892    render/lam/pixel/ff2/inst/i_synth/FLT_TO_FIX_OP.SPD.OP/aclk
                          FDRE                                         r  render/lam/pixel/ff2/inst/i_synth/FLT_TO_FIX_OP.SPD.OP/result_i_reg[3]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.456    -2.436 r  render/lam/pixel/ff2/inst/i_synth/FLT_TO_FIX_OP.SPD.OP/result_i_reg[3]/Q
@@ -312,7 +312,7 @@ Slack (MET) :             5.025ns  (required time - arrival time)
                          LUT3 (Prop_lut3_I0_O)        0.150    -0.566 r  render/lam/pixel/tmds_out[8]_i_3/O
                          net (fo=1, unplaced)         0.902     0.336    render/lam/pixel/tmds_out[8]_i_3_n_0
                          LUT6 (Prop_lut6_I1_O)        0.124     0.460 r  render/lam/pixel/tmds_out[8]_i_1__0/O
-                         net (fo=13, unplaced)        0.499     0.959    render/lam/pixel/a_pipe_reg[213][0]_3
+                         net (fo=13, unplaced)        0.499     0.959    render/lam/pixel/a_pipe_reg[146][0]_3
                          LUT4 (Prop_lut4_I0_O)        0.124     1.083 r  render/lam/pixel/count[4]_i_13__0/O
                          net (fo=8, unplaced)         0.940     2.023    render/lam/pixel/count[4]_i_13__0_n_0
                          LUT6 (Prop_lut6_I0_O)        0.124     2.147 r  render/lam/pixel/count[4]_i_16__0/O
@@ -341,7 +341,7 @@ Slack (MET) :             5.025ns  (required time - arrival time)
                                                      -1.290     9.384 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.760    10.144    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.091    10.235 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=60361, unplaced)     0.655    10.890    tmds_green/clk_pixel
+                         net (fo=54285, unplaced)     0.655    10.890    tmds_green/clk_pixel
                          FDRE                                         r  tmds_green/count_reg[4]/C
                          clock pessimism             -0.459    10.431    
                          clock uncertainty           -0.210    10.221    
@@ -390,7 +390,7 @@ Slack (MET) :             0.003ns  (arrival time - required time)
                                                      -0.477    -1.397 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.337    -1.059    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.026    -1.033 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=60361, unplaced)     0.210    -0.824    red_ser/clk_pixel
+                         net (fo=54285, unplaced)     0.210    -0.824    red_ser/clk_pixel
                          FDRE                                         r  red_ser/pwup_rst_reg/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.141    -0.683 r  red_ser/pwup_rst_reg/Q
@@ -415,7 +415,7 @@ Slack (MET) :             0.003ns  (arrival time - required time)
                                                      -0.643    -1.230 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.355    -0.875    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.029    -0.846 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=60361, unplaced)     0.355    -0.491    blue_ser/clk_pixel
+                         net (fo=54285, unplaced)     0.355    -0.491    blue_ser/clk_pixel
     OLOGIC_X0Y20         OSERDESE2                                    r  blue_ser/primary/CLKDIV
                          clock pessimism             -0.187    -0.679    
     OLOGIC_X0Y20         OSERDESE2 (Hold_oserdese2_CLKDIV_RST)
