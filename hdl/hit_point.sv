@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module hit_point #(parameter SIZE) (
+module hit_point #(parameter SIZE=64) (
   input wire [5:0][SIZE-1:0] obj_axis_tdata,
   input wire obj_axis_is_cylinder,
   output logic obj_axis_tready,
@@ -18,16 +18,21 @@ module hit_point #(parameter SIZE) (
   output logic [2:0][SIZE-1:0] normal_axis_tdata,
   output logic normal_axis_tvalid,
   input wire normal_axis_tready,
+  output logic invalid_cylinder_hit,
   input wire aclk,
   input wire aresetn);
 
   //TOTAL LATENCY: 83
 
+  localparam [SIZE-1:0] PIN_HEIGHT = 64'h4008000000000000;
+
   localparam PIPE_CENTER_LATENCY = 17;
   localparam PIPE_CA_LATENCY = 29;
   localparam PIPE_CA_2_LATENCY = 33;
+  localparam PIPE_INVALID_LATENCY = 18;
   localparam PIPE_PRE_NORMAL_LATENCY = 42;
   localparam PIPE_HIT_POINT_LATENCY = 66;
+  localparam PIPE_NEGATIVE_DOT_LATENCY = 3;
 
   logic [2:0][SIZE-1:0] hit_point_result;
   logic hit_point_valid;
@@ -56,6 +61,17 @@ module hit_point #(parameter SIZE) (
   logic mul_ca_ready;
   logic [2:0][SIZE-1:0] mul_result;
   logic mul_valid;
+
+  logic cmp_ready;
+  logic cmp_result;
+  logic cmp_valid;
+
+  logic pipe_invalid_cylinder_hit_ready;
+  logic pipe_invalid_cylinder_hit_valid;
+
+  logic pipe_negative_dot_ready;
+  logic pipe_negative_dot_result;
+  logic pipe_negative_dot_valid;
 
   logic pipe_pre_normal_ready;
   logic [2:0][SIZE-1:0] pipe_pre_normal_result;
@@ -132,6 +148,42 @@ module hit_point #(parameter SIZE) (
     .m_axis_result_tdata(dot_result),
     .m_axis_result_tready(mul_dot_ready),
     .m_axis_result_tvalid(dot_valid),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  float_lt cmp (
+    .s_axis_a_tdata(PIN_HEIGHT),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(1'b1),
+    .s_axis_b_tdata(dot_result),
+    .s_axis_b_tready(),
+    .s_axis_b_tvalid(dot_valid),
+    .m_axis_result_tdata(cmp_result),
+    .m_axis_result_tvalid(cmp_valid),
+    .m_axis_result_tready(pipe_invalid_cylinder_hit_ready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  axi_pipe #(.LATENCY(PIPE_NEGATIVE_DOT_LATENCY), .SIZE(1)) pipe_negative_dot (
+    .s_axis_a_tdata(dot_result[SIZE-1]),
+    .s_axis_a_tready(pipe_negative_dot_ready),
+    .s_axis_a_tvalid(dot_valid),
+    .m_axis_result_tdata(pipe_negative_dot_result),
+    .m_axis_result_tvalid(pipe_negative_dot_valid),
+    .m_axis_result_tready(pipe_invalid_cylinder_hit_ready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  axi_pipe #(.LATENCY(PIPE_INVALID_LATENCY), .SIZE(1)) pipe_invalid (
+    .s_axis_a_tdata(obj_axis_is_cylinder && (cmp_result || pipe_negative_dot_result)),
+    .s_axis_a_tready(pipe_invalid_cylinder_hit_ready),
+    .s_axis_a_tvalid(cmp_valid),
+    .m_axis_result_tdata(invalid_cylinder_hit),
+    .m_axis_result_tvalid(pipe_invalid_cylinder_hit_valid),
+    .m_axis_result_tready(hit_point_axis_tready),
     .aclk(aclk),
     .aresetn(aresetn)
   );

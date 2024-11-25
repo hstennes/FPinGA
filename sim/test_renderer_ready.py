@@ -25,26 +25,24 @@ async def test_hit_point(dut):
 
     dut._log.info("Starting...")
     cocotb.start_soon(Clock(dut.aclk, 10, units="ns").start())
-    await ClockCycles(dut.aclk, 3)
+    await ClockCycles(dut.aclk, 1)
     dut.aresetn.value = 1
-    await ClockCycles(dut.aclk, 3)
+    await ClockCycles(dut.aclk, 1)
     dut.aresetn.value = 0
-    # dut.sphere.value = make_binary_vector([0, 0, 0, 0, -5, -5])
-    dut.sphere.value = make_binary_vector([0.0, 1.0, 0.0, 0, -5, -10])
+    dut.hcount_axis_tdata.value = 0
+    dut.hcount_axis_tvalid.value = 1
+    dut.vcount_axis_tdata.value = 0
+    dut.vcount_axis_tvalid.value = 1
     dut.pixel_axis_tready.value = 1
-
-    for y in range(320):
-        print("Row", y)
-        for x in range(640):
-            dut.hcount_axis_tdata.value = x
-            dut.hcount_axis_tvalid.value = 1
-            dut.vcount_axis_tdata.value = y
-            dut.vcount_axis_tvalid.value = 1
-            if dut.pixel_axis_tvalid == 1:
-                im_output.putpixel((dut.hcount_out.value.integer, dut.vcount_out.value.integer), decode_pixel(dut.pixel_axis_tdata.value))
-            await ClockCycles(dut.aclk, 1)
-
-    im_output.save('output.png','PNG')
+    await ClockCycles(dut.aclk, 500)
+    dut.aresetn.value = 0
+    dut.hcount_axis_tdata.value = 0
+    dut.hcount_axis_tvalid.value = 1
+    dut.vcount_axis_tdata.value = 0
+    dut.vcount_axis_tvalid.value = 1
+    dut.sphere.value = make_binary_vector([0.0, 1.0, 0.0, 0, -5, -10])
+    dut.pixel_axis_tready.value = 0
+    await ClockCycles(dut.aclk, 500)
 
 def runner():
     """Simulate the counter using the Python runner."""
@@ -94,7 +92,7 @@ def runner():
     run_test_args = []
     runner.test(
         hdl_toplevel="renderer",
-        test_module="test_renderer",
+        test_module="test_renderer_ready",
         test_args=run_test_args,
         waves=True
     )

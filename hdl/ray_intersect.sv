@@ -28,11 +28,11 @@ module ray_intersect #(parameter SIZE) (
   localparam PIPE_FLAG_QUAD_LATENCY = 74;
   localparam PIPE_FLAG_FINAL_LATENCY = 168;
 
-  // localparam NEG_SPHERE_RAD_SQ = 64'hBFF0000000000000;
-  // localparam NEG_CYLINDER_RAD_SQ = 64'hBFDF5C28F5C28F5C;
+  localparam NEG_SPHERE_RAD_SQ = 64'hBFF0000000000000;
+  localparam NEG_CYLINDER_RAD_SQ = 64'hBFDF5C28F5C28F5C;
 
-  localparam [SIZE-1:0] NEG_SPHERE_RAD_SQ = 32'hbf800000;
-  localparam [SIZE-1:0] NEG_CYLINDER_RAD_SQ = 32'hbefae148;
+  // localparam [SIZE-1:0] NEG_SPHERE_RAD_SQ = 32'hbf800000;
+  // localparam [SIZE-1:0] NEG_CYLINDER_RAD_SQ = 32'hbefae148;
 
   logic [2:0][SIZE-1:0] oc_result;
   logic oc_valid;
