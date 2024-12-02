@@ -10,8 +10,8 @@ module pins (
     input logic [9:0] pins_hit_in,
     output logic [9:0] [15:0] pins_x,     
     output logic [9:0] [15:0] pins_y,  
-    output logic [15:0] speed_x,
-    output logic [15:0] speed_y,
+    output logic [9:0] [15:0] pins_vx_out,     
+    output logic [9:0] [15:0] pins_vy_out
 );
 
     // Physics constants
@@ -21,12 +21,12 @@ module pins (
     parameter TIME_STEP = 1;     // Time step in ms (scaled by 100)
     // parameter BALL_MASS = 7200;    // Ball mass in grams
     // parameter PIN_START = 1000;
-    parameter PINS_X_INITIAL = [];
-    parameter PINS_Y_INITIAL = [];
+    parameter PINS_X_INITIAL = 0;
+    parameter PINS_Y_INITIAL = 0;
 
 
     // Pin dynamics
-    logic [15:0] simtime;              // Simulation time in ms
+    // logic [15:0] simtime;              // Simulation time in ms
     logic [9:0] [15:0] pins_vx;
     logic [9:0] [15:0] pins_vy;
 
@@ -34,53 +34,21 @@ module pins (
         if (rst_in) begin
             pins_x <= PINS_X_INITIAL;
             pins_y <= PINS_Y_INITIAL;
-            pins_vx <= 0;
-            pins_vy <= 0;
-            simtime <= 0;
-
+            pins_vx_out <= 0;
+            pins_vy_out <= 0;
+            // simtime <= 0;
             
         end else if (valid_in) begin
-            simtime <= simtime + TIME_STEP;
-            pins_vx <= pins_vx_in;
-            pins_vy <= pins_vy_in;
-            rolling <= 1;
-
-        end else if (rolling) begin
-            if (ball_y >= LANE_LENGTH) begin
-                speed_x <= 0;
-                spin <= 0;
-                rolling <= 0;
-                speed_y <= 0;
-                simtime <= 0;
-                check_collision <= 0;
-            
-            end else begin
-                // Update simulation time
-                simtime <= simtime + TIME_STEP;
-
-                // Friction effect on ball speed
-                if (speed_y > FRICTION * TIME_STEP) begin
-                    speed_y <= speed_y - FRICTION * TIME_STEP;
-                end else begin
-                    speed_y <= 1;
-                end
-
-                // Update lateral speed due to spin
-                speed_x <= speed_x + (spin * TIME_STEP) / 1000;
-                spin <= spin - (FRICTION * TIME_STEP / 10); // Decrease spin gradually
-
-                // Update ball position in x and y directions
-                ball_x <= ball_x + (speed_x * TIME_STEP) / 1000;
-                ball_y <= ball_y + (speed_y * TIME_STEP);
-
-                // End simulation if the ball exits the lane
-            
-                if (ball_y > LANE_LENGTH - PIN_START) begin
-                    check_collision <= 1;
-                end else begin
-                    check_collision <= 0;
+            // simtime <= simtime + TIME_STEP;
+            for (int i=0; i<10; i=i+1) begin
+                if (pins_hit_in[i]) begin
+                    pins_vx_out[i] <= pins_vx_in - FRICTION * TIME_STEP;
+                    pins_vy_out[i] <= pins_vy_in - FRICTION * TIME_STEP;
+                    pins_x[i] <= pins_x[i] + (pins_vx_in[i] * TIME_STEP) / 1000;
+                    pins_y[i] <= pins_y[i] + (pins_vy_in[i] * TIME_STEP) / 1000;
                 end
             end
         end
     end
+
 endmodule
