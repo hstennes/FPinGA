@@ -34,15 +34,24 @@ async def test_hit_point(dut):
     dut.vcount_axis_tdata.value = 0
     dut.vcount_axis_tvalid.value = 1
     dut.pixel_axis_tready.value = 1
-    await ClockCycles(dut.aclk, 500)
-    dut.aresetn.value = 0
+    dut.sphere.value = make_binary_vector([0.0, 0.0, 0.0, 0, -5, -5])
+    await ClockCycles(dut.aclk, 500) #make the whole pipeline valid
+    for _ in range(33):
+        for x in range(317, 327):
+            dut.hcount_axis_tdata.value = x
+            dut.hcount_axis_tvalid.value = 1
+            dut.vcount_axis_tdata.value = 251
+            dut.vcount_axis_tvalid.value = 1
+            await ClockCycles(dut.aclk, 1) #fill the pipeline with useful stuff, but not up to the output
+
+    dut.pixel_axis_tready.value = 0
     dut.hcount_axis_tdata.value = 0
     dut.hcount_axis_tvalid.value = 1
     dut.vcount_axis_tdata.value = 0
     dut.vcount_axis_tvalid.value = 1
-    dut.sphere.value = make_binary_vector([0.0, 1.0, 0.0, 0, -5, -10])
-    dut.pixel_axis_tready.value = 0
-    await ClockCycles(dut.aclk, 500)
+    await ClockCycles(dut.aclk, 500) #try to send garbage through the pipeline with the ready signal off
+    dut.pixel_axis_tready.value = 1
+    await ClockCycles(dut.aclk, 500) #check that the useful stuff is still in the pipeline and unchanged
 
 def runner():
     """Simulate the counter using the Python runner."""

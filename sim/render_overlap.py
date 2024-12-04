@@ -80,6 +80,8 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
     PY_MUL = -2 / height * angle
     PY_ADD = angle
 
+    print([y * PY_MUL + PY_ADD for y in (240, 224, 100)])
+
     print(PX_MUL, PX_ADD, PY_MUL, PY_ADD)
 
     for y in range(height):
@@ -101,8 +103,7 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                 dist = intersect_sphere(camera, direction, sphere)
                 if dist is not None and dist < min_dist:
 
-                    print("guys we found the sphere")
-                    print(x, y)
+
                     min_dist = dist
                     # Compute point of intersection
                     hit_point = camera + direction * dist
@@ -122,8 +123,10 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                     # exit()
 
             # Check intersections with cylinders
+            c_count = 0
             for cylinder in cylinders:
                 dist = intersect_cylinder(camera, direction, cylinder)
+                if dist != None: c_count += 1
                 if dist is not None and dist < min_dist:
 
                     # print("guys we found the cylinder", dist)
@@ -152,7 +155,11 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                     pass
 
             # Set the pixel color
-            pixels[x, y] = tuple(color)
+            if x == 320 and (y == 223 or y == 224):
+                print(camera, direction, c_count)
+                pixels[x, y] = (255, 0, 255)
+            else:
+                pixels[x, y] = tuple(color)
 
     return img
 
@@ -162,16 +169,16 @@ spheres = [
     {'center': np.array([0, -5, -5]), 'radius': 1, 'color': [0, 255, 0]},  # Green sphere
 ]
 cylinders = [
-    {'center': np.array([-6, -5, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([-2, -5, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([2, -5, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([6, -5, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([-4, -5, -14]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
+    {'center': np.array([0, -5, -22]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
+    {'center': np.array([0, -5, -20]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
+    {'center': np.array([0, -5, -18]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
+    {'center': np.array([0, -5, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
     {'center': np.array([0, -5, -14]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([4, -5, -14]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([-2, -5, -12]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([2, -5, -12]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
+    {'center': np.array([0, -5, -12]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
     {'center': np.array([0, -5, -10]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
+    {'center': np.array([0, -5, -8]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
+    {'center': np.array([0, -5, -6]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
+    {'center': np.array([0, -5, -4]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
 ]
 lights = [
     {'position': np.array([0, 5, 8]), 'intensity': 0.7},

@@ -19,7 +19,7 @@ def decode_pixel(encoded):
         return (0, 0, 0)
 
 @cocotb.test()
-async def test_hit_point(dut):
+async def test_full_renderer(dut):
     """cocotb test?"""
     im_output = Image.new('RGB', (640, 360))
 
@@ -29,30 +29,35 @@ async def test_hit_point(dut):
     dut.aresetn.value = 1
     await ClockCycles(dut.aclk, 3)
     dut.aresetn.value = 0
-    # dut.sphere.value = make_binary_vector([0, 0, 0, 0, -5, -5])
-    dut.sphere.value = make_binary_vector([0.0, 0.0, 0.0, 0, -5, -10])
+    dut.sphere.value = make_binary_vector([0.0, 0.0, 0.0, 0, -5, -5])
     dut.pixel_axis_tready.value = 1
+    # cylinders = []
+    # for i in range(-22, -3, 2):
+    #     cylinders.extend([0, 1, 0, 0, -5, i])
+    # print(cylinders, len(cylinders))
 
-    cylinders = []
-    for i in range(-22, -3, 2):
-        cylinders.extend([0, 1, 0, 0, -5, i])
-    print(cylinders, len(cylinders))
+    cylinders = [0, 1, 0, -6, -5, -16, 0, 1, 0, -2, -5, -16, 0, 1, 0, 2, -5, -16, 0, 1, 0, 6, -5, -16, 0, 1, 0, -4, -5, -14, 0, 1, 0, 0, -5, -14, 0, 1, 0, 4, -5, -14, 0, 1, 0, -2, -5, -12, 0, 1, 0, 2, -5, -12, 0, 1, 0, 0, -5, -10]
+    dut.cylinders.value = make_binary_vector(cylinders)
 
-    for y in range(130, 270):
+    dut.hcount_axis_tdata.value = 0
+    dut.vcount_axis_tdata.value = 0
+    await ClockCycles(dut.aclk, 500)
+
+    for y in range(195, 295):
         print("Row", y)
-        for x in range(295, 345):
-
-            for c in range(8, 9):
-                current_cylinder = cylinders[6*c:6*c+6]
-                dut.sphere = make_binary_vector(current_cylinder)
-                dut.hcount_axis_tdata.value = x
-                dut.hcount_axis_tvalid.value = 1
-                dut.vcount_axis_tdata.value = y
-                dut.vcount_axis_tvalid.value = 1
+        for x in range(260, 390):
+            while not dut.hcount_axis_tready.value:
                 if dut.pixel_axis_tvalid == 1:
-                    if not decode_pixel(dut.pixel_axis_tdata.value) == (0, 0, 0):
-                        im_output.putpixel((dut.hcount_out.value.integer, dut.vcount_out.value.integer), decode_pixel(dut.pixel_axis_tdata.value))
+                    im_output.putpixel((dut.hcount_out.value.integer, dut.vcount_out.value.integer), decode_pixel(dut.pixel_axis_tdata.value))
                 await ClockCycles(dut.aclk, 1)
+
+            if dut.pixel_axis_tvalid == 1:
+                im_output.putpixel((dut.hcount_out.value.integer, dut.vcount_out.value.integer), decode_pixel(dut.pixel_axis_tdata.value))
+            dut.hcount_axis_tdata.value = x
+            dut.hcount_axis_tvalid.value = 1
+            dut.vcount_axis_tdata.value = y
+            dut.vcount_axis_tvalid.value = 1
+            await ClockCycles(dut.aclk, 1)
 
     im_output.save('output.png','PNG')
 
@@ -62,7 +67,7 @@ def runner():
     sim = os.getenv("SIM", "icarus")
     proj_path = Path(__file__).resolve().parent.parent
     sys.path.append(str(proj_path / "sim" / "model"))
-    sources = [proj_path / "hdl" / "renderer.sv"] #grow/modify this as needed.
+    sources = [proj_path / "hdl" / "full_renderer.sv"] #grow/modify this as needed.
     sources.append(proj_path / "hdl" / "float_add.sv")
     sources.append(proj_path / "hdl" / "float_mul.sv")
     sources.append(proj_path / "hdl" / "float_div.sv")
@@ -88,13 +93,17 @@ def runner():
     sources.append(proj_path / "hdl" / "ray_from_pixel.sv")
     sources.append(proj_path / "hdl" / "hit_point.sv")
     sources.append(proj_path / "hdl" / "lambert.sv")
+    sources.append(proj_path / "hdl" / "float_argmin.sv")
+    sources.append(proj_path / "hdl" / "float_multi_argmin.sv")
+    sources.append(proj_path / "hdl" / "check_objects.sv")
+    sources.append(proj_path / "hdl" / "xilinx_true_dual_port_read_first_2_clock_ram.v")
     build_test_args = ["-Wall"]#,"COCOTB_RESOLVE_X=ZEROS"]
     parameters = {} #!!! nice figured it out.
     sys.path.append(str(proj_path / "sim"))
     runner = get_runner(sim)
     runner.build(
         sources=sources,
-        hdl_toplevel="renderer",
+        hdl_toplevel="full_renderer",
         always=True,
         build_args=build_test_args,
         parameters=parameters,
@@ -103,8 +112,8 @@ def runner():
     )
     run_test_args = []
     runner.test(
-        hdl_toplevel="renderer",
-        test_module="test_renderer",
+        hdl_toplevel="full_renderer",
+        test_module="test_full_renderer",
         test_args=run_test_args,
         waves=True
     )

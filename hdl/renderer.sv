@@ -19,6 +19,11 @@ module renderer #(parameter SIZE=64) (
   input wire aresetn
   );
 
+  /*
+  When passing a ray, also pass in which objects should be checked.
+  Options - just sphere, just cylinders, both
+  */
+
   //TOTAL LATENCY = 339
 
   localparam [3*SIZE-1:0] CAMERA_LOC = 192'h000000000000000000000000000000004014000000000000;

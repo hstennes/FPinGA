@@ -33,6 +33,7 @@ module hit_point #(parameter SIZE=64) (
   localparam PIPE_PRE_NORMAL_LATENCY = 42;
   localparam PIPE_HIT_POINT_LATENCY = 66;
   localparam PIPE_NEGATIVE_DOT_LATENCY = 3;
+  localparam PIPE_IS_CYLINDER_LATENCY = 65;
 
   logic [2:0][SIZE-1:0] hit_point_result;
   logic hit_point_valid;
@@ -72,6 +73,10 @@ module hit_point #(parameter SIZE=64) (
   logic pipe_negative_dot_ready;
   logic pipe_negative_dot_result;
   logic pipe_negative_dot_valid;
+
+  logic pipe_is_cylinder_ready;
+  logic pipe_is_cylinder_result;
+  logic pipe_is_cylinder_valid;
 
   logic pipe_pre_normal_ready;
   logic [2:0][SIZE-1:0] pipe_pre_normal_result;
@@ -177,8 +182,19 @@ module hit_point #(parameter SIZE=64) (
     .aresetn(aresetn)
   );
 
+  axi_pipe #(.LATENCY(PIPE_IS_CYLINDER_LATENCY), .SIZE(1)) pipe_is_cylinder (
+    .s_axis_a_tdata(obj_axis_is_cylinder),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(ray_axis_tvalid),
+    .m_axis_result_tdata(pipe_is_cylinder_result),
+    .m_axis_result_tvalid(pipe_is_cylinder_valid),
+    .m_axis_result_tready(pipe_invalid_cylinder_hit_ready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
   axi_pipe #(.LATENCY(PIPE_INVALID_LATENCY), .SIZE(1)) pipe_invalid (
-    .s_axis_a_tdata(obj_axis_is_cylinder && (cmp_result || pipe_negative_dot_result)),
+    .s_axis_a_tdata(pipe_is_cylinder_result && (cmp_result || pipe_negative_dot_result)),
     .s_axis_a_tready(pipe_invalid_cylinder_hit_ready),
     .s_axis_a_tvalid(cmp_valid),
     .m_axis_result_tdata(invalid_cylinder_hit),
