@@ -16,17 +16,17 @@ module ray_from_pixel #(parameter SIZE) (
 
   //TOTAL LATENCY: 24
 
-  localparam [SIZE-1:0] PX_MUL = 64'h3F76C16C16C16C16;
-  localparam [SIZE-1:0] PX_ADD = 64'hBFFC71C71C71C71B;
-  localparam [SIZE-1:0] PY_MUL = 64'hBF76C16C16C16C16;
-  localparam [SIZE-1:0] PY_ADD = 64'h3FEFFFFFFFFFFFFF;
-  localparam [SIZE-1:0] PZ = 64'hBFF0000000000000;
+  // localparam [SIZE-1:0] PX_MUL = 64'h3F76C16C16C16C16;
+  // localparam [SIZE-1:0] PX_ADD = 64'hBFFC71C71C71C71B;
+  // localparam [SIZE-1:0] PY_MUL = 64'hBF76C16C16C16C16;
+  // localparam [SIZE-1:0] PY_ADD = 64'h3FEFFFFFFFFFFFFF;
+  // localparam [SIZE-1:0] PZ = 64'hBFF0000000000000;
 
-  // localparam [SIZE-1:0] PX_MUL = 32'h3bb60b61;
-  // localparam [SIZE-1:0] PX_ADD = 32'hbfe38e39;
-  // localparam [SIZE-1:0] PY_MUL = 32'hbbb60b61;
-  // localparam [SIZE-1:0] PY_ADD = 32'h3f800000;
-  // localparam [SIZE-1:0] PZ = 32'hbf800000;
+  localparam [SIZE-1:0] PX_MUL = 32'h3bb60b61;
+  localparam [SIZE-1:0] PX_ADD = 32'hbfe38e39;
+  localparam [SIZE-1:0] PY_MUL = 32'hbbb60b61;
+  localparam [SIZE-1:0] PY_ADD = 32'h3f800000;
+  localparam [SIZE-1:0] PZ = 32'hbf800000;
 
   logic [SIZE-1:0] float_hcount_result;
   logic float_hcount_valid;

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module full_renderer #(parameter SIZE=64) (
+module full_renderer #(parameter SIZE=32) (
   input wire [10:0] hcount_axis_tdata,
   input wire hcount_axis_tvalid,
   output logic hcount_axis_tready,
@@ -26,8 +26,8 @@ module full_renderer #(parameter SIZE=64) (
 
   //TOTAL LATENCY = 339
 
-  localparam [3*SIZE-1:0] CAMERA_LOC = 192'h000000000000000000000000000000004014000000000000;
-  // localparam [3*SIZE-1:0] CAMERA_LOC ''= 96'h000000000000000040a00000;
+  // localparam [3*SIZE-1:0] CAMERA_LOC = 192'h000000000000000000000000000000004014000000000000;
+  localparam [3*SIZE-1:0] CAMERA_LOC = 96'h000000000000000040a00000;
 
   localparam PIPE_RAY_LATENCY = 168;
   localparam PIPE_HVCOUNT1_LATENCY = 24;

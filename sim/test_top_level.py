@@ -71,7 +71,7 @@ def runner():
     sim = os.getenv("SIM", "icarus")
     proj_path = Path(__file__).resolve().parent.parent
     sys.path.append(str(proj_path / "sim" / "model"))
-    sources = [proj_path / "hdl" / "full_renderer.sv"] #grow/modify this as needed.
+    sources = [proj_path / "hdl" / "top_level.sv"] #grow/modify this as needed.
     sources.append(proj_path / "hdl" / "float_add.sv")
     sources.append(proj_path / "hdl" / "float_mul.sv")
     sources.append(proj_path / "hdl" / "float_div.sv")

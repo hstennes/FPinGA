@@ -24,7 +24,8 @@ module hit_point #(parameter SIZE=64) (
 
   //TOTAL LATENCY: 83
 
-  localparam [SIZE-1:0] PIN_HEIGHT = 64'h4008000000000000;
+  // localparam [SIZE-1:0] PIN_HEIGHT = 64'h4008000000000000;
+  localparam [SIZE-1:0] PIN_HEIGHT = 32'h40400000;
 
   localparam PIPE_CENTER_LATENCY = 17;
   localparam PIPE_CA_LATENCY = 29;

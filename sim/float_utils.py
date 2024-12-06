@@ -5,6 +5,11 @@ def float_to_binary(f):
     binary_as_int = struct.unpack('>Q', struct.pack('>d', f))[0]
     return binary_as_int
 
+def float_to_binary_32(f):
+    # Pack the float into 4 bytes (single-precision) and unpack as an integer
+    binary_as_int = struct.unpack('>I', struct.pack('>f', f))[0]
+    return binary_as_int
+
 def binary_to_float(binary_as_int):
     # Pack the integer into 8 bytes and unpack as a double-precision float
     float_value = struct.unpack('>d', struct.pack('>Q', binary_as_int))[0]
@@ -18,6 +23,9 @@ def concat_binary(vals, bit_width=64):
 
 def make_binary_vector(vals):
     return concat_binary([float_to_binary(i) for i in vals])
+
+def make_binary_vector_32(vals):
+    return concat_binary([float_to_binary_32(i) for i in vals], bit_width=32)
 
 # Example usage
 # float_number = 1.5
