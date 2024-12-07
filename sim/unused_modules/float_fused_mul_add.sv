@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module float_fused_mul_add #(parameter SIZE=64) (
+module float_fused_mul_add #(parameter SIZE=32) (
   input wire [SIZE-1:0] s_axis_a_tdata,
   output logic s_axis_a_tready,
   input wire s_axis_a_tvalid,
@@ -26,7 +26,7 @@ module float_fused_mul_add #(parameter SIZE=64) (
 
   always_comb begin
     m_axis_result_tvalid = valid_pipe[ARTIFICIAL_LATENCY-1];
-    m_axis_result_tdata = $realtobits($bitstoreal(a_pipe[ARTIFICIAL_LATENCY-1]) * $bitstoreal(b_pipe[ARTIFICIAL_LATENCY-1]) + $bitstoreal(c_pipe[ARTIFICIAL_LATENCY-1]));
+    m_axis_result_tdata = $shortrealtobits($bitstoshortreal(a_pipe[ARTIFICIAL_LATENCY-1]) * $bitstoshortreal(b_pipe[ARTIFICIAL_LATENCY-1]) + $bitstoshortreal(c_pipe[ARTIFICIAL_LATENCY-1]));
     //to convert float 64 to float 32, most significant bit of exponent stays, take the bottom however many bits
     can_advance = m_axis_result_tready || !m_axis_result_tvalid;
     s_axis_a_tready = can_advance;

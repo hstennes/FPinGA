@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module top_level
+module top_level_sim
   (
    input wire         CLK100MHZ,
    output logic [3:0] VGA_R,
@@ -24,18 +24,7 @@ module top_level
 
   // clocking wizards to generate the clock speeds we need for our different domains
   // clk_camera: 200MHz, fast enough to comfortably sample the cameera's PCLK (50MHz)
-  cw_hdmi_clk_wiz wizard_hdmi
-    (.sysclk(clk_100_passthrough),
-     .clk_pixel(clk_pixel),
-     .clk_tmds(clk_5x),
-     .reset(0));
-
-  cw_fast_clk_wiz wizard_migcam
-    (.clk_in1(CLK100MHZ),
-     .clk_camera(clk_camera),
-     .clk_xc(clk_xc),
-     .clk_100(clk_100_passthrough),
-     .reset(0));
+  assign clk_pixel = CLK100MHZ;
 
   assign sys_rst_pixel = BTNC; //use for resetting hdmi/draw side of logic
 
@@ -126,7 +115,7 @@ module top_level
   xilinx_true_dual_port_read_first_2_clock_ram #(
       .RAM_WIDTH(24),                       // Specify RAM data width
       .RAM_DEPTH(13000),                     // Specify RAM depth (number of entries)
-      .RAM_PERFORMANCE("HIGH_PERFORMANCE"), // Select "HIGH_PERFORMANCE" or "LOW_LATENCY"
+      .RAM_PERFORMANCE("LOW_LATENCY"), // Select "HIGH_PERFORMANCE" or "LOW_LATENCY"
       .INIT_FILE("")                        // Specify name/location of RAM initialization file if using one (leave blank if not)
   ) renderer_buffer (
       .addra(ram_addra),   // Port A address bus, width determined from RAM_DEPTH
@@ -135,7 +124,7 @@ module top_level
       .dinb(1'b0),     // Port B RAM input data, width determined from RAM_WIDTH
       .clka(clk_pixel),     // Port A clock
       .clkb(clk_pixel),     // Port B clock
-      .wea(1'b1),       // Port A write enable
+      .wea(pixel_valid),       // Port A write enable
       .web(1'b0),       // Port B write enable
       .ena(1'b1),       // Port A RAM Enable, for additional power savings, disable port when not in use
       .enb(1'b1),       // Port B RAM Enable, for additional power savings, disable port when not in use

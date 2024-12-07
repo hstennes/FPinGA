@@ -1,0 +1,150 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
+| Date         : Sat Dec  7 11:33:48 2024
+| Host         : eecs-digital-19 running 64-bit Ubuntu 24.04.1 LTS
+| Command      : report_utilization -file obj/post_synth_util.rpt -hierarchical -hierarchical_depth 4
+| Design       : top_level
+| Device       : xc7a100tcsg324-1
+| Speed File   : -1
+| Design State : Synthesized
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++---------------------------+--------------------------------------------------------------+------------+------------+---------+------+-------+--------+--------+------------+
+|          Instance         |                            Module                            | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs  | RAMB36 | RAMB18 | DSP Blocks |
++---------------------------+--------------------------------------------------------------+------------+------------+---------+------+-------+--------+--------+------------+
+| top_level                 |                                                        (top) |      26610 |      23024 |       0 | 3586 | 49927 |      5 |      0 |        138 |
+|   (top_level)             |                                                        (top) |          0 |          0 |       0 |    0 |     0 |      0 |      0 |          4 |
+|   full_render             |                                                full_renderer |      26536 |      22950 |       0 | 3586 | 49840 |      3 |      0 |        134 |
+|     check_objects         |                                                check_objects |      21085 |      18010 |       0 | 3075 | 40226 |      3 |      0 |        108 |
+|       (check_objects)     |                                                check_objects |          4 |          4 |       0 |    0 |   608 |      0 |      0 |          0 |
+|       hp                  |                                                    hit_point |       6076 |       5230 |       0 |  846 | 10614 |      0 |      0 |         34 |
+|         (hp)              |                                                    hit_point |          0 |          0 |       0 |    0 |     0 |      0 |      0 |          0 |
+|         cmp               |                                                     float_lt |         92 |         92 |       0 |    0 |   146 |      0 |      0 |          0 |
+|         dot               |                                           vec_dot__xdcDup__6 |        997 |        895 |       0 |  102 |  1974 |      0 |      0 |         10 |
+|         hit_point         |                                            vec_fused_mul_add |       2547 |       2328 |       0 |  219 |  3891 |      0 |      0 |          6 |
+|         mul               |                                           vec_mul__xdcDup__1 |        469 |        424 |       0 |   45 |   945 |      0 |      0 |          6 |
+|         normal            |                                           vec_add__xdcDup__3 |        719 |        683 |       0 |   36 |  1380 |      0 |      0 |          6 |
+|         pipe_ca           |                                    axi_pipe__parameterized19 |          6 |          4 |       0 |    2 |    33 |      0 |      0 |          0 |
+|         pipe_ca_2         |                                    axi_pipe__parameterized23 |          6 |          4 |       0 |    2 |    37 |      0 |      0 |          0 |
+|         pipe_center       |                                    axi_pipe__parameterized18 |         16 |          6 |       0 |   10 |    45 |      0 |      0 |          0 |
+|         pipe_hit_point    |                                    axi_pipe__parameterized25 |        243 |         49 |       0 |  194 |   355 |      0 |      0 |          0 |
+|         pipe_invalid      |                                    axi_pipe__parameterized22 |          8 |          6 |       0 |    2 |    22 |      0 |      0 |          0 |
+|         pipe_is_cylinder  |                                    axi_pipe__parameterized21 |          7 |          3 |       0 |    4 |    69 |      0 |      0 |          0 |
+|         pipe_negative_dot |                                    axi_pipe__parameterized20 |          4 |          4 |       0 |    0 |     6 |      0 |      0 |          0 |
+|         pipe_pre_normal   |                                    axi_pipe__parameterized24 |        243 |         49 |       0 |  194 |   331 |      0 |      0 |          0 |
+|         pre_normal        |                                           vec_add__xdcDup__2 |        719 |        683 |       0 |   36 |  1380 |      0 |      0 |          6 |
+|       pipe_hcount1        |                                    axi_pipe__parameterized13 |        108 |         12 |       0 |   96 |   285 |      0 |      0 |          0 |
+|       pipe_hcount2        |                                    axi_pipe__parameterized26 |         18 |          6 |       0 |   12 |    47 |      0 |      0 |          0 |
+|       pipe_hit_normal     |                                    axi_pipe__parameterized29 |        290 |         97 |       0 |  193 |   591 |      0 |      0 |          0 |
+|       pipe_obj_idx1       |                                    axi_pipe__parameterized15 |         40 |         10 |       0 |   30 |   181 |      0 |      0 |          0 |
+|       pipe_obj_idx2       |                                    axi_pipe__parameterized16 |        581 |        566 |       0 |   15 |   112 |      0 |      0 |          0 |
+|       pipe_obj_idx3       |                                    axi_pipe__parameterized28 |         11 |          6 |       0 |    5 |    25 |      0 |      0 |          0 |
+|       pipe_ray            |                                    axi_pipe__parameterized12 |        439 |         37 |       0 |  402 |   367 |      0 |      0 |          0 |
+|       pipe_t              |                                    axi_pipe__parameterized17 |        116 |         17 |       0 |   99 |   180 |      0 |      0 |          0 |
+|       pipe_vcount1        |                                    axi_pipe__parameterized14 |        101 |         13 |       0 |   88 |   282 |      0 |      0 |          0 |
+|       pipe_vcount2        |                                    axi_pipe__parameterized27 |         17 |          6 |       0 |   11 |    44 |      0 |      0 |          0 |
+|       r_intersect         |                                                ray_intersect |      11552 |      10281 |       0 | 1271 | 21798 |      0 |      0 |         74 |
+|         (r_intersect)     |                                                ray_intersect |          0 |          0 |       0 |    0 |     0 |      0 |      0 |          0 |
+|         a                 |                                   float_fused_mul_add_HD7706 |        848 |        775 |       0 |   73 |  1297 |      0 |      0 |          2 |
+|         b                 |                                   float_fused_mul_add_HD7983 |        848 |        775 |       0 |   73 |  1297 |      0 |      0 |          2 |
+|         c                 |                                             float_add_HD4813 |        239 |        227 |       0 |   12 |   460 |      0 |      0 |          2 |
+|         dca               |                                           vec_dot__xdcDup__2 |        998 |        896 |       0 |  102 |  1974 |      0 |      0 |         10 |
+|         dd                |                                           vec_dot__xdcDup__1 |       1029 |        927 |       0 |  102 |  1974 |      0 |      0 |         10 |
+|         oc                |                                           vec_add__xdcDup__1 |        728 |        692 |       0 |   36 |  1380 |      0 |      0 |          6 |
+|         occa              |                                           vec_dot__xdcDup__4 |        998 |        896 |       0 |  102 |  1974 |      0 |      0 |         10 |
+|         ocd               |                                           vec_dot__xdcDup__3 |        998 |        896 |       0 |  102 |  1974 |      0 |      0 |         10 |
+|         ococ              |                                           vec_dot__xdcDup__5 |        996 |        894 |       0 |  102 |  1974 |      0 |      0 |         10 |
+|         pipe_a            |                                     axi_pipe__parameterized7 |         59 |         26 |       0 |   33 |   121 |      0 |      0 |          0 |
+|         pipe_b            |                                  axi_pipe__parameterized1_35 |         56 |         23 |       0 |   33 |   109 |      0 |      0 |          0 |
+|         pipe_ca           |                                  axi_pipe__parameterized2_36 |          6 |          4 |       0 |    2 |    16 |      0 |      0 |          0 |
+|         pipe_d            |                                  axi_pipe__parameterized2_37 |         99 |         33 |       0 |   66 |   208 |      0 |      0 |          0 |
+|         pipe_dca          |                                  axi_pipe__parameterized1_38 |         53 |         20 |       0 |   33 |   109 |      0 |      0 |          0 |
+|         pipe_flag_final   |                                     axi_pipe__parameterized5 |         17 |          5 |       0 |   12 |   172 |      0 |      0 |          0 |
+|         pipe_flag_prec    |                                  axi_pipe__parameterized3_39 |         10 |          6 |       0 |    4 |    49 |      0 |      0 |          0 |
+|         pipe_flag_quad    |                                     axi_pipe__parameterized4 |         10 |          4 |       0 |    6 |    78 |      0 |      0 |          0 |
+|         pipe_ococ         |                                     axi_pipe__parameterized6 |         53 |         20 |       0 |   33 |   114 |      0 |      0 |          0 |
+|         prec              |                                   float_fused_mul_add_HD8260 |        848 |        775 |       0 |   73 |  1297 |      0 |      0 |          2 |
+|         quad              |                                                    quadratic |       2659 |       2387 |       0 |  272 |  5221 |      0 |      0 |         10 |
+|       ram                 |                 xilinx_true_dual_port_read_first_2_clock_ram |          3 |          3 |       0 |    0 |     0 |      3 |      0 |          0 |
+|       t_argmin            |                                           float_multi_argmin |       1729 |       1722 |       0 |    7 |  5092 |      0 |      0 |          0 |
+|         cmp_11            |                                      float_argmin__xdcDup__1 |        116 |        116 |       0 |    0 |   347 |      0 |      0 |          0 |
+|         cmp_12            |                                      float_argmin__xdcDup__2 |        116 |        116 |       0 |    0 |   350 |      0 |      0 |          0 |
+|         cmp_13            |                                      float_argmin__xdcDup__3 |        116 |        116 |       0 |    0 |   350 |      0 |      0 |          0 |
+|         cmp_14            |                                      float_argmin__xdcDup__4 |        116 |        116 |       0 |    0 |   350 |      0 |      0 |          0 |
+|         cmp_15            |                                      float_argmin__xdcDup__5 |        116 |        116 |       0 |    0 |   350 |      0 |      0 |          0 |
+|         cmp_16            |                                      float_argmin__xdcDup__6 |        116 |        116 |       0 |    0 |   350 |      0 |      0 |          0 |
+|         cmp_17            |                                      float_argmin__xdcDup__7 |        116 |        116 |       0 |    0 |   350 |      0 |      0 |          0 |
+|         cmp_18            |                                      float_argmin__xdcDup__8 |        116 |        116 |       0 |    0 |   350 |      0 |      0 |          0 |
+|         cmp_21            |                                      float_argmin__xdcDup__9 |        116 |        116 |       0 |    0 |   353 |      0 |      0 |          0 |
+|         cmp_22            |                                     float_argmin__xdcDup__10 |        116 |        116 |       0 |    0 |   356 |      0 |      0 |          0 |
+|         cmp_23            |                                     float_argmin__xdcDup__11 |        116 |        116 |       0 |    0 |   356 |      0 |      0 |          0 |
+|         cmp_24            |                                     float_argmin__xdcDup__12 |        116 |        116 |       0 |    0 |   356 |      0 |      0 |          0 |
+|         cmp_31            |                                     float_argmin__xdcDup__13 |        116 |        116 |       0 |    0 |   359 |      0 |      0 |          0 |
+|         cmp_32            |                                     float_argmin__xdcDup__14 |        116 |        116 |       0 |    0 |   362 |      0 |      0 |          0 |
+|         cmp_41            |                                                 float_argmin |        105 |         98 |       0 |    7 |   153 |      0 |      0 |          0 |
+|     lam                   |                                                      lambert |       3307 |       3011 |       0 |  296 |  6278 |      0 |      0 |         22 |
+|       color               |                                                      vec_mul |        466 |        421 |       0 |   45 |   945 |      0 |      0 |          6 |
+|         (color)           |                                                      vec_mul |          1 |          1 |       0 |    0 |     0 |      0 |      0 |          0 |
+|         mul1              |                                             float_mul_HD3592 |        155 |        140 |       0 |   15 |   315 |      0 |      0 |          2 |
+|         mul2              |                                             float_mul_HD3667 |        155 |        140 |       0 |   15 |   315 |      0 |      0 |          2 |
+|         mul3              |                                             float_mul_HD3742 |        155 |        140 |       0 |   15 |   315 |      0 |      0 |          2 |
+|       dot                 |                                                      vec_dot |       1015 |        913 |       0 |  102 |  1974 |      0 |      0 |         10 |
+|         (dot)             |                                                      vec_dot |         15 |         15 |       0 |    0 |     0 |      0 |      0 |          0 |
+|         mul_1             |                                             float_mul_HD3817 |        155 |        140 |       0 |   15 |   315 |      0 |      0 |          2 |
+|         mul_2             |                                             float_mul_HD3892 |        155 |        140 |       0 |   15 |   315 |      0 |      0 |          2 |
+|         mul_3             |                                             float_mul_HD3967 |        155 |        140 |       0 |   15 |   315 |      0 |      0 |          2 |
+|         sum               |                                                   float_sum3 |        535 |        478 |       0 |   57 |  1029 |      0 |      0 |          4 |
+|       light_dir           |                                                      vec_add |        717 |        681 |       0 |   36 |  1380 |      0 |      0 |          6 |
+|         (light_dir)       |                                                      vec_add |          0 |          0 |       0 |    0 |     0 |      0 |      0 |          0 |
+|         add_1             |                                             float_add_HD6827 |        239 |        227 |       0 |   12 |   460 |      0 |      0 |          2 |
+|         add_2             |                                             float_add_HD6933 |        239 |        227 |       0 |   12 |   460 |      0 |      0 |          2 |
+|         add_3             |                                             float_add_HD7039 |        239 |        227 |       0 |   12 |   460 |      0 |      0 |          2 |
+|       pipe_is_cylinder    |                                     axi_pipe__parameterized3 |          7 |          3 |       0 |    4 |    49 |      0 |      0 |          0 |
+|       pipe_normal         |                                     axi_pipe__parameterized2 |        147 |         50 |       0 |   97 |   253 |      0 |      0 |          0 |
+|       pixel               |                                           vec_to_pixel_color |        954 |        942 |       0 |   12 |  1677 |      0 |      0 |          0 |
+|         (pixel)           |                                           vec_to_pixel_color |          0 |          0 |       0 |    0 |     0 |      0 |      0 |          0 |
+|         clamp             |                                                    vec_clamp |        351 |        351 |       0 |    0 |   753 |      0 |      0 |          0 |
+|         ff1               |                                               float_to_fixed |        201 |        197 |       0 |    4 |   308 |      0 |      0 |          0 |
+|         ff2               |                                        float_to_fixed_HD9093 |        201 |        197 |       0 |    4 |   308 |      0 |      0 |          0 |
+|         ff3               |                                        float_to_fixed_HD9155 |        201 |        197 |       0 |    4 |   308 |      0 |      0 |          0 |
+|       scale_pipe_a        |                               float_mul_pow2__parameterized3 |          1 |          1 |       0 |    0 |     0 |      0 |      0 |          0 |
+|     pipe_hcount1          |                                                     axi_pipe |         18 |          6 |       0 |   12 |    58 |      0 |      0 |          0 |
+|     pipe_hcount2          |                                    axi_pipe__parameterized32 |         22 |          0 |       0 |   22 |    11 |      0 |      0 |          0 |
+|     pipe_vcount1          |                                     axi_pipe__parameterized0 |         17 |          6 |       0 |   11 |    55 |      0 |      0 |          0 |
+|     pipe_vcount2          |                                    axi_pipe__parameterized33 |         20 |          0 |       0 |   20 |    10 |      0 |      0 |          0 |
+|     rfp                   |                                               ray_from_pixel |       2067 |       1917 |       0 |  150 |  3202 |      0 |      0 |          4 |
+|       (rfp)               |                                               ray_from_pixel |          1 |          1 |       0 |    0 |     0 |      0 |      0 |          0 |
+|       float_hcount        |                                               fixed_to_float |        185 |        183 |       0 |    2 |   304 |      0 |      0 |          0 |
+|         (float_hcount)    |                                               fixed_to_float |          0 |          0 |       0 |    0 |     0 |      0 |      0 |          0 |
+|         inst              |                         fixed_to_floatfloating_point_v7_1_18 |        185 |        183 |       0 |    2 |   304 |      0 |      0 |          0 |
+|       float_vcount        |                                        fixed_to_float_HD9218 |        185 |        183 |       0 |    2 |   304 |      0 |      0 |          0 |
+|         (float_vcount)    |                                        fixed_to_float_HD9218 |          0 |          0 |       0 |    0 |     0 |      0 |      0 |          0 |
+|         inst              |                  fixed_to_floatfloating_point_v7_1_18_HD9219 |        185 |        183 |       0 |    2 |   304 |      0 |      0 |          0 |
+|       px                  |                                   float_fused_mul_add_HD8537 |        848 |        775 |       0 |   73 |  1297 |      0 |      0 |          2 |
+|         (px)              |                                   float_fused_mul_add_HD8537 |          0 |          0 |       0 |    0 |     0 |      0 |      0 |          0 |
+|         inst              |             float_fused_mul_addfloating_point_v7_1_18_HD8538 |        848 |        775 |       0 |   73 |  1297 |      0 |      0 |          2 |
+|       py                  |                                   float_fused_mul_add_HD8814 |        848 |        775 |       0 |   73 |  1297 |      0 |      0 |          2 |
+|         (py)              |                                   float_fused_mul_add_HD8814 |          0 |          0 |       0 |    0 |     0 |      0 |      0 |          0 |
+|         inst              |             float_fused_mul_addfloating_point_v7_1_18_HD8815 |        848 |        775 |       0 |   73 |  1297 |      0 |      0 |          2 |
+|   pipe_active_draw        |                                    axi_pipe__parameterized34 |          0 |          0 |       0 |    0 |     1 |      0 |      0 |          0 |
+|   pipe_in_3d              |                                  axi_pipe__parameterized34_0 |          0 |          0 |       0 |    0 |     1 |      0 |      0 |          0 |
+|   renderer_buffer         | xilinx_true_dual_port_read_first_2_clock_ram__parameterized0 |          2 |          2 |       0 |    0 |     0 |      2 |      0 |          0 |
+|   renderer_sig            |                                             renderer_sig_gen |         22 |         22 |       0 |    0 |    21 |      0 |      0 |          0 |
+|   vsg                     |                                                  vga_sig_gen |         50 |         50 |       0 |    0 |    64 |      0 |      0 |          0 |
+|     h_counter             |                                                      counter |         33 |         33 |       0 |    0 |    32 |      0 |      0 |          0 |
+|     v_counter             |                                                  evt_counter |         17 |         17 |       0 |    0 |    32 |      0 |      0 |          0 |
+|   wizard_hdmi             |                                              cw_hdmi_clk_wiz |          0 |          0 |       0 |    0 |     0 |      0 |      0 |          0 |
+|   wizard_migcam           |                                              cw_fast_clk_wiz |          0 |          0 |       0 |    0 |     0 |      0 |      0 |          0 |
++---------------------------+--------------------------------------------------------------+------------+------------+---------+------+-------+--------+--------+------------+
+
+

@@ -1,0 +1,94 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
+| Date         : Sat Dec  7 11:33:48 2024
+| Host         : eecs-digital-19 running 64-bit Ubuntu 24.04.1 LTS
+| Command      : report_timing -file obj/post_synth_timing.rpt
+| Design       : top_level
+| Device       : 7a100t-csg324
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Synthesized
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             3.785ns  (required time - arrival time)
+  Source:                 ram_addrb0/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
+  Destination:            renderer_buffer/BRAM_reg_10/ADDRBWRADDR[10]
+                            (rising edge-triggered cell RAMB36E1 clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
+  Path Group:             clk_pixel_cw_hdmi
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            13.468ns  (clk_pixel_cw_hdmi rise@13.468ns - clk_pixel_cw_hdmi rise@0.000ns)
+  Data Path Delay:        8.763ns  (logic 7.157ns (81.676%)  route 1.606ns (18.324%))
+  Logic Levels:           2  (DSP48E1=1 LUT6=1)
+  Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -2.753ns = ( 10.715 - 13.468 ) 
+    Source Clock Delay      (SCD):    -3.066ns
+    Clock Pessimism Removal (CPR):    -0.458ns
+  Clock Uncertainty:      0.210ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.414ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pixel_cw_hdmi rise edge)
+                                                      0.000     0.000 r  
+    E3                                                0.000     0.000 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000     0.000    wizard_migcam/CLK100MHZ
+    E3                   IBUF (Prop_ibuf_I_O)         1.482     1.482 r  wizard_migcam/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.584     2.066    wizard_migcam/clk_in1_cw_fast
+                         PLLE2_ADV (Prop_plle2_adv_CLKIN1_CLKOUT0)
+                                                     -6.615    -4.549 r  wizard_migcam/plle2_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.803    -3.746    wizard_migcam/clk_100_cw_fast
+                         BUFG (Prop_bufg_I_O)         0.096    -3.650 r  wizard_migcam/clkout1_buf/O
+                         net (fo=1, unplaced)         0.584    -3.066    wizard_hdmi/sysclk
+                         MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -1.483    -4.549 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.803    -3.746    wizard_hdmi/clk_pixel_cw_hdmi
+                         BUFG (Prop_bufg_I_O)         0.096    -3.650 r  wizard_hdmi/clkout1_buf/O
+                         net (fo=53661, unplaced)     0.584    -3.066    clk_pixel
+                         DSP48E1                                      r  ram_addrb0/CLK
+  -------------------------------------------------------------------    -------------------
+                         DSP48E1 (Prop_dsp48e1_CLK_PCOUT[47])
+                                                      5.515     2.449 r  ram_addrb0/PCOUT[47]
+                         net (fo=1, unplaced)         0.000     2.449    ram_addrb0_n_106
+                         DSP48E1 (Prop_dsp48e1_PCIN[47]_P[9])
+                                                      1.518     3.967 r  ram_addrb/P[9]
+                         net (fo=1, unplaced)         0.803     4.770    vsg/h_counter/P[9]
+                         LUT6 (Prop_lut6_I5_O)        0.124     4.894 r  vsg/h_counter/BRAM_reg_2_i_5/O
+                         net (fo=2, unplaced)         0.803     5.697    renderer_buffer/ADDRBWRADDR[9]
+                         RAMB36E1                                     r  renderer_buffer/BRAM_reg_10/ADDRBWRADDR[10]
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pixel_cw_hdmi rise edge)
+                                                     13.468    13.468 r  
+    E3                                                0.000    13.468 r  CLK100MHZ (IN)
+                         net (fo=0)                   0.000    13.468    wizard_migcam/CLK100MHZ
+    E3                   IBUF (Prop_ibuf_I_O)         1.411    14.879 r  wizard_migcam/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.439    15.318    wizard_migcam/clk_in1_cw_fast
+                         PLLE2_ADV (Prop_plle2_adv_CLKIN1_CLKOUT0)
+                                                     -5.896     9.423 r  wizard_migcam/plle2_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.763    10.185    wizard_migcam/clk_100_cw_fast
+                         BUFG (Prop_bufg_I_O)         0.091    10.276 r  wizard_migcam/clkout1_buf/O
+                         net (fo=1, unplaced)         0.439    10.715    wizard_hdmi/sysclk
+                         MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -1.293     9.423 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.763    10.185    wizard_hdmi/clk_pixel_cw_hdmi
+                         BUFG (Prop_bufg_I_O)         0.091    10.276 r  wizard_hdmi/clkout1_buf/O
+                         net (fo=53661, unplaced)     0.439    10.715    renderer_buffer/clk_pixel
+                         RAMB36E1                                     r  renderer_buffer/BRAM_reg_10/CLKBWRCLK
+                         clock pessimism             -0.458    10.257    
+                         clock uncertainty           -0.210    10.047    
+                         RAMB36E1 (Setup_ramb36e1_CLKBWRCLK_ADDRBWRADDR[10])
+                                                     -0.566     9.481    renderer_buffer/BRAM_reg_10
+  -------------------------------------------------------------------
+                         required time                          9.481    
+                         arrival time                          -5.697    
+  -------------------------------------------------------------------
+                         slack                                  3.785    
+
+
+
+

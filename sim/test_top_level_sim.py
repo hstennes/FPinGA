@@ -18,54 +18,54 @@ def decode_pixel(encoded):
     except:
         return (0, 0, 0)
 
+def decode_pixel_vga(R, G, B):
+    try:
+        return R.integer << 4, G.integer << 4, B.integer << 4
+    except:
+        return (0, 0, 0)
+
 @cocotb.test()
-async def test_full_renderer(dut):
+async def test_top_level_sim(dut):
     """cocotb test?"""
-    im_output = Image.new('RGB', (640, 360))
+
+    im_output = Image.new('RGB', (1024, 768))
 
     dut._log.info("Starting...")
-    cocotb.start_soon(Clock(dut.aclk, 10, units="ns").start())
-    await ClockCycles(dut.aclk, 3)
-    dut.aresetn.value = 1
-    await ClockCycles(dut.aclk, 3)
-    dut.aresetn.value = 0
-    # dut.sphere.value = make_binary_vector_32([0.0, 0.0, 0.0, 0, -5, -5])
-    dut.sphere.value = 0x00000000000000000000000000000000c0a00000c0a00000
-    dut.pixel_axis_tready.value = 1
-    # cylinders = []
-    # for i in range(-22, -3, 2):
-    #     cylinders.extend([0, 1, 0, 0, -5, i])
-    # print(cylinders, len(cylinders))
+    cocotb.start_soon(Clock(dut.CLK100MHZ, 10, units="ns").start())
+    await ClockCycles(dut.CLK100MHZ, 3)
+    dut.BTNC.value = 1
+    await ClockCycles(dut.CLK100MHZ, 1)
+    dut.BTNC.value = 0
 
-    cylinders = [0, 1, 0, -6, -5, -16, 0, 1, 0, -2, -5, -16, 0, 1, 0, 2, -5, -16, 0, 1, 0, 6, -5, -16, 0, 1, 0, -4, -5, -14, 0, 1, 0, 0, -5, -14, 0, 1, 0, 4, -5, -14, 0, 1, 0, -2, -5, -12, 0, 1, 0, 2, -5, -12, 0, 1, 0, 0, -5, -10]
-    # dut.cylinders.value = make_binary_vector_32(cylinders)
-    dut.cylinders.value = 0x3f80000000000000c0c00000c0a00000c1800000000000003f80000000000000c0000000c0a00000c1800000000000003f8000000000000040000000c0a00000c1800000000000003f8000000000000040c00000c0a00000c1800000000000003f80000000000000c0800000c0a00000c1600000000000003f8000000000000000000000c0a00000c1600000000000003f8000000000000040800000c0a00000c1600000000000003f80000000000000c0000000c0a00000c1400000000000003f8000000000000040000000c0a00000c1400000000000003f8000000000000000000000c0a00000c1200000
+    hcount = 0
+    vcount = 0
+    prev_hsync = 0
+    prev_vsync = 0
 
-    print(len(hex(make_binary_vector(cylinders))))
+    for i in range(400000):
+        if dut.VGA_VS.value == 1 and prev_vsync == 0:
+            hcount = 0
+            vcount = 0
+        elif dut.VGA_HS.value == 1 and prev_hsync == 0:
+            hcount = 0
+            vcount += 1
+            print(vcount)
+        
+        if dut.VGA_VS.value == 0 and dut.VGA_HS.value == 0 and hcount < 1024:
+            # print(hcount, vcount)
+            im_output.putpixel((hcount, vcount), decode_pixel_vga(dut.VGA_R.value, dut.VGA_G.value, dut.VGA_B.value))
+            hcount += 1
 
-    print(hex(make_binary_vector_32(cylinders)), len(hex(make_binary_vector_32(cylinders))))
+        prev_vsync = dut.VGA_VS.value
+        prev_hsync = dut.VGA_HS.value
+        await ClockCycles(dut.CLK100MHZ, 1)
 
-    dut.hcount_axis_tdata.value = 0
-    dut.vcount_axis_tdata.value = 0
-    await ClockCycles(dut.aclk, 500)
 
-    for y in range(195, 295):
-        print("Row", y)
-        for x in range(260, 390):
-            while not dut.hcount_axis_tready.value:
-                if dut.pixel_axis_tvalid == 1:
-                    im_output.putpixel((dut.hcount_out.value.integer, dut.vcount_out.value.integer), decode_pixel(dut.pixel_axis_tdata.value))
-                await ClockCycles(dut.aclk, 1)
+    # for i in range(800):
+    #     await ClockCycles(dut.CLK100MHZ, 1000)
+    #     print("iter", i)
 
-            if dut.pixel_axis_tvalid == 1:
-                im_output.putpixel((dut.hcount_out.value.integer, dut.vcount_out.value.integer), decode_pixel(dut.pixel_axis_tdata.value))
-            dut.hcount_axis_tdata.value = x
-            dut.hcount_axis_tvalid.value = 1
-            dut.vcount_axis_tdata.value = y
-            dut.vcount_axis_tvalid.value = 1
-            await ClockCycles(dut.aclk, 1)
-
-    im_output.save('output.png','PNG')
+    im_output.save('output_full_sim.png','PNG')
 
 def runner():
     """Simulate the counter using the Python runner."""
@@ -73,7 +73,7 @@ def runner():
     sim = os.getenv("SIM", "icarus")
     proj_path = Path(__file__).resolve().parent.parent
     sys.path.append(str(proj_path / "sim" / "model"))
-    sources = [proj_path / "hdl" / "full_renderer.sv"] #grow/modify this as needed.
+    sources = [proj_path / "hdl" / "top_level_sim.sv"] #grow/modify this as needed.
     sources.append(proj_path / "hdl" / "float_add.sv")
     sources.append(proj_path / "hdl" / "float_mul.sv")
     sources.append(proj_path / "hdl" / "float_div.sv")
@@ -102,6 +102,11 @@ def runner():
     sources.append(proj_path / "hdl" / "float_argmin.sv")
     sources.append(proj_path / "hdl" / "float_multi_argmin.sv")
     sources.append(proj_path / "hdl" / "check_objects.sv")
+    sources.append(proj_path / "hdl" / "vga_sig_gen.sv")
+    sources.append(proj_path / "hdl" / "renderer_sig_gen.sv")
+    sources.append(proj_path / "hdl" / "evt_counter.sv")
+    sources.append(proj_path / "hdl" / "counter.sv")
+    sources.append(proj_path / "hdl" / "full_renderer.sv")
     sources.append(proj_path / "hdl" / "xilinx_true_dual_port_read_first_2_clock_ram.v")
     build_test_args = ["-Wall"]#,"COCOTB_RESOLVE_X=ZEROS"]
     parameters = {} #!!! nice figured it out.
@@ -109,7 +114,7 @@ def runner():
     runner = get_runner(sim)
     runner.build(
         sources=sources,
-        hdl_toplevel="full_renderer",
+        hdl_toplevel="top_level_sim",
         always=True,
         build_args=build_test_args,
         parameters=parameters,
@@ -118,8 +123,8 @@ def runner():
     )
     run_test_args = []
     runner.test(
-        hdl_toplevel="full_renderer",
-        test_module="test_full_renderer",
+        hdl_toplevel="top_level_sim",
+        test_module="test_top_level_sim",
         test_args=run_test_args,
         waves=True
     )
