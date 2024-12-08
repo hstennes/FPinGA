@@ -58,8 +58,8 @@ module top_level
     .rst_in(sys_rst_pixel),
     .hcount_out(hcount_vga),
     .vcount_out(vcount_vga),
-    .vs_out(VGA_VS),
-    .hs_out(VGA_HS),
+    .vs_out(vsync_vga),
+    .hs_out(hsync_vga),
     .nf_out(nf_vga),
     .ad_out(active_draw_vga),
     .fc_out(frame_count_vga)
@@ -170,29 +170,29 @@ module top_level
   logic pipe_active_draw_vga;
   logic pipe_in_3d_region;
 
-  axi_pipe #(.LATENCY(1), .SIZE(1)) pipe_hsync (
+  axi_pipe #(.LATENCY(339), .SIZE(1)) pipe_hsync (
     .s_axis_a_tdata(hsync_vga),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(1'b1),
-    .m_axis_result_tdata(pipe_hsync_vga),
+    .m_axis_result_tdata(VGA_HS),
     .m_axis_result_tvalid(),
     .m_axis_result_tready(1'b1),
     .aclk(clk_pixel),
     .aresetn(sys_rst_pixel)
   );
 
-  axi_pipe #(.LATENCY(1), .SIZE(1)) pipe_vsync (
+  axi_pipe #(.LATENCY(339), .SIZE(1)) pipe_vsync (
     .s_axis_a_tdata(vsync_vga),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(1'b1),
-    .m_axis_result_tdata(pipe_vsync_vga),
+    .m_axis_result_tdata(VGA_VS),
     .m_axis_result_tvalid(),
     .m_axis_result_tready(1'b1),
     .aclk(clk_pixel),
     .aresetn(sys_rst_pixel)
   );
 
-  axi_pipe #(.LATENCY(1), .SIZE(1)) pipe_active_draw (
+  axi_pipe #(.LATENCY(339), .SIZE(1)) pipe_active_draw (
     .s_axis_a_tdata(active_draw_vga),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(1'b1),
@@ -203,7 +203,7 @@ module top_level
     .aresetn(sys_rst_pixel)
   );
 
-  axi_pipe #(.LATENCY(1), .SIZE(1)) pipe_in_3d (
+  axi_pipe #(.LATENCY(339), .SIZE(1)) pipe_in_3d (
     .s_axis_a_tdata(in_3d_region),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(1'b1),
@@ -214,7 +214,7 @@ module top_level
     .aresetn(sys_rst_pixel)
   );
 
-  assign VGA_R = pipe_active_draw_vga && pixel_valid ? renderer_pixel_out[23:20] : 4'h0; // Full red in active region
+  assign VGA_R = pipe_active_draw_vga ? renderer_pixel_out[23:20] : 4'h0; // Full red in active region
   assign VGA_G = pipe_active_draw_vga ? renderer_pixel_out[15:12] : 4'h0; // No green
   assign VGA_B = pipe_active_draw_vga ? renderer_pixel_out[7:4] : 4'h0; // No green
 

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module renderer #(parameter SIZE=64) (
+module renderer #(parameter SIZE=32) (
   input wire [10:0] hcount_axis_tdata,
   input wire hcount_axis_tvalid,
   output logic hcount_axis_tready,
