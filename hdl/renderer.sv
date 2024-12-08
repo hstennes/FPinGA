@@ -26,6 +26,7 @@ module renderer #(parameter SIZE=32) (
 
   localparam PIPE_RAY_LATENCY = 168;
   localparam PIPE_UNDEF_LATENCY = 147;
+  localparam PIPE_INVALID_CYLINDER_HIT_LATENCY = 64;
   localparam TOTAL_LATENCY = 339;
 
   logic [2:0][SIZE-1:0] ray_data;
@@ -45,6 +46,7 @@ module renderer #(parameter SIZE=32) (
   logic [2:0][SIZE-1:0] hit_point_result;
   logic [2:0][SIZE-1:0] normal_result;
   logic hit_point_valid;
+  logic invalid_cylinder_hit;
   logic normal_valid;
 
   logic lambert_hit_point_ready;
@@ -53,6 +55,9 @@ module renderer #(parameter SIZE=32) (
   logic pipe_undef_ready;
   logic pipe_undef_result;
   logic pipe_undef_valid;
+
+  logic pipe_invalid_cylinder_hit_result;
+  logic pipe_invalid_cylinder_hit_valid;
 
   logic [23:0] output_pixel;
 
@@ -147,6 +152,18 @@ module renderer #(parameter SIZE=32) (
     .normal_axis_tdata(normal_result),
     .normal_axis_tvalid(normal_valid),
     .normal_axis_tready(lambert_normal_ready),
+    .invalid_cylinder_hit(invalid_cylinder_hit),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  axi_pipe #(.LATENCY(PIPE_INVALID_CYLINDER_HIT_LATENCY), .SIZE(1)) pipe_invalid_cylinder_hit (
+    .s_axis_a_tdata(invalid_cylinder_hit),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(hit_point_valid),
+    .m_axis_result_tdata(pipe_invalid_cylinder_hit_result),
+    .m_axis_result_tvalid(pipe_invalid_cylinder_hit_valid),
+    .m_axis_result_tready(pixel_axis_tready),
     .aclk(aclk),
     .aresetn(aresetn)
   );
@@ -166,7 +183,7 @@ module renderer #(parameter SIZE=32) (
     .aresetn(aresetn)
   );
 
-  assign pixel_axis_tdata = pipe_undef_result ? 24'b0 : output_pixel;
+  assign pixel_axis_tdata = (pipe_undef_result || pipe_invalid_cylinder_hit_result) ? 24'b0 : output_pixel;
 
 endmodule
 `default_nettype wire

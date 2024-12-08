@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date             : Sun Dec  8 10:56:43 2024
-| Host             : eecs-digital-01 running 64-bit Ubuntu 24.04.1 LTS
+| Date             : Sun Dec  8 12:30:21 2024
+| Host             : eecs-digital-30 running 64-bit Ubuntu 24.04.1 LTS
 | Command          : report_power -file obj/post_route_power.rpt
 | Design           : top_level
 | Device           : xc7a100tcsg324-1
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.623        |
+| Total On-Chip Power (W)  | 0.621        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.525        |
+| Dynamic (W)              | 0.522        |
 | Device Static (W)        | 0.099        |
 | Effective TJA (C/W)      | 4.6          |
 | Max Ambient (C)          | 82.2         |
@@ -53,20 +53,20 @@ Table of Contents
 | On-Chip                 | Power (W) | Used     | Available | Utilization (%) |
 +-------------------------+-----------+----------+-----------+-----------------+
 | Clocks                  |     0.098 |        7 |       --- |             --- |
-| Slice Logic             |     0.078 |    72504 |       --- |             --- |
-|   LUT as Logic          |     0.059 |    17165 |     63400 |           27.07 |
+| Slice Logic             |     0.077 |    72504 |       --- |             --- |
+|   LUT as Logic          |     0.058 |    17167 |     63400 |           27.08 |
 |   Register              |     0.010 |    37345 |    126800 |           29.45 |
-|   LUT as Shift Register |     0.005 |     2305 |     19000 |           12.13 |
+|   LUT as Shift Register |     0.005 |     2313 |     19000 |           12.17 |
 |   CARRY4                |     0.004 |     1946 |     15850 |           12.28 |
 |   F7/F8 Muxes           |    <0.001 |       86 |     63400 |            0.14 |
 |   Others                |     0.000 |     7301 |       --- |             --- |
-| Signals                 |     0.102 |    49141 |       --- |             --- |
+| Signals                 |     0.101 |    49146 |       --- |             --- |
 | MMCM                    |     0.104 |        1 |         6 |           16.67 |
 | PLL                     |     0.101 |        1 |         6 |           16.67 |
 | DSPs                    |     0.040 |      134 |       240 |           55.83 |
 | I/O                     |     0.001 |       16 |       210 |            7.62 |
 | Static Power            |     0.099 |          |           |                 |
-| Total                   |     0.623 |          |           |                 |
+| Total                   |     0.621 |          |           |                 |
 +-------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -76,7 +76,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.341 |       0.324 |      0.016 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.339 |       0.322 |      0.016 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.129 |       0.111 |      0.018 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.004 |       0.000 |      0.004 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -149,19 +149,19 @@ Table of Contents
 +-----------------------------------+-----------+
 | Name                              | Power (W) |
 +-----------------------------------+-----------+
-| top_level                         |     0.525 |
-|   render                          |     0.317 |
-|     hp                            |     0.081 |
+| top_level                         |     0.522 |
+|   render                          |     0.315 |
+|     hp                            |     0.080 |
 |       dot                         |     0.009 |
 |       hit_point                   |     0.034 |
 |       mul                         |     0.004 |
 |       normal                      |     0.013 |
 |       pipe_hit_point              |     0.003 |
 |       pipe_pre_normal             |     0.004 |
-|       pre_normal                  |     0.014 |
-|     intersectisakeywordapparently |     0.152 |
+|       pre_normal                  |     0.013 |
+|     intersectisakeywordapparently |     0.153 |
 |       a                           |     0.012 |
-|       b                           |     0.012 |
+|       b                           |     0.011 |
 |       c                           |     0.004 |
 |       dca                         |     0.008 |
 |       dd                          |     0.016 |
@@ -173,15 +173,15 @@ Table of Contents
 |       pipe_b                      |     0.001 |
 |       pipe_d                      |     0.002 |
 |       prec                        |     0.005 |
-|       quad                        |     0.053 |
-|     lam                           |     0.053 |
+|       quad                        |     0.054 |
+|     lam                           |     0.051 |
 |       color                       |     0.010 |
-|       dot                         |     0.023 |
-|       light_dir                   |     0.011 |
+|       dot                         |     0.022 |
+|       light_dir                   |     0.010 |
 |       pipe_normal                 |     0.003 |
 |       pixel                       |     0.006 |
 |     pipe_ray                      |     0.004 |
-|     rfp                           |     0.027 |
+|     rfp                           |     0.028 |
 |       float_hcount                |     0.001 |
 |       float_vcount                |     0.001 |
 |       px                          |     0.013 |
