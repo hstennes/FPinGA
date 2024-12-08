@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date             : Sat Dec  7 11:34:12 2024
-| Host             : eecs-digital-19 running 64-bit Ubuntu 24.04.1 LTS
+| Date             : Sun Dec  8 11:39:37 2024
+| Host             : eecs-digital-30 running 64-bit Ubuntu 24.04.1 LTS
 | Command          : report_power -file obj/post_route_power.rpt
 | Design           : top_level
 | Device           : xc7a100tcsg324-1
@@ -30,14 +30,14 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.326        |
+| Total On-Chip Power (W)  | 0.548        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.228        |
-| Device Static (W)        | 0.098        |
+| Dynamic (W)              | 0.450        |
+| Device Static (W)        | 0.099        |
 | Effective TJA (C/W)      | 4.6          |
-| Max Ambient (C)          | 83.5         |
-| Junction Temperature (C) | 26.5         |
+| Max Ambient (C)          | 82.5         |
+| Junction Temperature (C) | 27.5         |
 | Confidence Level         | Medium       |
 | Setting File             | ---          |
 | Simulation Activity File | ---          |
@@ -52,21 +52,21 @@ Table of Contents
 +-------------------------+-----------+----------+-----------+-----------------+
 | On-Chip                 | Power (W) | Used     | Available | Utilization (%) |
 +-------------------------+-----------+----------+-----------+-----------------+
-| Clocks                  |     0.013 |        7 |       --- |             --- |
-| Slice Logic             |     0.002 |     4976 |       --- |             --- |
-|   LUT as Logic          |     0.001 |     1181 |     63400 |            1.86 |
-|   Register              |    <0.001 |     2840 |    126800 |            2.24 |
-|   LUT as Shift Register |    <0.001 |      306 |     19000 |            1.61 |
-|   CARRY4                |    <0.001 |       32 |     15850 |            0.20 |
-|   Others                |     0.000 |      320 |       --- |             --- |
-| Signals                 |     0.002 |     3945 |       --- |             --- |
-| Block RAM               |     0.006 |        2 |       135 |            1.48 |
+| Clocks                  |     0.088 |        7 |       --- |             --- |
+| Slice Logic             |     0.051 |    72628 |       --- |             --- |
+|   LUT as Logic          |     0.039 |    17298 |     63400 |           27.28 |
+|   Register              |     0.006 |    37317 |    126800 |           29.43 |
+|   CARRY4                |     0.003 |     1947 |     15850 |           12.28 |
+|   LUT as Shift Register |     0.002 |     2274 |     19000 |           11.97 |
+|   F7/F8 Muxes           |    <0.001 |       86 |     63400 |            0.14 |
+|   Others                |     0.000 |     7334 |       --- |             --- |
+| Signals                 |     0.067 |    49135 |       --- |             --- |
 | MMCM                    |     0.104 |        1 |         6 |           16.67 |
 | PLL                     |     0.101 |        1 |         6 |           16.67 |
-| DSPs                    |    <0.001 |        4 |       240 |            1.67 |
-| I/O                     |    <0.001 |       16 |       210 |            7.62 |
-| Static Power            |     0.098 |          |           |                 |
-| Total                   |     0.326 |          |           |                 |
+| DSPs                    |     0.033 |      134 |       240 |           55.83 |
+| I/O                     |     0.008 |       16 |       210 |            7.62 |
+| Static Power            |     0.099 |          |           |                 |
+| Total                   |     0.548 |          |           |                 |
 +-------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -76,16 +76,16 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.044 |       0.028 |      0.016 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.259 |       0.243 |      0.016 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.129 |       0.111 |      0.018 |       NA    | Unspecified | NA         |
-| Vcco33    |       3.300 |     0.004 |       0.000 |      0.004 |       NA    | Unspecified | NA         |
+| Vcco33    |       3.300 |     0.006 |       0.002 |      0.004 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco18    |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco15    |       1.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco135   |       1.350 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco12    |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccaux_io |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
-| Vccbram   |       1.000 |     0.001 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
+| Vccbram   |       1.000 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | MGTAVcc   |       1.000 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | MGTAVtt   |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccadc    |       1.800 |     0.020 |       0.000 |      0.020 |       NA    | Unspecified | NA         |
@@ -146,20 +146,45 @@ Table of Contents
 3.1 By Hierarchy
 ----------------
 
-+--------------------+-----------+
-| Name               | Power (W) |
-+--------------------+-----------+
-| top_level          |     0.228 |
-|   full_render      |     0.014 |
-|     check_objects  |     0.012 |
-|       hp           |     0.002 |
-|       pipe_hcount1 |     0.001 |
-|       pipe_vcount1 |     0.001 |
-|       r_intersect  |     0.006 |
-|     lam            |     0.001 |
-|   renderer_buffer  |     0.006 |
-|   wizard_hdmi      |     0.104 |
-|   wizard_migcam    |     0.101 |
-+--------------------+-----------+
++-----------------------------------+-----------+
+| Name                              | Power (W) |
++-----------------------------------+-----------+
+| top_level                         |     0.450 |
+|   full_render                     |     0.236 |
+|     hp                            |     0.057 |
+|       dot                         |     0.006 |
+|       hit_point                   |     0.022 |
+|       mul                         |     0.006 |
+|       normal                      |     0.008 |
+|       pipe_hit_point              |     0.002 |
+|       pipe_pre_normal             |     0.003 |
+|       pre_normal                  |     0.009 |
+|     intersectisakeywordapparently |     0.125 |
+|       a                           |     0.011 |
+|       b                           |     0.010 |
+|       c                           |     0.003 |
+|       dca                         |     0.007 |
+|       dd                          |     0.015 |
+|       oc                          |     0.001 |
+|       occa                        |     0.006 |
+|       ocd                         |     0.015 |
+|       ococ                        |     0.006 |
+|       pipe_a                      |     0.001 |
+|       pipe_d                      |     0.001 |
+|       prec                        |     0.005 |
+|       quad                        |     0.041 |
+|     lam                           |     0.031 |
+|       color                       |     0.006 |
+|       dot                         |     0.012 |
+|       light_dir                   |     0.006 |
+|       pipe_normal                 |     0.003 |
+|       pixel                       |     0.004 |
+|     pipe_ray                      |     0.002 |
+|     rfp                           |     0.021 |
+|       px                          |     0.010 |
+|       py                          |     0.009 |
+|   wizard_hdmi                     |     0.104 |
+|   wizard_migcam                   |     0.101 |
++-----------------------------------+-----------+
 
 

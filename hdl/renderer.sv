@@ -26,8 +26,8 @@ module renderer #(parameter SIZE=64) (
 
   //TOTAL LATENCY = 339
 
-  localparam [3*SIZE-1:0] CAMERA_LOC = 192'h000000000000000000000000000000004014000000000000;
-  // localparam [3*SIZE-1:0] CAMERA_LOC ''= 96'h000000000000000040a00000;
+  // localparam [3*SIZE-1:0] CAMERA_LOC = 192'h000000000000000000000000000000004014000000000000;
+  localparam [3*SIZE-1:0] CAMERA_LOC = 96'h000000000000000040a00000;
 
   localparam PIPE_RAY_LATENCY = 168;
   localparam PIPE_UNDEF_LATENCY = 147;
@@ -117,7 +117,7 @@ module renderer #(parameter SIZE=64) (
     .obj_axis_tdata(sphere),
     .obj_axis_tvalid(1'b1),
     .obj_axis_tready(),
-    .obj_axis_is_cylinder(1'b1),
+    .obj_axis_is_cylinder(1'b0),
     .ray_axis_tdata({ray_data, CAMERA_LOC}),
     .ray_axis_tvalid(ray_valid),
     .ray_axis_tready(ray_intersect_ready),
@@ -142,7 +142,7 @@ module renderer #(parameter SIZE=64) (
 
   hit_point #(.SIZE(SIZE)) hp (
     .obj_axis_tdata(sphere),
-    .obj_axis_is_cylinder(1'b1),
+    .obj_axis_is_cylinder(1'b0),
     .obj_axis_tready(),
     .obj_axis_tvalid(1'b1),
     .t_axis_tdata(t_result),
@@ -180,7 +180,7 @@ module renderer #(parameter SIZE=64) (
     .normal_axis_tdata(normal_result),
     .normal_axis_tvalid(normal_valid),
     .normal_axis_tready(lambert_normal_ready),
-    .is_cylinder(1'b1),
+    .is_cylinder(1'b0),
     .pixel_axis_tdata(output_pixel),
     .pixel_axis_tvalid(pixel_axis_tvalid),
     .pixel_axis_tready(pixel_axis_tready),

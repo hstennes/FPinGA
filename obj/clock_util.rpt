@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Sat Dec  7 11:34:00 2024
-| Host         : eecs-digital-19 running 64-bit Ubuntu 24.04.1 LTS
+| Date         : Sun Dec  8 11:38:49 2024
+| Host         : eecs-digital-30 running 64-bit Ubuntu 24.04.1 LTS
 | Command      : report_clock_utilization -file obj/clock_util.rpt
 | Design       : top_level
 | Device       : 7a100t-csg324
@@ -24,10 +24,13 @@ Table of Contents
 8. Device Cell Placement Summary for Global Clock g2
 9. Device Cell Placement Summary for Global Clock g3
 10. Clock Region Cell Placement per Global Clock: Region X0Y0
-11. Clock Region Cell Placement per Global Clock: Region X0Y1
-12. Clock Region Cell Placement per Global Clock: Region X1Y1
-13. Clock Region Cell Placement per Global Clock: Region X0Y2
-14. Clock Region Cell Placement per Global Clock: Region X1Y2
+11. Clock Region Cell Placement per Global Clock: Region X1Y0
+12. Clock Region Cell Placement per Global Clock: Region X0Y1
+13. Clock Region Cell Placement per Global Clock: Region X1Y1
+14. Clock Region Cell Placement per Global Clock: Region X0Y2
+15. Clock Region Cell Placement per Global Clock: Region X1Y2
+16. Clock Region Cell Placement per Global Clock: Region X0Y3
+17. Clock Region Cell Placement per Global Clock: Region X1Y3
 
 1. Clock Primitive Utilization
 ------------------------------
@@ -51,7 +54,7 @@ Table of Contents
 +-----------+-----------+-----------------+------------+----------------+--------------+-------------------+-------------+-----------------+--------------+-------------------+-----------------------------+------------------------------------+
 | Global Id | Source Id | Driver Type/Pin | Constraint | Site           | Clock Region | Load Clock Region | Clock Loads | Non-Clock Loads | Clock Period | Clock             | Driver Pin                  | Net                                |
 +-----------+-----------+-----------------+------------+----------------+--------------+-------------------+-------------+-----------------+--------------+-------------------+-----------------------------+------------------------------------+
-| g0        | src0      | BUFG/O          | None       | BUFGCTRL_X0Y0  | n/a          |                 4 |        3152 |               0 |       13.468 | clk_pixel_cw_hdmi | wizard_hdmi/clkout1_buf/O   | wizard_hdmi/clk_pixel              |
+| g0        | src0      | BUFG/O          | None       | BUFGCTRL_X0Y0  | n/a          |                 8 |       40169 |               0 |       13.468 | clk_pixel_cw_hdmi | wizard_hdmi/clkout1_buf/O   | wizard_hdmi/clk_pixel              |
 | g1        | src1      | BUFG/O          | None       | BUFGCTRL_X0Y1  | n/a          |                 1 |           1 |               0 |       50.000 | clkfbout_cw_hdmi  | wizard_hdmi/clkf_buf/O      | wizard_hdmi/clkfbout_buf_cw_hdmi   |
 | g2        | src2      | BUFG/O          | None       | BUFGCTRL_X0Y16 | n/a          |                 1 |           1 |               0 |       10.000 | clkfbout_cw_fast  | wizard_migcam/clkf_buf/O    | wizard_migcam/clkfbout_buf_cw_fast |
 | g3        | src3      | BUFG/O          | None       | BUFGCTRL_X0Y17 | n/a          |                 1 |           1 |               0 |       10.000 | clk_100_cw_fast   | wizard_migcam/clkout1_buf/O | wizard_migcam/sysclk               |
@@ -83,14 +86,14 @@ Table of Contents
 +-------------------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+
 | Clock Region Name | Used | Avail | Used | Avail | Used | Avail | Used | Avail | Used | Avail | Used | Avail | Used | Avail | Used | Avail | Used | Avail | Used | Avail | Used | Avail | Used | Avail | Used | Avail | Used | Avail | Used | Avail |
 +-------------------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+
-| X0Y0              |    2 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    1 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |    0 |  2600 |    0 |   600 |    0 |    20 |    0 |    10 |    0 |    20 |
-| X1Y0              |    0 |    12 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     4 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |  1500 |    0 |   550 |    0 |    40 |    0 |    20 |    0 |    40 |
-| X0Y1              |    1 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 | 2159 |  2000 |  712 |   600 |    0 |    20 |    0 |    10 |    0 |    20 |
-| X1Y1              |    1 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |  327 |  1900 |  219 |   650 |    0 |    60 |    2 |    30 |    4 |    40 |
-| X0Y2              |    1 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |  291 |  2000 |   89 |   600 |    0 |    20 |    0 |    10 |    0 |    20 |
-| X1Y2              |    2 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    1 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |   63 |  1900 |   24 |   650 |    0 |    60 |    0 |    30 |    0 |    40 |
-| X0Y3              |    0 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |    0 |  2600 |    0 |   600 |    0 |    20 |    0 |    10 |    0 |    20 |
-| X1Y3              |    0 |    12 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     4 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |  1350 |    0 |   500 |    0 |    30 |    0 |    15 |    0 |    40 |
+| X0Y0              |    3 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    1 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 | 8698 |  2600 | 2679 |   600 |    0 |    20 |    0 |    10 |   18 |    20 |
+| X1Y0              |    1 |    12 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     4 |    0 |     0 |    0 |     0 |    0 |     0 | 5203 |  1500 | 2317 |   550 |    0 |    40 |    0 |    20 |   36 |    40 |
+| X0Y1              |    1 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 | 6660 |  2000 | 2418 |   600 |    0 |    20 |    0 |    10 |   12 |    20 |
+| X1Y1              |    1 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 | 6354 |  1900 | 2735 |   650 |    0 |    60 |    0 |    30 |   29 |    40 |
+| X0Y2              |    1 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 | 4793 |  2000 | 1883 |   600 |    0 |    20 |    0 |    10 |   10 |    20 |
+| X1Y2              |    2 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    1 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 | 5309 |  1900 | 2281 |   650 |    0 |    60 |    0 |    30 |   29 |    40 |
+| X0Y3              |    1 |    12 |    0 |     4 |    0 |     2 |    0 |     4 |    0 |     1 |    0 |     1 |    0 |     0 |    0 |     0 |    0 |    50 |    0 |    50 |   50 |  2600 |   21 |   600 |    0 |    20 |    0 |    10 |    0 |    20 |
+| X1Y3              |    1 |    12 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     0 |    0 |     4 |    0 |     1 |    0 |     0 |    0 |     0 |  250 |  1350 |  113 |   500 |    0 |    30 |    0 |    15 |    0 |    40 |
 +-------------------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+------+-------+
 * Global Clock column represents track count; while other columns represents cell counts
 
@@ -115,7 +118,7 @@ All Modules
 +-----------+-----------------+-------------------+-------------------+-------------+---------------+-------------+----------+----------------+----------+-----------------------+
 | Global Id | Driver Type/Pin | Driver Region (D) | Clock             | Period (ns) | Waveform (ns) | Slice Loads | IO Loads | Clocking Loads | GT Loads | Net                   |
 +-----------+-----------------+-------------------+-------------------+-------------+---------------+-------------+----------+----------------+----------+-----------------------+
-| g0        | BUFG/O          | n/a               | clk_pixel_cw_hdmi |      13.468 | {0.000 6.734} |        3152 |        0 |              0 |        0 | wizard_hdmi/clk_pixel |
+| g0        | BUFG/O          | n/a               | clk_pixel_cw_hdmi |      13.468 | {0.000 6.734} |       40169 |        0 |              0 |        0 | wizard_hdmi/clk_pixel |
 +-----------+-----------------+-------------------+-------------------+-------------+---------------+-------------+----------+----------------+----------+-----------------------+
 * Slice Loads column represents load cell count of all cell types other than IO, GT and clock resources
 ** IO Loads column represents load cell count of IO types
@@ -123,14 +126,14 @@ All Modules
 **** GT Loads column represents load cell count of GT types
 
 
-+----+-------+------+-----------------------+
-|    | X0    | X1   | HORIZONTAL PROG DELAY |
-+----+-------+------+-----------------------+
-| Y3 |     0 |    0 |                     - |
-| Y2 |   296 |   63 |                     0 |
-| Y1 |  2338 |  455 |                     0 |
-| Y0 |     0 |    0 |                     - |
-+----+-------+------+-----------------------+
++----+-------+-------+-----------------------+
+|    | X0    | X1    | HORIZONTAL PROG DELAY |
++----+-------+-------+-----------------------+
+| Y3 |    50 |   254 |                     0 |
+| Y2 |  5202 |  5684 |                     0 |
+| Y1 |  7297 |  6919 |                     0 |
+| Y0 |  9275 |  5488 |                     0 |
++----+-------+-------+-----------------------+
 
 
 7. Device Cell Placement Summary for Global Clock g1
@@ -208,65 +211,105 @@ All Modules
 10. Clock Region Cell Placement per Global Clock: Region X0Y0
 -------------------------------------------------------------
 
-+-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+----------------------------------+
-| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                              |
-+-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+----------------------------------+
-| g1        | n/a   | BUFG/O          | None       |           1 |               0 |  0 |           0 |    0 |   0 |  0 |    1 |   0 |       0 | wizard_hdmi/clkfbout_buf_cw_hdmi |
-| g3        | n/a   | BUFG/O          | None       |           1 |               0 |  0 |           0 |    0 |   0 |  0 |    1 |   0 |       0 | wizard_migcam/sysclk             |
-+-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+----------------------------------+
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+----------------------------------+
+| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF   | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                              |
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+----------------------------------+
+| g0        | n/a   | BUFG/O          | None       |        9275 |               0 | 8698 |         559 |    0 |  18 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel            |
+| g1        | n/a   | BUFG/O          | None       |           1 |               0 |    0 |           0 |    0 |   0 |  0 |    1 |   0 |       0 | wizard_hdmi/clkfbout_buf_cw_hdmi |
+| g3        | n/a   | BUFG/O          | None       |           1 |               0 |    0 |           0 |    0 |   0 |  0 |    1 |   0 |       0 | wizard_migcam/sysclk             |
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+----------------------------------+
 * Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
 ** Non-Clock Loads column represents cell count of non-clock pin loads
 *** Columns FF, LUTRAM, RAMB through 'Hard IP' represents load cell counts
 
 
-11. Clock Region Cell Placement per Global Clock: Region X0Y1
+11. Clock Region Cell Placement per Global Clock: Region X1Y0
 -------------------------------------------------------------
 
 +-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
 | Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF   | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                   |
 +-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
-| g0        | n/a   | BUFG/O          | None       |        2338 |               0 | 2159 |         179 |    0 |   0 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel |
+| g0        | n/a   | BUFG/O          | None       |        5488 |               0 | 5203 |         249 |    0 |  36 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel |
 +-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
 * Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
 ** Non-Clock Loads column represents cell count of non-clock pin loads
 *** Columns FF, LUTRAM, RAMB through 'Hard IP' represents load cell counts
 
 
-12. Clock Region Cell Placement per Global Clock: Region X1Y1
+12. Clock Region Cell Placement per Global Clock: Region X0Y1
 -------------------------------------------------------------
 
-+-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+-----------------------+
-| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF  | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                   |
-+-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+-----------------------+
-| g0        | n/a   | BUFG/O          | None       |         455 |               0 | 327 |         122 |    2 |   4 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel |
-+-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+-----------------------+
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
+| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF   | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                   |
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
+| g0        | n/a   | BUFG/O          | None       |        7297 |               0 | 6660 |         625 |    0 |  12 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel |
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
 * Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
 ** Non-Clock Loads column represents cell count of non-clock pin loads
 *** Columns FF, LUTRAM, RAMB through 'Hard IP' represents load cell counts
 
 
-13. Clock Region Cell Placement per Global Clock: Region X0Y2
+13. Clock Region Cell Placement per Global Clock: Region X1Y1
 -------------------------------------------------------------
 
-+-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+-----------------------+
-| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF  | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                   |
-+-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+-----------------------+
-| g0        | n/a   | BUFG/O          | None       |         296 |               0 | 291 |           5 |    0 |   0 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel |
-+-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+-----------------------+
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
+| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF   | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                   |
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
+| g0        | n/a   | BUFG/O          | None       |        6919 |               0 | 6354 |         536 |    0 |  29 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel |
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
 * Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
 ** Non-Clock Loads column represents cell count of non-clock pin loads
 *** Columns FF, LUTRAM, RAMB through 'Hard IP' represents load cell counts
 
 
-14. Clock Region Cell Placement per Global Clock: Region X1Y2
+14. Clock Region Cell Placement per Global Clock: Region X0Y2
 -------------------------------------------------------------
 
-+-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+------------------------------------+
-| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                                |
-+-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+------------------------------------+
-| g0        | n/a   | BUFG/O          | None       |          63 |               0 | 63 |           0 |    0 |   0 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel              |
-| g2        | n/a   | BUFG/O          | None       |           1 |               0 |  0 |           0 |    0 |   0 |  0 |    0 |   1 |       0 | wizard_migcam/clkfbout_buf_cw_fast |
-+-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+------------------------------------+
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
+| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF   | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                   |
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
+| g0        | n/a   | BUFG/O          | None       |        5202 |               0 | 4793 |         399 |    0 |  10 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel |
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+-----------------------+
+* Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
+** Non-Clock Loads column represents cell count of non-clock pin loads
+*** Columns FF, LUTRAM, RAMB through 'Hard IP' represents load cell counts
+
+
+15. Clock Region Cell Placement per Global Clock: Region X1Y2
+-------------------------------------------------------------
+
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+------------------------------------+
+| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF   | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                                |
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+------------------------------------+
+| g0        | n/a   | BUFG/O          | None       |        5684 |               0 | 5309 |         346 |    0 |  29 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel              |
+| g2        | n/a   | BUFG/O          | None       |           1 |               0 |    0 |           0 |    0 |   0 |  0 |    0 |   1 |       0 | wizard_migcam/clkfbout_buf_cw_fast |
++-----------+-------+-----------------+------------+-------------+-----------------+------+-------------+------+-----+----+------+-----+---------+------------------------------------+
+* Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
+** Non-Clock Loads column represents cell count of non-clock pin loads
+*** Columns FF, LUTRAM, RAMB through 'Hard IP' represents load cell counts
+
+
+16. Clock Region Cell Placement per Global Clock: Region X0Y3
+-------------------------------------------------------------
+
++-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+-----------------------+
+| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                   |
++-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+-----------------------+
+| g0        | n/a   | BUFG/O          | None       |          50 |               0 | 50 |           0 |    0 |   0 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel |
++-----------+-------+-----------------+------------+-------------+-----------------+----+-------------+------+-----+----+------+-----+---------+-----------------------+
+* Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
+** Non-Clock Loads column represents cell count of non-clock pin loads
+*** Columns FF, LUTRAM, RAMB through 'Hard IP' represents load cell counts
+
+
+17. Clock Region Cell Placement per Global Clock: Region X1Y3
+-------------------------------------------------------------
+
++-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+-----------------------+
+| Global Id | Track | Driver Type/Pin | Constraint | Clock Loads | Non-Clock Loads | FF  | Memory LUTs | RAMB | DSP | GT | MMCM | PLL | Hard IP | Net                   |
++-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+-----------------------+
+| g0        | n/a   | BUFG/O          | None       |         254 |               0 | 250 |           4 |    0 |   0 |  0 |    0 |   0 |       0 | wizard_hdmi/clk_pixel |
++-----------+-------+-----------------+------------+-------------+-----------------+-----+-------------+------+-----+----+------+-----+---------+-----------------------+
 * Clock Loads column represents cell count of net connects that connect to a clock pin. Internal cell leaf pins are not considered
 ** Non-Clock Loads column represents cell count of non-clock pin loads
 *** Columns FF, LUTRAM, RAMB through 'Hard IP' represents load cell counts
@@ -288,5 +331,5 @@ set_property LOC IOB_X1Y126 [get_ports CLK100MHZ]
 #startgroup
 create_pblock {CLKAG_wizard_hdmi/clk_pixel}
 add_cells_to_pblock [get_pblocks  {CLKAG_wizard_hdmi/clk_pixel}] [get_cells -filter { PRIMITIVE_GROUP != I/O && IS_PRIMITIVE==1 && PRIMITIVE_LEVEL !=INTERNAL } -of_object [get_pins -filter {DIRECTION==IN} -of_objects [get_nets -hierarchical -filter {PARENT=="wizard_hdmi/clk_pixel"}]]]
-resize_pblock [get_pblocks {CLKAG_wizard_hdmi/clk_pixel}] -add {CLOCKREGION_X0Y1:CLOCKREGION_X0Y1 CLOCKREGION_X0Y2:CLOCKREGION_X0Y2 CLOCKREGION_X1Y1:CLOCKREGION_X1Y1 CLOCKREGION_X1Y2:CLOCKREGION_X1Y2}
+resize_pblock [get_pblocks {CLKAG_wizard_hdmi/clk_pixel}] -add {CLOCKREGION_X0Y0:CLOCKREGION_X0Y0 CLOCKREGION_X0Y1:CLOCKREGION_X0Y1 CLOCKREGION_X0Y2:CLOCKREGION_X0Y2 CLOCKREGION_X0Y3:CLOCKREGION_X0Y3 CLOCKREGION_X1Y0:CLOCKREGION_X1Y0 CLOCKREGION_X1Y1:CLOCKREGION_X1Y1 CLOCKREGION_X1Y2:CLOCKREGION_X1Y2 CLOCKREGION_X1Y3:CLOCKREGION_X1Y3}
 #endgroup

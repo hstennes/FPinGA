@@ -96,7 +96,25 @@ module top_level
 
   logic [24:0] renderer_pixel_out;
 
-  full_renderer full_render (
+  // full_renderer full_render (
+  //   .hcount_axis_tdata(renderer_hcount_in),
+  //   .hcount_axis_tvalid(1'b1),
+  //   .hcount_axis_tready(renderer_ready),
+  //   .vcount_axis_tdata(renderer_vcount_in),
+  //   .vcount_axis_tvalid(1'b1),
+  //   .vcount_axis_tready(),
+  //   .sphere(192'h00000000000000000000000000000000c0a00000c0a00000),
+  //   .cylinders(1920'h3f80000000000000c0c00000c0a00000c1800000000000003f80000000000000c0000000c0a00000c1800000000000003f8000000000000040000000c0a00000c1800000000000003f8000000000000040c00000c0a00000c1800000000000003f80000000000000c0800000c0a00000c1600000000000003f8000000000000000000000c0a00000c1600000000000003f8000000000000040800000c0a00000c1600000000000003f80000000000000c0000000c0a00000c1400000000000003f8000000000000040000000c0a00000c1400000000000003f8000000000000000000000c0a00000c1200000),
+  //   .pixel_axis_tdata(renderer_pixel_out),
+  //   .pixel_axis_tvalid(pixel_valid),
+  //   .pixel_axis_tready(1'b1),
+  //   .aclk(clk_pixel),
+  //   .hcount_out(renderer_hcount_out),
+  //   .vcount_out(renderer_vcount_out),
+  //   .aresetn(sys_rst_pixel)
+  // );
+
+  renderer full_render (
     .hcount_axis_tdata(renderer_hcount_in),
     .hcount_axis_tvalid(1'b1),
     .hcount_axis_tready(renderer_ready),
@@ -131,11 +149,11 @@ module top_level
   ) renderer_buffer (
       .addra(ram_addra),   // Port A address bus, width determined from RAM_DEPTH
       .addrb(in_3d_region ? ram_addrb : 1'b0),   // Port B address bus, width determined from RAM_DEPTH
-      .dina(24'hFF0000),     // Port A RAM input data, width determined from RAM_WIDTH
+      .dina(renderer_pixel_out),     // Port A RAM input data, width determined from RAM_WIDTH
       .dinb(1'b0),     // Port B RAM input data, width determined from RAM_WIDTH
       .clka(clk_pixel),     // Port A clock
       .clkb(clk_pixel),     // Port B clock
-      .wea(1'b1),       // Port A write enable
+      .wea(pixel_valid),       // Port A write enable
       .web(1'b0),       // Port B write enable
       .ena(1'b1),       // Port A RAM Enable, for additional power savings, disable port when not in use
       .enb(1'b1),       // Port B RAM Enable, for additional power savings, disable port when not in use
@@ -196,9 +214,9 @@ module top_level
     .aresetn(sys_rst_pixel)
   );
 
-  assign VGA_R = pipe_active_draw_vga && pipe_in_3d_region ? red[7:4] : 4'h0; // Full red in active region
-  assign VGA_G = pipe_active_draw_vga && pipe_in_3d_region ? green[7:4] : 4'h0; // No green
-  assign VGA_B = pipe_active_draw_vga && pipe_in_3d_region ? blue[7:4] : 4'h0; // No green
+  assign VGA_R = pipe_active_draw_vga && pixel_valid ? renderer_pixel_out[23:20] : 4'h0; // Full red in active region
+  assign VGA_G = pipe_active_draw_vga ? renderer_pixel_out[15:12] : 4'h0; // No green
+  assign VGA_B = pipe_active_draw_vga ? renderer_pixel_out[7:4] : 4'h0; // No green
 
 endmodule // top_level
 
