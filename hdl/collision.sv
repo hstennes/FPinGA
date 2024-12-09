@@ -46,6 +46,7 @@ module collision (
             timer <= timer + 1;
 
             if(valid_in && (state == CALC_DIST_BALL)) begin
+                done <= 0;
                 for (int i = 0; i < 10; i++) begin
                     dist_ball_pin[i] <= (ball_x - pins_x[i]) * (ball_x - pins_x[i]) +
                                         (ball_y - pins_y[i]) * (ball_y - pins_y[i]);
@@ -86,10 +87,10 @@ module collision (
                         end
                     end
                 end
-                state <= CALC_COLL_PIN;
-
+                state <= CALC_DIST_BALL;
+                done <= 1;
             end
-            done <= 1;
+
         end else if (timer == TIMER_RST) begin
             timer <= 0;
         end else begin 
