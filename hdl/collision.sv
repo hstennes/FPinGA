@@ -25,11 +25,13 @@ module collision (
     parameter PIN_RADIUS = 5;
     parameter SCREEN_HEIGHT = 768;
     parameter SCREEN_WIDTH = 1024;
+    parameter TIMER_RST = 750000;
 
     // Intermediate variables
     logic [19:0] dist_ball_pin [9:0];
     logic [19:0] dist_pin [9:0][9:0];
     logic state;
+    logic [31:0] timer;
     // logic [19:0] dist_pin;
 
     always @(posedge clk_in or posedge rst_in) begin
@@ -40,8 +42,10 @@ module collision (
             done <= 0;
             state <= CALC_DIST_BALL;
         
-        end else if (valid_in) begin
-            if(state == CALC_DIST_BALL) begin
+        end else if (timer == 0) begin
+            timer <= timer + 1;
+
+            if(valid_in && (state == CALC_DIST_BALL)) begin
                 for (int i = 0; i < 10; i++) begin
                     dist_ball_pin[i] <= (ball_x - pins_x[i]) * (ball_x - pins_x[i]) +
                                         (ball_y - pins_y[i]) * (ball_y - pins_y[i]);
@@ -86,6 +90,10 @@ module collision (
 
             end
             done <= 1;
+        end else if (timer == TIMER_RST) begin
+            timer <= 0;
+        end else begin 
+            timer <= timer +1;
         end
     end
 endmodule
