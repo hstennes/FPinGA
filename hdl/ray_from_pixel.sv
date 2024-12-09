@@ -22,9 +22,9 @@ module ray_from_pixel #(parameter SIZE) (
   // localparam [SIZE-1:0] PY_ADD = 64'h3FEFFFFFFFFFFFFF;
   // localparam [SIZE-1:0] PZ = 64'hBFF0000000000000;
 
-  localparam [SIZE-1:0] PX_MUL = 32'h3bb60b61;
-  localparam [SIZE-1:0] PX_ADD = 32'hbfe38e39;
-  localparam [SIZE-1:0] PY_MUL = 32'hbbb60b61;
+  localparam [SIZE-1:0] PX_MUL = 32'h3b2aaaab;
+  localparam [SIZE-1:0] PX_ADD = 32'hbfaaaaab;
+  localparam [SIZE-1:0] PY_MUL = 32'hbb2aaaab;
   localparam [SIZE-1:0] PY_ADD = 32'h3f800000;
   localparam [SIZE-1:0] PZ = 32'hbf800000;
 

@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Sun Dec  8 21:32:47 2024
-| Host         : eecs-digital-44 running 64-bit Ubuntu 24.04.1 LTS
+| Date         : Mon Dec  9 09:28:25 2024
+| Host         : eecs-digital-35 running 64-bit Ubuntu 24.04.1 LTS
 | Command      : report_timing -file obj/post_route_timing.rpt
 | Design       : top_level
 | Device       : 7a100t-csg324
@@ -12,20 +12,20 @@ Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanc
 
 Timing Report
 
-Slack (MET) :             2.624ns  (required time - arrival time)
+Slack (MET) :             1.512ns  (required time - arrival time)
   Source:                 ram_addrb0/CLK
                             (rising edge-triggered cell DSP48E1 clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
-  Destination:            renderer_buffer/BRAM_reg_6/ADDRBWRADDR[2]
+  Destination:            renderer_buffer/BRAM_reg_1_9__0/ADDRBWRADDR[8]
                             (rising edge-triggered cell RAMB36E1 clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
   Path Group:             clk_pixel_cw_hdmi
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            13.468ns  (clk_pixel_cw_hdmi rise@13.468ns - clk_pixel_cw_hdmi rise@0.000ns)
-  Data Path Delay:        9.978ns  (logic 7.157ns (71.725%)  route 2.821ns (28.275%))
-  Logic Levels:           2  (DSP48E1=1 LUT6=1)
-  Clock Path Skew:        -0.090ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -1.810ns = ( 11.658 - 13.468 ) 
-    Source Clock Delay      (SCD):    -2.142ns
-    Clock Pessimism Removal (CPR):    -0.422ns
+  Data Path Delay:        10.634ns  (logic 7.152ns (67.253%)  route 3.482ns (32.747%))
+  Logic Levels:           2  (DSP48E1=1 LUT2=1)
+  Clock Path Skew:        -0.338ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.994ns = ( 11.474 - 13.468 ) 
+    Source Clock Delay      (SCD):    -2.159ns
+    Clock Pessimism Removal (CPR):    -0.503ns
   Clock Uncertainty:      0.210ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
     Discrete Jitter          (DJ):    0.414ns
@@ -48,18 +48,18 @@ Slack (MET) :             2.624ns  (required time - arrival time)
                                                      -3.922    -6.159 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, routed)           2.018    -4.141    wizard_hdmi/clk_pixel_cw_hdmi
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -4.045 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=55771, routed)       1.903    -2.142    clk_pixel
-    DSP48_X0Y75          DSP48E1                                      r  ram_addrb0/CLK
+                         net (fo=51214, routed)       1.886    -2.159    clk_pixel
+    DSP48_X1Y60          DSP48E1                                      r  ram_addrb0/CLK
   -------------------------------------------------------------------    -------------------
-    DSP48_X0Y75          DSP48E1 (Prop_dsp48e1_CLK_PCOUT[47])
-                                                      5.515     3.373 r  ram_addrb0/PCOUT[47]
-                         net (fo=1, routed)           0.002     3.375    ram_addrb0_n_106
-    DSP48_X0Y76          DSP48E1 (Prop_dsp48e1_PCIN[47]_P[1])
-                                                      1.518     4.893 r  ram_addrb/P[1]
-                         net (fo=1, routed)           1.187     6.080    vsg/h_counter/P[1]
-    SLICE_X9Y184         LUT6 (Prop_lut6_I5_O)        0.124     6.204 r  vsg/h_counter/BRAM_reg_2_i_13/O
-                         net (fo=6, routed)           1.632     7.836    renderer_buffer/ADDRBWRADDR[1]
-    RAMB36_X0Y30         RAMB36E1                                     r  renderer_buffer/BRAM_reg_6/ADDRBWRADDR[2]
+    DSP48_X1Y60          DSP48E1 (Prop_dsp48e1_CLK_PCOUT[47])
+                                                      5.515     3.356 r  ram_addrb0/PCOUT[47]
+                         net (fo=1, routed)           0.002     3.358    ram_addrb0_n_106
+    DSP48_X1Y61          DSP48E1 (Prop_dsp48e1_PCIN[47]_P[8])
+                                                      1.518     4.876 r  ram_addrb/P[8]
+                         net (fo=2, routed)           0.933     5.809    vsg/h_counter/P[8]
+    SLICE_X57Y150        LUT2 (Prop_lut2_I1_O)        0.119     5.928 r  vsg/h_counter/BRAM_reg_0_8_i_7/O
+                         net (fo=12, routed)          2.548     8.475    renderer_buffer/ADDRBWRADDR[8]
+    RAMB36_X0Y24         RAMB36E1                                     r  renderer_buffer/BRAM_reg_1_9__0/ADDRBWRADDR[8]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_pixel_cw_hdmi rise edge)
@@ -77,17 +77,17 @@ Slack (MET) :             2.624ns  (required time - arrival time)
                                                      -3.694     7.918 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, routed)           1.923     9.841    wizard_hdmi/clk_pixel_cw_hdmi
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091     9.932 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=55771, routed)       1.725    11.658    renderer_buffer/clk_pixel
-    RAMB36_X0Y30         RAMB36E1                                     r  renderer_buffer/BRAM_reg_6/CLKBWRCLK
-                         clock pessimism             -0.422    11.236    
-                         clock uncertainty           -0.210    11.026    
-    RAMB36_X0Y30         RAMB36E1 (Setup_ramb36e1_CLKBWRCLK_ADDRBWRADDR[2])
-                                                     -0.566    10.460    renderer_buffer/BRAM_reg_6
+                         net (fo=51214, routed)       1.541    11.474    renderer_buffer/clk_pixel
+    RAMB36_X0Y24         RAMB36E1                                     r  renderer_buffer/BRAM_reg_1_9__0/CLKBWRCLK
+                         clock pessimism             -0.503    10.971    
+                         clock uncertainty           -0.210    10.761    
+    RAMB36_X0Y24         RAMB36E1 (Setup_ramb36e1_CLKBWRCLK_ADDRBWRADDR[8])
+                                                     -0.774     9.987    renderer_buffer/BRAM_reg_1_9__0
   -------------------------------------------------------------------
-                         required time                         10.460    
-                         arrival time                          -7.836    
+                         required time                          9.987    
+                         arrival time                          -8.475    
   -------------------------------------------------------------------
-                         slack                                  2.624    
+                         slack                                  1.512    
 
 
 

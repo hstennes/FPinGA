@@ -33,6 +33,7 @@ module top_level_sim
 
   // clocking wizards to generate the clock speeds we need for our different domains
   // clk_camera: 200MHz, fast enough to comfortably sample the cameera's PCLK (50MHz)
+
   assign clk_pixel = CLK100MHZ;
 
   assign sys_rst_pixel = ~BTNC; //use for resetting hdmi/draw side of logic
@@ -49,7 +50,7 @@ module top_level_sim
   logic          nf_vga;
 
   // rgb output values
-  logic [7:0]          red,green,blue;
+  logic [3:0]          red,green,blue;
 
   vga_sig_gen vsg
   (
@@ -71,10 +72,10 @@ module top_level_sim
   logic renderer_ready;
   logic pixel_valid;
 
-  localparam [10:0] START_X = 260;
-  localparam [9:0] START_Y = 195;
-  localparam [10:0] END_X = 390;
-  localparam [9:0] END_Y = 295;
+  localparam [10:0] START_X = 390;
+  localparam [9:0] START_Y = 390;
+  localparam [10:0] END_X = 634;
+  localparam [9:0] END_Y = 765;
 
   renderer_sig_gen #(
     .START_X(START_X),
@@ -122,8 +123,8 @@ module top_level_sim
     .vcount_axis_tdata(renderer_vcount_in),
     .vcount_axis_tvalid(1'b1),
     .vcount_axis_tready(),
-    .sphere(192'h00000000000000000000000000000000c0a00000c0a00000),
-    .cylinders(1920'h3f80000000000000c0c00000c0a00000c1800000000000003f80000000000000c0000000c0a00000c1800000000000003f8000000000000040000000c0a00000c1800000000000003f8000000000000040c00000c0a00000c1800000000000003f80000000000000c0800000c0a00000c1600000000000003f8000000000000000000000c0a00000c1600000000000003f8000000000000040800000c0a00000c1600000000000003f80000000000000c0000000c0a00000c1400000000000003f8000000000000040000000c0a00000c1400000000000003f8000000000000000000000c0a00000c1200000),
+    .sphere(192'h000000003f80000000000000000000003f800000c0000000),
+    .cylinders(1920'h3f80000000000000c099999a00000000c1800000000000003f80000000000000bfcccccd00000000c1800000000000003f800000000000003fcccccd00000000c1800000000000003f800000000000004099999a00000000c1800000000000003f80000000000000c04ccccd00000000c1600000000000003f800000000000000000000000000000c1600000000000003f80000000000000404ccccd00000000c1600000000000003f80000000000000bfcccccd00000000c1400000000000003f800000000000003fcccccd00000000c1400000000000003f800000000000000000000000000000c1200000),
     .pixel_axis_tdata(renderer_pixel_out),
     .pixel_axis_tvalid(pixel_valid),
     .pixel_axis_tready(1'b1),
@@ -133,48 +134,24 @@ module top_level_sim
     .aresetn(sys_rst_pixel)
   );
 
-  // evt_counter valid_evt_counter (
-  //   .clk_in(clk_pixel),
-  //   .rst_in(~sys_rst_pixel),
-  //   .evt_in(pixel_valid),
-  //   .period_in(32'hFFFFFFFF),
-  //   .count_out(valid_counter)
-  // );
-
-  // logic [6:0] ss_c;
-
-  // seven_segment_controller mssc(.clk_in(clk_pixel),
-  //                              .rst_in(~sys_rst_pixel),
-  //                              .val_in(valid_counter),
-  //                              .cat_out(ss_c),
-  //                              .an_out(AN));
-
-  // assign CA = ss_c[0];
-  // assign CB = ss_c[1];
-  // assign CC = ss_c[2];
-  // assign CD = ss_c[3];
-  // assign CE = ss_c[4];
-  // assign CF = ss_c[5];
-  // assign CG = ss_c[6];
-
   logic [24:0] ram_pixel_out;
 
   logic in_3d_region;
   assign in_3d_region = hcount_vga >= START_X && hcount_vga < END_X && vcount_vga >= START_Y && vcount_vga < END_Y;
-  logic [13:0] ram_addrb;
+  logic [14:0] ram_addrb;
   assign ram_addrb = (hcount_vga - START_X) + (vcount_vga - START_Y) * (END_X - START_X);
-  logic [13:0] ram_addra;
+  logic [14:0] ram_addra;
   assign ram_addra = (renderer_hcount_out - START_X) + (renderer_vcount_out - START_Y) * (END_X - START_X);
 
   xilinx_true_dual_port_read_first_2_clock_ram #(
-      .RAM_WIDTH(24),                       // Specify RAM data width
-      .RAM_DEPTH(13000),                     // Specify RAM depth (number of entries)
+      .RAM_WIDTH(12),                       // Specify RAM data width
+      .RAM_DEPTH(91500),                     // Specify RAM depth (number of entries)
       .RAM_PERFORMANCE("HIGH_PERFORMANCE"), // Select "HIGH_PERFORMANCE" or "LOW_LATENCY"
       .INIT_FILE("")                        // Specify name/location of RAM initialization file if using one (leave blank if not)
   ) renderer_buffer (
       .addra(ram_addra),   // Port A address bus, width determined from RAM_DEPTH
       .addrb(in_3d_region ? ram_addrb : 1'b0),   // Port B address bus, width determined from RAM_DEPTH
-      .dina(renderer_pixel_out),     // Port A RAM input data, width determined from RAM_WIDTH
+      .dina({renderer_pixel_out[23:20], renderer_pixel_out[15:12], renderer_pixel_out[7:4]}),     // Port A RAM input data, width determined from RAM_WIDTH
       .dinb(1'b0),     // Port B RAM input data, width determined from RAM_WIDTH
       .clka(clk_pixel),     // Port A clock
       .clkb(clk_pixel),     // Port B clock
@@ -243,9 +220,9 @@ module top_level_sim
   // assign VGA_G = pipe_active_draw_vga ? renderer_pixel_out[15:12] : 4'h0; // No green
   // assign VGA_B = pipe_active_draw_vga ? renderer_pixel_out[7:4] : 4'h0; // No green
 
-  assign VGA_R = pipe_active_draw_vga ? red[7:4] : 4'h0; // Full red in active region
-  assign VGA_G = pipe_active_draw_vga ? green[7:4] : 4'h0; // No green
-  assign VGA_B = pipe_active_draw_vga ? blue[7:4] : 4'h0; // No green
+  assign VGA_R = pipe_active_draw_vga ? red : 4'h0; // Full red in active region
+  assign VGA_G = pipe_active_draw_vga ? green : 4'h0; // No green
+  assign VGA_B = pipe_active_draw_vga ? blue : 4'h0; // No green
 
 endmodule // top_level
 

@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image
+from float_utils import *
 
 # Vector operations
 def normalize(v):
@@ -80,7 +81,10 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
     PY_MUL = -2 / height * angle
     PY_ADD = angle
 
-    print(PX_MUL, PX_ADD, PY_MUL, PY_ADD)
+    print("PX MUL:", hex(float_to_binary_32(PX_MUL)))
+    print("PX ADD:", hex(float_to_binary_32(PX_ADD)))
+    print("PY MUL:", hex(float_to_binary_32(PY_MUL)))
+    print("PY ADD:", hex(float_to_binary_32(PY_ADD)))
 
     for y in range(height):
         for x in range(width):
@@ -100,9 +104,6 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
             for sphere in spheres:
                 dist = intersect_sphere(camera, direction, sphere)
                 if dist is not None and dist < min_dist:
-
-                    print("guys we found the sphere")
-                    print(x, y)
                     min_dist = dist
                     # Compute point of intersection
                     hit_point = camera + direction * dist
@@ -177,6 +178,29 @@ lights = [
     {'position': np.array([0, 45, 70]), 'intensity': 0.7},
     # {'position': np.array([0, 10, -5]), 'intensity': 0.5},
 ]
+
+cylinder_data = []
+for c in cylinders:
+    cylinder_data.extend(c["direction"].tolist())
+    cylinder_data.extend(c["center"].tolist())
+
+print("CYLINDER DATA:", hex(make_binary_vector_32(cylinder_data)))
+
+print("SPHERE DATA:", hex(make_binary_vector_32([0, 1, 0] + spheres[0]["center"].tolist())))
+
+print("CAMERA DATA:", hex(make_binary_vector_32(camera.tolist())))
+
+print("LIGHT DATA:", hex(make_binary_vector_32(lights[0]["position"].tolist())))
+
+print("CYLINDER HEIGHT", hex(float_to_binary_32(cylinders[0]["height"])))
+
+print("CYLINDER RADIUS:", hex(float_to_binary_32(cylinders[0]["radius"])))
+
+print("SPHERE RADIUS:", hex(float_to_binary_32(spheres[0]["radius"])))
+
+print("CYLINDER COLOR", hex(make_binary_vector_32(cylinders[0]["color"])))
+
+print("SPHERE COLOR:", hex(make_binary_vector_32(spheres[0]["color"])))
 
 # Render and save the image
 image = render(camera, spheres, cylinders, lights, width=1024, height=768)

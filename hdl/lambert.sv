@@ -24,8 +24,8 @@ module lambert #(parameter SIZE) (
   // localparam [3*SIZE-1:0] SPHERE_COLOR = 192'h0000000000000000406FE000000000000000000000000000;
   // localparam [3*SIZE-1:0] CYLINDER_COLOR = 192'h406FE00000000000406FE00000000000406FE00000000000;
 
-  localparam [3*SIZE-1:0] LIGHT_LOC = 96'h0000000040e0000040e00000;
-  localparam [3*SIZE-1:0] SPHERE_COLOR = 96'h00000000437f000000000000;
+  localparam [3*SIZE-1:0] LIGHT_LOC = 96'h0000000042340000428c0000;
+  localparam [3*SIZE-1:0] SPHERE_COLOR = 96'h000000004316000000000000;
   localparam [3*SIZE-1:0] CYLINDER_COLOR = 96'h437f0000437f0000437f0000;
 
   logic [2:0][SIZE-1:0] light_dir_result;
@@ -104,7 +104,7 @@ module lambert #(parameter SIZE) (
 
   logic [SIZE-1:0] scale_dot_result;
 
-  float_mul_pow2 #(.SIZE(SIZE), .POW(-4)) scale_pipe_a(
+  float_mul_pow2 #(.SIZE(SIZE), .POW(-6)) scale_pipe_a(
     .in_float(dot_result),
     .result(scale_dot_result)
   );
