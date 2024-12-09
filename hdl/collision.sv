@@ -21,8 +21,8 @@ module collision (
     localparam CALC_COLL_PIN = 2'b11;
     parameter BALL_MASS = 1;
     parameter PIN_MASS = 1;
-    parameter BALL_RADIUS = 8;
-    parameter PIN_RADIUS = 5;
+    parameter BALL_RADIUS = 166;
+    parameter PIN_RADIUS = 90;
     parameter SCREEN_HEIGHT = 768;
     parameter SCREEN_WIDTH = 1024;
     parameter TIMER_RST = 750000;
