@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date             : Mon Dec  9 09:28:29 2024
-| Host             : eecs-digital-35 running 64-bit Ubuntu 24.04.1 LTS
+| Date             : Mon Dec  9 12:28:51 2024
+| Host             : eecs-digital-44 running 64-bit Ubuntu 24.04.1 LTS
 | Command          : report_power -file obj/post_route_power.rpt
 | Design           : top_level
 | Device           : xc7a100tcsg324-1
@@ -30,15 +30,15 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.731        |
+| Total On-Chip Power (W)  | 0.339        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.630        |
-| Device Static (W)        | 0.101        |
+| Dynamic (W)              | 0.240        |
+| Device Static (W)        | 0.099        |
 | Effective TJA (C/W)      | 4.6          |
-| Max Ambient (C)          | 81.7         |
-| Junction Temperature (C) | 28.3         |
-| Confidence Level         | Medium       |
+| Max Ambient (C)          | 83.5         |
+| Junction Temperature (C) | 26.5         |
+| Confidence Level         | Low          |
 | Setting File             | ---          |
 | Simulation Activity File | ---          |
 | Design Nets Matched      | NA           |
@@ -49,26 +49,25 @@ Table of Contents
 1.1 On-Chip Components
 ----------------------
 
-+-------------------------+-----------+----------+-----------+-----------------+
-| On-Chip                 | Power (W) | Used     | Available | Utilization (%) |
-+-------------------------+-----------+----------+-----------+-----------------+
-| Clocks                  |     0.110 |        7 |       --- |             --- |
-| Slice Logic             |     0.085 |    92102 |       --- |             --- |
-|   LUT as Logic          |     0.067 |    22019 |     63400 |           34.73 |
-|   Register              |     0.010 |    47318 |    126800 |           37.32 |
-|   LUT as Shift Register |     0.005 |     3177 |     19000 |           16.72 |
-|   CARRY4                |     0.004 |     2188 |     15850 |           13.80 |
-|   F7/F8 Muxes           |    <0.001 |       86 |     63400 |            0.14 |
-|   Others                |     0.000 |     8142 |       --- |             --- |
-| Signals                 |     0.114 |    61015 |       --- |             --- |
-| Block RAM               |     0.053 |       39 |       135 |           28.89 |
-| MMCM                    |     0.104 |        1 |         6 |           16.67 |
-| PLL                     |     0.101 |        1 |         6 |           16.67 |
-| DSPs                    |     0.051 |      138 |       240 |           57.50 |
-| I/O                     |     0.012 |       32 |       210 |           15.24 |
-| Static Power            |     0.101 |          |           |                 |
-| Total                   |     0.731 |          |           |                 |
-+-------------------------+-----------+----------+-----------+-----------------+
++----------------+-----------+----------+-----------+-----------------+
+| On-Chip        | Power (W) | Used     | Available | Utilization (%) |
++----------------+-----------+----------+-----------+-----------------+
+| Clocks         |     0.010 |        9 |       --- |             --- |
+| Slice Logic    |     0.001 |     1755 |       --- |             --- |
+|   LUT as Logic |     0.001 |      586 |     63400 |            0.92 |
+|   CARRY4       |    <0.001 |       83 |     15850 |            0.52 |
+|   Register     |    <0.001 |      677 |    126800 |            0.53 |
+|   F7/F8 Muxes  |    <0.001 |       32 |     63400 |            0.05 |
+|   Others       |     0.000 |      140 |       --- |             --- |
+| Signals        |     0.003 |     1636 |       --- |             --- |
+| Block RAM      |     0.011 |     28.5 |       135 |           21.11 |
+| MMCM           |     0.104 |        1 |         6 |           16.67 |
+| PLL            |     0.101 |        1 |         6 |           16.67 |
+| DSPs           |    <0.001 |        8 |       240 |            3.33 |
+| I/O            |     0.010 |       81 |       210 |           38.57 |
+| Static Power   |     0.099 |          |           |                 |
+| Total          |     0.339 |          |           |                 |
++----------------+-----------+----------+-----------+-----------------+
 
 
 1.2 Power Supply Summary
@@ -77,7 +76,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.433 |       0.415 |      0.018 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.047 |       0.031 |      0.016 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.129 |       0.111 |      0.018 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.007 |       0.003 |      0.004 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -86,7 +85,7 @@ Table of Contents
 | Vcco135   |       1.350 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco12    |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccaux_io |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
-| Vccbram   |       1.000 |     0.005 |       0.004 |      0.001 |       NA    | Unspecified | NA         |
+| Vccbram   |       1.000 |     0.002 |       0.001 |      0.001 |       NA    | Unspecified | NA         |
 | MGTAVcc   |       1.000 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | MGTAVtt   |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccadc    |       1.800 |     0.020 |       0.000 |      0.020 |       NA    | Unspecified | NA         |
@@ -96,17 +95,17 @@ Table of Contents
 1.3 Confidence Level
 --------------------
 
-+-----------------------------+------------+-------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
-| User Input Data             | Confidence | Details                                               | Action                                                                                                     |
-+-----------------------------+------------+-------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
-| Design implementation state | High       | Design is routed                                      |                                                                                                            |
-| Clock nodes activity        | High       | User specified more than 95% of clocks                |                                                                                                            |
-| I/O nodes activity          | Medium     | More than 5% of inputs are missing user specification | Provide missing input activity with simulation results or by editing the "By Resource Type -> I/Os" view   |
-| Internal nodes activity     | Medium     | User specified less than 25% of internal nodes        | Provide missing internal nodes activity with simulation results or by editing the "By Resource Type" views |
-| Device models               | High       | Device models are Production                          |                                                                                                            |
-|                             |            |                                                       |                                                                                                            |
-| Overall confidence level    | Medium     |                                                       |                                                                                                            |
-+-----------------------------+------------+-------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
++-----------------------------+------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+| User Input Data             | Confidence | Details                                                | Action                                                                                                     |
++-----------------------------+------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
+| Design implementation state | High       | Design is routed                                       |                                                                                                            |
+| Clock nodes activity        | High       | User specified more than 95% of clocks                 |                                                                                                            |
+| I/O nodes activity          | Low        | More than 75% of inputs are missing user specification | Provide missing input activity with simulation results or by editing the "By Resource Type -> I/Os" view   |
+| Internal nodes activity     | Medium     | User specified less than 25% of internal nodes         | Provide missing internal nodes activity with simulation results or by editing the "By Resource Type" views |
+| Device models               | High       | Device models are Production                           |                                                                                                            |
+|                             |            |                                                        |                                                                                                            |
+| Overall confidence level    | Low        |                                                        |                                                                                                            |
++-----------------------------+------------+--------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
 
 
 2. Settings
@@ -130,15 +129,17 @@ Table of Contents
 2.2 Clock Constraints
 ---------------------
 
-+-------------------+--------------------------------+-----------------+
-| Clock             | Domain                         | Constraint (ns) |
-+-------------------+--------------------------------+-----------------+
-| clk_100_cw_fast   | wizard_migcam/clk_100_cw_fast  |            10.0 |
-| clk_pixel_cw_hdmi | wizard_hdmi/clk_pixel_cw_hdmi  |            13.5 |
-| clkfbout_cw_fast  | wizard_migcam/clkfbout_cw_fast |            10.0 |
-| clkfbout_cw_hdmi  | wizard_hdmi/clkfbout_cw_hdmi   |            50.0 |
-| sys_clk_pin       | CLK100MHZ                      |            10.0 |
-+-------------------+--------------------------------+-----------------+
++--------------------+----------------------------------+-----------------+
+| Clock              | Domain                           | Constraint (ns) |
++--------------------+----------------------------------+-----------------+
+| clk_100_cw_fast    | wizard_migcam/clk_100_cw_fast    |            10.0 |
+| clk_camera_cw_fast | wizard_migcam/clk_camera_cw_fast |             5.0 |
+| clk_pixel_cw_hdmi  | wizard_hdmi/clk_pixel_cw_hdmi    |            13.5 |
+| clk_xc_cw_fast     | wizard_migcam/clk_xc_cw_fast     |            40.0 |
+| clkfbout_cw_fast   | wizard_migcam/clkfbout_cw_fast   |            10.0 |
+| clkfbout_cw_hdmi   | wizard_hdmi/clkfbout_cw_hdmi     |            50.0 |
+| gclk               | clk_100mhz                       |            10.0 |
++--------------------+----------------------------------+-----------------+
 
 
 3. Detailed Reports
@@ -147,33 +148,20 @@ Table of Contents
 3.1 By Hierarchy
 ----------------
 
-+-----------------------+-----------+
-| Name                  | Power (W) |
-+-----------------------+-----------+
-| top_level             |     0.630 |
-|   full_render         |     0.365 |
-|     check_objects     |     0.300 |
-|       hp              |     0.091 |
-|       pipe_hit_normal |     0.005 |
-|       pipe_ray        |     0.002 |
-|       pipe_t          |     0.001 |
-|       r_intersect     |     0.166 |
-|       ram             |     0.015 |
-|       t_argmin        |     0.014 |
-|     lam               |     0.055 |
-|       color           |     0.011 |
-|       dot             |     0.022 |
-|       light_dir       |     0.009 |
-|       pipe_normal     |     0.001 |
-|       pixel           |     0.011 |
-|     rfp               |     0.010 |
-|       px              |     0.004 |
-|       py              |     0.004 |
-|   renderer_buffer     |     0.039 |
-|   vsg                 |     0.002 |
-|     h_counter         |     0.002 |
-|   wizard_hdmi         |     0.104 |
-|   wizard_migcam       |     0.101 |
-+-----------------------+-----------+
++------------------------+-----------+
+| Name                   | Power (W) |
++------------------------+-----------+
+| top_level              |     0.240 |
+|   IOBUF_sda            |     0.003 |
+|   com_m                |     0.003 |
+|   crw                  |     0.004 |
+|     sccb_c             |     0.002 |
+|   frame_buffer         |     0.012 |
+|     U0                 |     0.012 |
+|       inst_blk_mem_gen |     0.012 |
+|   nolabel_line114      |     0.002 |
+|   wizard_hdmi          |     0.104 |
+|   wizard_migcam        |     0.102 |
++------------------------+-----------+
 
 

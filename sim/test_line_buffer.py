@@ -1,6 +1,5 @@
 import cocotb
 import os
-import random
 import sys
 from math import log
 import logging
@@ -10,50 +9,80 @@ from cocotb.triggers import Timer, ClockCycles, RisingEdge, FallingEdge, ReadOnl
 from cocotb.utils import get_sim_time as gst
 from cocotb.runner import get_runner
 
-def get_vals(buffer_out):
-    try:
-        buffer_out = buffer_out.integer
-        first = (buffer_out & 0xFFFF00000000) >> 32
-        second = (buffer_out & 0x0000FFFF0000) >> 16
-        third = buffer_out & 0x00000000FFFF
-        return first, second, third
-    except:
-        return None
-    
-    # return (first, second, third)
-    # print(type(buffer_out))
-    # return (int(buffer_out[0:16], 2), int(buffer_out[16:32], 2), int(buffer_out[32:48], 2))
 
 @cocotb.test()
 async def test_line_buffer(dut):
-    dut._log.info("Starting...")
+    """Cocotb test for line_buffer module"""
+
+    # Start the clock
     cocotb.start_soon(Clock(dut.clk_in, 10, units="ns").start())
+    print("Clock started")
+
     dut.rst_in.value = 1
-    await ClockCycles(dut.clk_in, 1)
+    await ClockCycles(dut.clk_in, 5)
     dut.rst_in.value = 0
-    await ClockCycles(dut.clk_in, 1)
 
-    for y in range(725):
-        for x in range(1285):
-            dut.hcount_in.value = x
-            dut.vcount_in.value = y
-            dut.pixel_data_in.value = (x + y * 720) & 0xFFFF
-            dut.data_valid_in.value = x < 1280 and y < 720
-            await ClockCycles(dut.clk_in, 1)
-            if 3 <= y <= 6 and x < 15:
-                print(f'({x}, {y}):', get_vals(dut.line_buffer_out.value), dut.data_valid_out.value)
-            
+    assert dut.hcount_out.value == 0, "hcount_out not reset properly"
+    assert dut.vcount_out.value == 0, "vcount_out not reset properly"
+    assert dut.data_valid_out.value == 0, "data_valid_out not reset properly"
+
+    # Apply a simple test pattern
+    pixel_data_pattern = [
+        0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008,
+        0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x000F, 0x0000,
+        0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008,
+        0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x000F, 0x0000,
+        0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008,
+        0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x000F, 0x0000,
+        0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008,
+        0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E, 0x000F, 0x0000
+    ]
+    dut.hcount_in.value = 0
+    dut.vcount_in.value = 0
+    vval = 0
+
+    for i in range(64): 
+
+        dut.hcount_in.value = i % 8
+        # print(i%4)
+        dut.vcount_in.value = int(vval/8)
+        # print(int(vval/4))
+        vval +=1 
+        dut.pixel_data_in.value = pixel_data_pattern[i]
+        dut.data_valid_in.value = 1
+        # await ClockCycles(dut.clk_in, 2)
+        await RisingEdge(dut.clk_in)
+        print(dut.bram_out[0].value)
+        print(dut.bram_out[1].value)
+        print(dut.bram_out[2].value)
+        print(dut.bram_out[3].value)
+        print(dut.hcount_out.value)
+        print(dut.vcount_out.value)
+        print(dut.data_valid_out.value)
+        print(dut.line_buffer_out.value)
+    
+    dut.data_valid_in.value = 0
+
+    # Wait for the data to propagate
+    # await ClockCycles(dut.clk_in, 5)
+
+    # assert dut.bram_out.value == {0x0007,0x000F,0x0007}, f"line_buffer_out is {dut.line_buffer_out.value}, expected 6"
+    assert dut.hcount_out.value == 4, f"hcount_out is {dut.hcount_out.value}, expected 6"
+    assert dut.vcount_out.value == int((vval-1)/8-2), f"vcount_out is {dut.vcount_out.value}, expected {int((vval-1)/8-2)}"
+
+    dut._log.info("Test completed successfully")
 
 
-def line_buffer_runner():
-    """Simulate the counter using the Python runner."""
+def is_runner():
+    """Image Sprite Tester."""
     hdl_toplevel_lang = os.getenv("HDL_TOPLEVEL_LANG", "verilog")
     sim = os.getenv("SIM", "icarus")
     proj_path = Path(__file__).resolve().parent.parent
     sys.path.append(str(proj_path / "sim" / "model"))
     sources = [proj_path / "hdl" / "line_buffer.sv"]
-    sources += [proj_path / "hdl" / "xilinx_true_dual_port_read_first_2_clock_ram.v"]
+    sources += [proj_path / "hdl" / "xilinx_true_dual_port_read_first_1_clock_ram.sv"]
     build_test_args = ["-Wall"]
+    parameters = {}
     sys.path.append(str(proj_path / "sim"))
     runner = get_runner(sim)
     runner.build(
@@ -61,6 +90,7 @@ def line_buffer_runner():
         hdl_toplevel="line_buffer",
         always=True,
         build_args=build_test_args,
+        parameters=parameters,
         timescale = ('1ns','1ps'),
         waves=True
     )
@@ -73,4 +103,4 @@ def line_buffer_runner():
     )
 
 if __name__ == "__main__":
-    line_buffer_runner()
+    is_runner()

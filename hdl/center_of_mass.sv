@@ -8,6 +8,7 @@ module center_of_mass (
                          input wire tabulate_in,
                          output logic [10:0] x_out,
                          output logic [9:0] y_out,
+                         output logic light_out,
                          output logic valid_out);
 	logic [31:0] sum_x;
     logic [31:0] sum_y;
@@ -20,6 +21,7 @@ module center_of_mass (
     logic divider_valid_in;
     logic div_x_valid_out;
     logic div_y_valid_out;
+    logic light;
 
     divider x_div(
         .clk_in(clk_in),
@@ -55,15 +57,23 @@ module center_of_mass (
         case(state)
             RECORDING: begin
                 valid_out <= 0;
+                light_out <= light;
                 if(valid_in) begin
                     total += 1;
                     sum_x += x_in;
                     sum_y += y_in;
                 end
+                
+
                 if(tabulate_in) begin
                     if(total > 0) begin
                         state <= DIVIDING;
                         divider_valid_in <= 1;
+                    end 
+                    if (sum_x > 0 || sum_y > 0) begin
+                        light <= 1;
+                    end else begin
+                        light <= 0;
                     end
                 end
             end
@@ -79,6 +89,7 @@ module center_of_mass (
                 end
                 if(x_done == 1 && y_done == 1) begin
                     valid_out <= 1;
+                    light_out <= light;
                     sum_x <= 0;
                     sum_y <= 0;
                     total <= 0;

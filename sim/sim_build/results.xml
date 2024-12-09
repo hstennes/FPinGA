@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1733689395" />
+    <testcase name="test_camera" classname="test_camera" file="/mnt/c/Users/deniz/OneDrive/Documents/6.205/FPinGA/sim/test_camera.py" lineno="13" time="0.11712408065795898" sim_time_ns="9140.001" ratio_time="78036.90708738046" />
+  </testsuite>
+</testsuites>

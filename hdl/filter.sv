@@ -15,8 +15,8 @@ module filter (
   output logic [9:0] vcount_out
   );
   parameter K_SELECT = 0;
-  parameter HRES = 1280;
-  parameter VRES = 720;
+  parameter HRES = 1024;
+  parameter VRES = 768;
 
   localparam KERNEL_SIZE = 3;
   logic [KERNEL_SIZE-1:0][15:0] buffs;
