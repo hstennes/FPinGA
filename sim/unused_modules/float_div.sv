@@ -30,7 +30,7 @@ module float_div #(parameter SIZE=32) (
   end
 
   always_ff @(posedge aclk) begin
-    if(aresetn) begin
+    if(~aresetn) begin
       for(int i = 0; i < ARTIFICIAL_LATENCY; i++) begin
         valid_pipe[i] <= 0;
       end

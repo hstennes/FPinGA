@@ -23,7 +23,7 @@ module axi_pipe #(parameter SIZE=32, LATENCY=12) (
   end
 
   always_ff @(posedge aclk) begin
-    if(aresetn) begin
+    if(~aresetn) begin
       for(int i = 0; i < LATENCY; i++) begin
         valid_pipe[i] <= 0;
         a_pipe[i] <= 0;

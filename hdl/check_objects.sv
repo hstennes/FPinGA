@@ -118,7 +118,7 @@ module check_objects #(parameter SIZE=64) (
   assign current_vcount = resting ? vcount_axis_tdata : vcount_reg;
 
   always_ff @(posedge aclk) begin
-    if(aresetn == 1) begin
+    if(~aresetn) begin
       count_reg <= 0;
       count_end_reg <= 0;
       ray_reg <= 0;
@@ -313,7 +313,7 @@ module check_objects #(parameter SIZE=64) (
 
   always_ff @(posedge aclk) begin
     delayed_pipe_hcount1_valid <= pipe_hcount1_valid;
-    if(aresetn || delayed_pipe_hcount1_valid) begin
+    if(~aresetn || delayed_pipe_hcount1_valid) begin
       t_reg <= RESET_T_REG;
     end
     if(pipe_obj_idx2_valid) begin
@@ -358,8 +358,8 @@ module check_objects #(parameter SIZE=64) (
       .web(1'b0),       // Port B write enable
       .ena(1'b1),       // Port A RAM Enable, for additional power savings, disable port when not in use
       .enb(1'b1),       // Port B RAM Enable, for additional power savings, disable port when not in use
-      .rsta(aresetn),     // Port A output reset (does not affect memory contents)
-      .rstb(aresetn),     // Port B output reset (does not affect memory contents)
+      .rsta(~aresetn),     // Port A output reset (does not affect memory contents)
+      .rstb(~aresetn),     // Port B output reset (does not affect memory contents)
       .regcea(1'b0), // Port A output register enable
       .regceb(1'b1), // Port B output register enable
       // .douta(douta),   // Port A RAM output data, width determined from RAM_WIDTH
