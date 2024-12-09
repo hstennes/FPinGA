@@ -8,6 +8,7 @@ module full_renderer #(parameter SIZE=32) (
   input wire [9:0] vcount_axis_tdata,
   input wire vcount_axis_tvalid,
   output logic vcount_axis_tready,
+  input wire [1:0] select_objs,
   input wire [5:0][SIZE-1:0] sphere,
   input wire [9:0][5:0][SIZE-1:0] cylinders,
   output logic [23:0] pixel_axis_tdata,
@@ -31,6 +32,7 @@ module full_renderer #(parameter SIZE=32) (
 
   localparam PIPE_RAY_LATENCY = 168;
   localparam PIPE_HVCOUNT1_LATENCY = 24;
+  localparam PIPE_SELECT_OBJS_LATENCY = 24;
   localparam PIPE_UNDEF_LATENCY = 64;
   localparam PIPE_HVCOUNT2_LATENCY = 64;
   localparam PIPE_INVALID_CYLINDER_HIT_LATENCY = 64;
@@ -67,6 +69,9 @@ module full_renderer #(parameter SIZE=32) (
   logic [9:0] pipe_vcount1_result;
   logic pipe_vcount1_valid;
 
+  logic [1:0] pipe_select_objs_result;
+  logic pipe_select_objs_valid;
+
   logic pipe_hcount2_ready;
   logic pipe_vcount2_ready;
 
@@ -92,6 +97,17 @@ module full_renderer #(parameter SIZE=32) (
     .s_axis_a_tvalid(vcount_axis_tvalid),
     .m_axis_result_tdata(pipe_vcount1_result),
     .m_axis_result_tvalid(pipe_vcount1_valid),
+    .m_axis_result_tready(check_objects_ready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  axi_pipe #(.LATENCY(PIPE_SELECT_OBJS_LATENCY), .SIZE(2)) pipe_select_objs (
+    .s_axis_a_tdata(select_objs),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(vcount_axis_tvalid),
+    .m_axis_result_tdata(pipe_select_objs_result),
+    .m_axis_result_tvalid(pipe_select_objs_valid),
     .m_axis_result_tready(check_objects_ready),
     .aclk(aclk),
     .aresetn(aresetn)
@@ -134,7 +150,7 @@ module full_renderer #(parameter SIZE=32) (
 
   check_objects #(.SIZE(SIZE)) check_objects(
     .ray_axis_tdata(ray_data),
-    .select_objs(/*pipe_vcount1_result[0] == 1 ? 2'b01 : 2'b10*/2'b11),
+    .select_objs(/*pipe_vcount1_result[0] == 1 ? 2'b01 : 2'b10*/pipe_select_objs_result),
     .hcount_axis_tdata(pipe_hcount1_result),
     .vcount_axis_tdata(pipe_vcount1_result),
     .ray_axis_tvalid(ray_valid),

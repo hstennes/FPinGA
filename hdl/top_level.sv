@@ -86,6 +86,7 @@ module top_level
   localparam [9:0] START_Y = 390;
   localparam [10:0] END_X = 634;
   localparam [9:0] END_Y = 765;
+  localparam [9:0] REGION_DIVIDE = 530;
 
   renderer_sig_gen #(
     .START_X(START_X),
@@ -126,6 +127,9 @@ module top_level
 
   logic [31:0] valid_counter;
 
+  logic [1:0] select_objs;
+  assign select_objs = renderer_vcount_in < REGION_DIVIDE ? 2'b11 : 2'b10;
+
   full_renderer full_render (
     .hcount_axis_tdata(renderer_hcount_in),
     .hcount_axis_tvalid(1'b1),
@@ -133,7 +137,8 @@ module top_level
     .vcount_axis_tdata(renderer_vcount_in),
     .vcount_axis_tvalid(1'b1),
     .vcount_axis_tready(),
-    .sphere(192'h000000003f80000000000000000000003f800000c0000000),
+    .select_objs(select_objs),
+    .sphere(192'h000000000000000000000000000000003f800000c0000000),
     .cylinders(1920'h3f80000000000000c099999a00000000c1800000000000003f80000000000000bfcccccd00000000c1800000000000003f800000000000003fcccccd00000000c1800000000000003f800000000000004099999a00000000c1800000000000003f80000000000000c04ccccd00000000c1600000000000003f800000000000000000000000000000c1600000000000003f80000000000000404ccccd00000000c1600000000000003f80000000000000bfcccccd00000000c1400000000000003f800000000000003fcccccd00000000c1400000000000003f800000000000000000000000000000c1200000),
     .pixel_axis_tdata(renderer_pixel_out),
     .pixel_axis_tvalid(pixel_valid),

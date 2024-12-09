@@ -186,7 +186,7 @@ for c in cylinders:
 
 print("CYLINDER DATA:", hex(make_binary_vector_32(cylinder_data)))
 
-print("SPHERE DATA:", hex(make_binary_vector_32([0, 1, 0] + spheres[0]["center"].tolist())))
+print("SPHERE DATA:", hex(make_binary_vector_32([0, 0, 0] + spheres[0]["center"].tolist())))
 
 print("CAMERA DATA:", hex(make_binary_vector_32(camera.tolist())))
 
