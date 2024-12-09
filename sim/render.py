@@ -112,7 +112,7 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
                     final_color = np.zeros(3)
                     for light in lights:
                         light_dir = light['position'] - hit_point
-                        intensity = dot(normal, light_dir) / 16
+                        intensity = dot(normal, light_dir) / 64
                         final_color += intensity * sphere_color
 
                     color = np.clip(final_color, 0, 255).astype(int)
@@ -139,11 +139,11 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
 
                     # Accumulate light contribution from each source
                     cylinder_color = np.array(cylinder['color'])
-                    if 2 < hit_height < 2.2: cylinder_color = np.array([255, 0, 0])
+                    if 3 < hit_height < 3.2: cylinder_color = np.array([255, 0, 0])
                     final_color = np.zeros(3)
                     for light in lights:
                         light_dir = light['position'] - hit_point
-                        intensity = dot(normal, light_dir) / 16
+                        intensity = dot(normal, light_dir) / 64
 
                         final_color += intensity * cylinder_color
 
@@ -157,27 +157,27 @@ def render(camera, spheres, cylinders, lights, width=400, height=300, fov=90):
     return img
 
 # Define camera, spheres, cylinders, and multiple light sources
-camera = np.array([0, 0, 5])
+camera = np.array([0, 5, 4])
 spheres = [
-    {'center': np.array([0, -5, -5]), 'radius': 1, 'color': [0, 255, 0]},  # Green sphere
+    {'center': np.array([0, 1, -2]), 'radius': 1.3, 'color': [0, 150, 0]},  # Green sphere
 ]
 cylinders = [
-    {'center': np.array([-6, -5, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([-2, -5, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([2, -5, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([6, -5, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([-4, -5, -14]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([0, -5, -14]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([4, -5, -14]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([-2, -5, -12]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([2, -5, -12]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
-    {'center': np.array([0, -5, -10]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 3, 'color': [255, 255, 255]},
+    {'center': np.array([-4.8, 0, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 4, 'color': [255, 255, 255]},
+    {'center': np.array([-1.6, -0, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 4, 'color': [255, 255, 255]},
+    {'center': np.array([1.6, 0, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 4, 'color': [255, 255, 255]},
+    {'center': np.array([4.8, 0, -16]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 4, 'color': [255, 255, 255]},
+    {'center': np.array([-3.2, 0, -14]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 4, 'color': [255, 255, 255]},
+    {'center': np.array([0, 0, -14]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 4, 'color': [255, 255, 255]},
+    {'center': np.array([3.2, 0, -14]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 4, 'color': [255, 255, 255]},
+    {'center': np.array([-1.6, 0, -12]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 4, 'color': [255, 255, 255]},
+    {'center': np.array([1.6, 0, -12]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 4, 'color': [255, 255, 255]},
+    {'center': np.array([0, 0, -10]), 'direction': normalize(np.array([0, 1, 0])), 'radius': 0.7, 'height': 4, 'color': [255, 255, 255]},
 ]
 lights = [
-    {'position': np.array([0, 5, 8]), 'intensity': 0.7},
+    {'position': np.array([0, 45, 70]), 'intensity': 0.7},
     # {'position': np.array([0, 10, -5]), 'intensity': 0.5},
 ]
 
 # Render and save the image
-image = render(camera, spheres, cylinders, lights, width=640, height=360)
+image = render(camera, spheres, cylinders, lights, width=1024, height=768)
 image.show()
