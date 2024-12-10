@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module top_level_sim
+module top_level
   (
    input wire         CLK100MHZ,
    output logic [3:0] VGA_R,
@@ -33,7 +33,6 @@ module top_level_sim
 
   // clocking wizards to generate the clock speeds we need for our different domains
   // clk_camera: 200MHz, fast enough to comfortably sample the cameera's PCLK (50MHz)
-
   assign clk_pixel = CLK100MHZ;
 
   assign sys_rst_pixel = ~BTNC; //use for resetting hdmi/draw side of logic
@@ -76,6 +75,7 @@ module top_level_sim
   localparam [9:0] START_Y = 390;
   localparam [10:0] END_X = 634;
   localparam [9:0] END_Y = 765;
+  localparam [9:0] REGION_DIVIDE = 530;
 
   renderer_sig_gen #(
     .START_X(START_X),
@@ -116,6 +116,9 @@ module top_level_sim
 
   logic [31:0] valid_counter;
 
+  logic [1:0] select_objs;
+  assign select_objs = renderer_vcount_in < REGION_DIVIDE ? 2'b11 : 2'b10;
+
   full_renderer full_render (
     .hcount_axis_tdata(renderer_hcount_in),
     .hcount_axis_tvalid(1'b1),
@@ -123,8 +126,9 @@ module top_level_sim
     .vcount_axis_tdata(renderer_vcount_in),
     .vcount_axis_tvalid(1'b1),
     .vcount_axis_tready(),
-    .sphere(192'h000000003f80000000000000000000003f800000c0000000),
-    .cylinders(1920'h3f80000000000000c099999a00000000c1800000000000003f80000000000000bfcccccd00000000c1800000000000003f800000000000003fcccccd00000000c1800000000000003f800000000000004099999a00000000c1800000000000003f80000000000000c04ccccd00000000c1600000000000003f800000000000000000000000000000c1600000000000003f80000000000000404ccccd00000000c1600000000000003f80000000000000bfcccccd00000000c1400000000000003f800000000000003fcccccd00000000c1400000000000003f800000000000000000000000000000c1200000),
+    .select_objs(select_objs),
+    .sphere(192'h0000000000000000000000004310000041f0000043d20000),
+    .cylinders(1920'h3f80000000000000000000000000000000000000000000003f8000000000000042c000000000000000000000000000003f80000000000000434000000000000000000000000000003f80000000000000439000000000000000000000000000003f80000000000000424000000000000042700000000000003f80000000000000431000000000000042700000000000003f80000000000000437000000000000042700000000000003f8000000000000042c000000000000042f00000000000003f80000000000000434000000000000042f00000000000003f80000000000000431000000000000043340000),
     .pixel_axis_tdata(renderer_pixel_out),
     .pixel_axis_tvalid(pixel_valid),
     .pixel_axis_tready(1'b1),
@@ -134,13 +138,11 @@ module top_level_sim
     .aresetn(sys_rst_pixel)
   );
 
-  logic [24:0] ram_pixel_out;
-
   logic in_3d_region;
   assign in_3d_region = hcount_vga >= START_X && hcount_vga < END_X && vcount_vga >= START_Y && vcount_vga < END_Y;
-  logic [14:0] ram_addrb;
+  logic [16:0] ram_addrb;
   assign ram_addrb = (hcount_vga - START_X) + (vcount_vga - START_Y) * (END_X - START_X);
-  logic [14:0] ram_addra;
+  logic [16:0] ram_addra;
   assign ram_addra = (renderer_hcount_out - START_X) + (renderer_vcount_out - START_Y) * (END_X - START_X);
 
   xilinx_true_dual_port_read_first_2_clock_ram #(

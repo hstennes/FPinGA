@@ -31,8 +31,8 @@ module ray_intersect #(parameter SIZE) (
   // localparam NEG_SPHERE_RAD_SQ = 64'hBFF0000000000000;
   // localparam NEG_CYLINDER_RAD_SQ = 64'hBFDF5C28F5C28F5C;
 
-  localparam [SIZE-1:0] NEG_SPHERE_RAD_SQ = 32'hbfd851ec;
-  localparam [SIZE-1:0] NEG_CYLINDER_RAD_SQ = 32'hbefae148;
+  localparam [SIZE-1:0] NEG_SPHERE_RAD_SQ = 32'hc4be2000;
+  localparam [SIZE-1:0] NEG_CYLINDER_RAD_SQ = 32'hc3dc8000;
 
   logic [2:0][SIZE-1:0] oc_result;
   logic oc_valid;

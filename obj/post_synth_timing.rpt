@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Mon Dec  9 10:03:29 2024
-| Host         : eecs-digital-15 running 64-bit Ubuntu 24.04.1 LTS
+| Date         : Mon Dec  9 22:13:25 2024
+| Host         : eecs-digital-08 running 64-bit Ubuntu 24.04.1 LTS
 | Command      : report_timing -file obj/post_synth_timing.rpt
 | Design       : top_level
 | Device       : 7a100t-csg324
@@ -48,7 +48,7 @@ Slack (MET) :             3.785ns  (required time - arrival time)
                                                      -1.483    -4.549 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.803    -3.746    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.096    -3.650 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=59688, unplaced)     0.584    -3.066    clk_pixel
+                         net (fo=63262, unplaced)     0.584    -3.066    clk_pixel
                          DSP48E1                                      r  ram_addrb0/CLK
   -------------------------------------------------------------------    -------------------
                          DSP48E1 (Prop_dsp48e1_CLK_PCOUT[47])
@@ -77,7 +77,7 @@ Slack (MET) :             3.785ns  (required time - arrival time)
                                                      -1.293     9.423 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.763    10.185    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.091    10.276 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=59688, unplaced)     0.439    10.715    renderer_buffer/clk_pixel
+                         net (fo=63262, unplaced)     0.439    10.715    renderer_buffer/clk_pixel
                          RAMB36E1                                     r  renderer_buffer/BRAM_reg_0_0/CLKBWRCLK
                          clock pessimism             -0.458    10.257    
                          clock uncertainty           -0.210    10.047    

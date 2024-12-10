@@ -41,7 +41,7 @@ module check_objects #(parameter SIZE=64) (
   localparam [16*SIZE-1:0] RESET_T_REG = 512'h7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff7f7fffff;
 
   // localparam [3*SIZE-1:0] CAMERA_LOC = 192'h000000000000000000000000000000004014000000000000;
-  localparam [3*SIZE-1:0] CAMERA_LOC = 96'h0000000040a0000040800000;
+  localparam [3*SIZE-1:0] CAMERA_LOC = 96'h431000004316000044160000;
 
   logic ray_intersect_ready;
   logic [SIZE-1:0] t_result;
