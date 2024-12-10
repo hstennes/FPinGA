@@ -175,7 +175,7 @@ module top_level_sim
     .s_axis_a_tready(),
     .s_axis_a_tvalid(1'b1),
     .m_axis_result_tdata(float_ball_x),
-    .m_axis_result_tready(),
+    .m_axis_result_tready(1'b1),
     .m_axis_result_tvalid(float_ball_x_valid),
     .aclk(clk_pixel),
     .aresetn(sys_rst_pixel)
@@ -186,7 +186,7 @@ module top_level_sim
     .s_axis_a_tready(),
     .s_axis_a_tvalid(1'b1),
     .m_axis_result_tdata(float_ball_y),
-    .m_axis_result_tready(),
+    .m_axis_result_tready(1'b1),
     .m_axis_result_tvalid(float_ball_y_valid),
     .aclk(clk_pixel),
     .aresetn(sys_rst_pixel)
@@ -244,12 +244,14 @@ module top_level_sim
     .aresetn(sys_rst_pixel)
   );
 
+  logic in_cylinder_region;
+  assign in_cylinder_region = renderer_vcount_out < REGION_DIVIDE;
   logic in_3d_region;
   assign in_3d_region = hcount_vga >= START_X && hcount_vga < END_X && vcount_vga >= START_Y && vcount_vga < END_Y;
   logic [16:0] ram_addrb;
   assign ram_addrb = (hcount_vga - START_X) + (vcount_vga - START_Y) * (END_X - START_X);
   logic [16:0] ram_addra;
-  assign ram_addra = (renderer_hcount_out - START_X) + (renderer_vcount_out - START_Y) * (END_X - START_X);
+  assign ram_addra = (renderer_hcount_out - START_X - (in_cylinder_region ? 2 : 0)) + (renderer_vcount_out - START_Y) * (END_X - START_X);
 
   xilinx_true_dual_port_read_first_2_clock_ram #(
       .RAM_WIDTH(12),                       // Specify RAM data width
@@ -328,9 +330,9 @@ module top_level_sim
   // assign VGA_G = pipe_active_draw_vga ? renderer_pixel_out[15:12] : 4'h0; // No green
   // assign VGA_B = pipe_active_draw_vga ? renderer_pixel_out[7:4] : 4'h0; // No green
 
-  assign VGA_R = pipe_active_draw_vga ? red : 4'h0; // Full red in active region
-  assign VGA_G = pipe_active_draw_vga ? green : 4'h0; // No green
-  assign VGA_B = pipe_active_draw_vga ? blue : 4'h0; // No green
+  assign VGA_R = pipe_in_3d_region && pipe_active_draw_vga ? red : 4'h0; // Full red in active region
+  assign VGA_G = pipe_in_3d_region && pipe_active_draw_vga ? green : 4'h0; // No green
+  assign VGA_B = pipe_in_3d_region && pipe_active_draw_vga ? blue : 4'h0; // No green
 
 endmodule // top_level
 

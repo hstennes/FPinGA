@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date             : Tue Dec 10 01:12:01 2024
-| Host             : eecs-digital-15 running 64-bit Ubuntu 24.04.1 LTS
+| Date             : Tue Dec 10 02:51:57 2024
+| Host             : eecs-digital-10 running 64-bit Ubuntu 24.04.1 LTS
 | Command          : report_power -file obj/post_route_power.rpt
 | Design           : top_level
 | Device           : xc7a100tcsg324-1
@@ -30,14 +30,14 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.775        |
+| Total On-Chip Power (W)  | 0.795        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.673        |
+| Dynamic (W)              | 0.694        |
 | Device Static (W)        | 0.101        |
 | Effective TJA (C/W)      | 4.6          |
-| Max Ambient (C)          | 81.5         |
-| Junction Temperature (C) | 28.5         |
+| Max Ambient (C)          | 81.4         |
+| Junction Temperature (C) | 28.6         |
 | Confidence Level         | Medium       |
 | Setting File             | ---          |
 | Simulation Activity File | ---          |
@@ -52,22 +52,22 @@ Table of Contents
 +-------------------------+-----------+----------+-----------+-----------------+
 | On-Chip                 | Power (W) | Used     | Available | Utilization (%) |
 +-------------------------+-----------+----------+-----------+-----------------+
-| Clocks                  |     0.115 |        7 |       --- |             --- |
-| Slice Logic             |     0.106 |    94958 |       --- |             --- |
-|   LUT as Logic          |     0.084 |    22988 |     63400 |           36.26 |
-|   Register              |     0.012 |    48681 |    126800 |           38.39 |
-|   LUT as Shift Register |     0.005 |     3131 |     19000 |           16.48 |
-|   CARRY4                |     0.005 |     2290 |     15850 |           14.45 |
+| Clocks                  |     0.118 |        7 |       --- |             --- |
+| Slice Logic             |     0.114 |    95482 |       --- |             --- |
+|   LUT as Logic          |     0.089 |    23175 |     63400 |           36.55 |
+|   Register              |     0.013 |    48939 |    126800 |           38.60 |
+|   LUT as Shift Register |     0.007 |     3083 |     19000 |           16.23 |
+|   CARRY4                |     0.005 |     2307 |     15850 |           14.56 |
 |   F7/F8 Muxes           |    <0.001 |       86 |     63400 |            0.14 |
-|   Others                |     0.000 |     8317 |       --- |             --- |
-| Signals                 |     0.143 |    62746 |       --- |             --- |
+|   Others                |     0.000 |     8377 |       --- |             --- |
+| Signals                 |     0.150 |    63027 |       --- |             --- |
 | Block RAM               |     0.049 |       39 |       135 |           28.89 |
 | MMCM                    |     0.104 |        1 |         6 |           16.67 |
 | PLL                     |     0.101 |        1 |         6 |           16.67 |
-| DSPs                    |     0.053 |      138 |       240 |           57.50 |
+| DSPs                    |     0.056 |      138 |       240 |           57.50 |
 | I/O                     |     0.002 |       32 |       210 |           15.24 |
 | Static Power            |     0.101 |          |           |                 |
-| Total                   |     0.775 |          |           |                 |
+| Total                   |     0.795 |          |           |                 |
 +-------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -77,7 +77,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.487 |       0.469 |      0.018 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.507 |       0.489 |      0.018 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.129 |       0.111 |      0.018 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.004 |       0.000 |      0.004 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -150,7 +150,7 @@ Table of Contents
 +-----------------------+-----------+
 | Name                  | Power (W) |
 +-----------------------+-----------+
-| top_level             |     0.673 |
+| top_level             |     0.694 |
 |   cam                 |     0.002 |
 |   convert_ball_x      |     0.002 |
 |     inst              |     0.002 |
@@ -158,25 +158,25 @@ Table of Contents
 |   convert_ball_y      |     0.002 |
 |     inst              |     0.002 |
 |       i_synth         |     0.002 |
-|   full_render         |     0.420 |
-|     check_objects     |     0.341 |
-|       hp              |     0.108 |
-|       pipe_hit_normal |     0.004 |
-|       pipe_obj_idx2   |     0.001 |
+|   full_render         |     0.441 |
+|     check_objects     |     0.361 |
+|       hp              |     0.111 |
+|       pipe_hit_normal |     0.005 |
+|       pipe_obj_idx2   |     0.002 |
 |       pipe_ray        |     0.002 |
 |       pipe_t          |     0.002 |
-|       r_intersect     |     0.188 |
+|       r_intersect     |     0.202 |
 |       ram             |     0.016 |
-|       t_argmin        |     0.015 |
+|       t_argmin        |     0.016 |
 |     lam               |     0.061 |
 |       color           |     0.011 |
 |       dot             |     0.025 |
-|       light_dir       |     0.013 |
-|       pipe_normal     |     0.002 |
+|       light_dir       |     0.012 |
+|       pipe_normal     |     0.003 |
 |       pixel           |     0.010 |
-|     pipe_vcount2      |     0.006 |
-|     rfp               |     0.012 |
-|       px              |     0.005 |
+|     pipe_vcount2      |     0.005 |
+|     rfp               |     0.013 |
+|       px              |     0.006 |
 |       py              |     0.005 |
 |   renderer_buffer     |     0.035 |
 |   vsg                 |     0.002 |

@@ -13,6 +13,7 @@ module lambert #(parameter SIZE) (
   output logic pixel_axis_tvalid,
   input wire pixel_axis_tready,
   input wire aclk,
+  input wire red,
   input wire aresetn);
 
   //TOTAL LATENCY: 64
@@ -27,6 +28,7 @@ module lambert #(parameter SIZE) (
   localparam [3*SIZE-1:0] LIGHT_LOC = 96'h4310000044a8c00045214000;
   localparam [3*SIZE-1:0] SPHERE_COLOR = 96'h000000004316000000000000;
   localparam [3*SIZE-1:0] CYLINDER_COLOR = 96'h437f0000437f0000437f0000;
+  localparam [3*SIZE-1:0] RED_CYLINDER_COLOR = 96'h437f00000000000000000000;
 
   logic [2:0][SIZE-1:0] light_dir_result;
   logic light_dir_valid;
@@ -39,7 +41,7 @@ module lambert #(parameter SIZE) (
   logic [SIZE-1:0] dot_result;
   logic dot_valid;
 
-  logic pipe_is_cylinder_result;
+  logic [1:0] pipe_is_cylinder_result;
   logic pipe_is_cylinder_valid;
 
   logic color_dot_ready;
@@ -91,8 +93,8 @@ module lambert #(parameter SIZE) (
     .aresetn(aresetn)
   );
 
-  axi_pipe #(.LATENCY(PIPE_IS_CYLINDER_LATENCY), .SIZE(1)) pipe_is_cylinder (
-    .s_axis_a_tdata(is_cylinder),
+  axi_pipe #(.LATENCY(PIPE_IS_CYLINDER_LATENCY), .SIZE(2)) pipe_is_cylinder (
+    .s_axis_a_tdata({is_cylinder, red}),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(normal_axis_tvalid),
     .m_axis_result_tdata(pipe_is_cylinder_result),
@@ -110,7 +112,7 @@ module lambert #(parameter SIZE) (
   );
 
   vec_mul #(.SIZE(SIZE)) color(
-    .s_axis_a_tdata(pipe_is_cylinder_result ? CYLINDER_COLOR : SPHERE_COLOR),
+    .s_axis_a_tdata(pipe_is_cylinder_result[1] ? (pipe_is_cylinder_result[0] ? RED_CYLINDER_COLOR : CYLINDER_COLOR) : SPHERE_COLOR),
     .s_axis_a_tready(color_paint_ready),
     .s_axis_a_tvalid(pipe_is_cylinder_valid),
     .s_axis_b_tdata(scale_dot_result),

@@ -148,6 +148,8 @@ module full_renderer #(parameter SIZE=32) (
   // input wire aclk,
   // input wire aresetn
 
+  logic check_objects_red;
+
   check_objects #(.SIZE(SIZE)) check_objects(
     .ray_axis_tdata(ray_data),
     .select_objs(/*pipe_vcount1_result[0] == 1 ? 2'b01 : 2'b10*/ pipe_select_objs_result),
@@ -167,6 +169,7 @@ module full_renderer #(parameter SIZE=32) (
     .hit_sphere(check_objects_hit_sphere),
     .hcount_out(check_objects_hcount_out),
     .vcount_out(check_objects_vcount_out),
+    .red(check_objects_red),
     .aclk(aclk),
     .aresetn(aresetn)
   );
@@ -190,6 +193,7 @@ module full_renderer #(parameter SIZE=32) (
     .normal_axis_tvalid(check_objects_normal_valid),
     .normal_axis_tready(lambert_normal_ready),
     .is_cylinder(check_objects_hit_cylinder),
+    .red(check_objects_red),
     .pixel_axis_tdata(output_pixel),
     .pixel_axis_tvalid(pixel_axis_tvalid),
     .pixel_axis_tready(pixel_axis_tready),

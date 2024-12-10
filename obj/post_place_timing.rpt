@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Tue Dec 10 01:09:21 2024
-| Host         : eecs-digital-15 running 64-bit Ubuntu 24.04.1 LTS
+| Date         : Tue Dec 10 02:48:23 2024
+| Host         : eecs-digital-10 running 64-bit Ubuntu 24.04.1 LTS
 | Command      : report_timing -file obj/post_place_timing.rpt
 | Design       : top_level
 | Device       : 7a100t-csg324
@@ -12,20 +12,20 @@ Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanc
 
 Timing Report
 
-Slack (MET) :             0.336ns  (required time - arrival time)
+Slack (MET) :             0.500ns  (required time - arrival time)
   Source:                 ram_addra0/CLK
                             (rising edge-triggered cell DSP48E1 clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
-  Destination:            renderer_buffer/BRAM_reg_0_0/WEA[0]
+  Destination:            renderer_buffer/BRAM_reg_1_11__0/ENARDEN
                             (rising edge-triggered cell RAMB36E1 clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
   Path Group:             clk_pixel_cw_hdmi
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            13.468ns  (clk_pixel_cw_hdmi rise@13.468ns - clk_pixel_cw_hdmi rise@0.000ns)
-  Data Path Delay:        12.053ns  (logic 8.438ns (70.007%)  route 3.615ns (29.993%))
-  Logic Levels:           7  (CARRY4=4 DSP48E1=1 LUT2=2)
-  Clock Path Skew:        -0.337ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    -2.069ns = ( 11.399 - 13.468 ) 
-    Source Clock Delay      (SCD):    -2.241ns
-    Clock Pessimism Removal (CPR):    -0.509ns
+  Data Path Delay:        12.286ns  (logic 8.362ns (68.061%)  route 3.924ns (31.939%))
+  Logic Levels:           6  (CARRY4=3 DSP48E1=1 LUT2=1 LUT3=1)
+  Clock Path Skew:        -0.029ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.833ns = ( 11.635 - 13.468 ) 
+    Source Clock Delay      (SCD):    -2.233ns
+    Clock Pessimism Removal (CPR):    -0.429ns
   Clock Uncertainty:      0.210ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
     Discrete Jitter          (DJ):    0.414ns
@@ -48,32 +48,29 @@ Slack (MET) :             0.336ns  (required time - arrival time)
                                                      -4.009    -6.226 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, estimated)        2.018    -4.208    wizard_hdmi/clk_pixel_cw_hdmi
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096    -4.112 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=52535, estimated)    1.872    -2.241    clk_pixel
-    DSP48_X1Y67          DSP48E1                                      r  ram_addra0/CLK
+                         net (fo=52750, estimated)    1.880    -2.233    clk_pixel
+    DSP48_X1Y64          DSP48E1                                      r  ram_addra0/CLK
   -------------------------------------------------------------------    -------------------
-    DSP48_X1Y67          DSP48E1 (Prop_dsp48e1_CLK_PCOUT[47])
-                                                      5.515     3.274 r  ram_addra0/PCOUT[47]
-                         net (fo=1, estimated)        0.000     3.274    ram_addra0_n_106
-    DSP48_X1Y68          DSP48E1 (Prop_dsp48e1_PCIN[47]_P[4])
-                                                      1.518     4.792 r  ram_addra/P[4]
-                         net (fo=2, estimated)        0.929     5.721    full_render/pipe_vcount2/P[4]
-    SLICE_X57Y170        LUT2 (Prop_lut2_I1_O)        0.124     5.845 r  full_render/pipe_vcount2/BRAM_reg_0_0_i_37/O
-                         net (fo=1, routed)           0.000     5.845    full_render/pipe_vcount2/BRAM_reg_0_0_i_37_n_0
-    SLICE_X57Y170        CARRY4 (Prop_carry4_S[0]_CO[3])
-                                                      0.532     6.377 r  full_render/pipe_vcount2/BRAM_reg_0_0_i_5/CO[3]
-                         net (fo=1, estimated)        0.000     6.377    full_render/pipe_vcount2/BRAM_reg_0_0_i_5_n_0
-    SLICE_X57Y171        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     6.491 r  full_render/pipe_vcount2/BRAM_reg_0_0_i_4/CO[3]
-                         net (fo=1, estimated)        0.000     6.491    full_render/pipe_vcount2/BRAM_reg_0_0_i_4_n_0
-    SLICE_X57Y172        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     6.605 r  full_render/pipe_vcount2/BRAM_reg_0_0_i_3/CO[3]
-                         net (fo=1, estimated)        0.000     6.605    full_render/pipe_vcount2/BRAM_reg_0_0_i_3_n_0
-    SLICE_X57Y173        CARRY4 (Prop_carry4_CI_O[0])
-                                                      0.222     6.827 f  full_render/pipe_vcount2/BRAM_reg_0_0_i_25/O[0]
-                         net (fo=53, estimated)       0.584     7.411    full_render/lam/pixel/ram_addra1_out[0]
-    SLICE_X57Y166        LUT2 (Prop_lut2_I1_O)        0.299     7.710 r  full_render/lam/pixel/BRAM_reg_0_0_i_24/O
-                         net (fo=8, estimated)        2.102     9.812    renderer_buffer/BRAM_reg_0_3_0[0]
-    RAMB36_X1Y23         RAMB36E1                                     r  renderer_buffer/BRAM_reg_0_0/WEA[0]
+    DSP48_X1Y64          DSP48E1 (Prop_dsp48e1_CLK_PCOUT[47])
+                                                      5.515     3.282 r  ram_addra0/PCOUT[47]
+                         net (fo=1, estimated)        0.000     3.282    ram_addra0_n_106
+    DSP48_X1Y65          DSP48E1 (Prop_dsp48e1_PCIN[47]_P[6])
+                                                      1.518     4.800 r  ram_addra/P[6]
+                         net (fo=2, estimated)        0.911     5.711    full_render/pipe_vcount2/P[5]
+    SLICE_X57Y162        LUT2 (Prop_lut2_I1_O)        0.124     5.835 r  full_render/pipe_vcount2/BRAM_reg_0_0_i_35/O
+                         net (fo=1, routed)           0.000     5.835    full_render/pipe_vcount2/BRAM_reg_0_0_i_35_n_0
+    SLICE_X57Y162        CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     6.385 r  full_render/pipe_vcount2/BRAM_reg_0_0_i_5/CO[3]
+                         net (fo=1, estimated)        0.000     6.385    full_render/pipe_vcount2/BRAM_reg_0_0_i_5_n_0
+    SLICE_X57Y163        CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     6.499 r  full_render/pipe_vcount2/BRAM_reg_0_0_i_4/CO[3]
+                         net (fo=1, estimated)        0.000     6.499    full_render/pipe_vcount2/BRAM_reg_0_0_i_4_n_0
+    SLICE_X57Y164        CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     6.738 f  full_render/pipe_vcount2/BRAM_reg_0_0_i_3/O[2]
+                         net (fo=36, estimated)       1.352     8.090    full_render/pipe_vcount2/ram_addra1_out[14]
+    SLICE_X41Y173        LUT3 (Prop_lut3_I1_O)        0.302     8.392 r  full_render/pipe_vcount2/BRAM_reg_1_11__0_i_1/O
+                         net (fo=1, estimated)        1.661    10.053    renderer_buffer/BRAM_reg_1_11__0_0[0]
+    RAMB36_X2Y38         RAMB36E1                                     r  renderer_buffer/BRAM_reg_1_11__0/ENARDEN
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_pixel_cw_hdmi rise edge)
@@ -91,17 +88,17 @@ Slack (MET) :             0.336ns  (required time - arrival time)
                                                      -3.774     7.864 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, estimated)        1.917     9.782    wizard_hdmi/clk_pixel_cw_hdmi
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091     9.873 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=52535, estimated)    1.526    11.399    renderer_buffer/clk_pixel
-    RAMB36_X1Y23         RAMB36E1                                     r  renderer_buffer/BRAM_reg_0_0/CLKARDCLK
-                         clock pessimism             -0.509    10.890    
-                         clock uncertainty           -0.210    10.681    
-    RAMB36_X1Y23         RAMB36E1 (Setup_ramb36e1_CLKARDCLK_WEA[0])
-                                                     -0.532    10.149    renderer_buffer/BRAM_reg_0_0
+                         net (fo=52750, estimated)    1.762    11.635    renderer_buffer/clk_pixel
+    RAMB36_X2Y38         RAMB36E1                                     r  renderer_buffer/BRAM_reg_1_11__0/CLKARDCLK
+                         clock pessimism             -0.429    11.206    
+                         clock uncertainty           -0.210    10.997    
+    RAMB36_X2Y38         RAMB36E1 (Setup_ramb36e1_CLKARDCLK_ENARDEN)
+                                                     -0.443    10.554    renderer_buffer/BRAM_reg_1_11__0
   -------------------------------------------------------------------
-                         required time                         10.149    
-                         arrival time                          -9.812    
+                         required time                         10.554    
+                         arrival time                         -10.053    
   -------------------------------------------------------------------
-                         slack                                  0.336    
+                         slack                                  0.500    
 
 
 

@@ -243,6 +243,8 @@ module check_objects #(parameter SIZE=64) (
   logic obj_axis_is_cylinder;
   assign obj_axis_is_cylinder = ~(pipe_obj_idx1_result == 10);
 
+  logic hp_red;
+
   hit_point #(.SIZE(SIZE)) hp (
     .obj_axis_tdata(hp_obj_input),
     .obj_axis_is_cylinder(obj_axis_is_cylinder),
@@ -261,6 +263,7 @@ module check_objects #(parameter SIZE=64) (
     .normal_axis_tvalid(normal_valid),
     .normal_axis_tready(pipe_hit_normal_ready),
     .invalid_cylinder_hit(invalid_cylinder_hit),
+    .red(hp_red),
     .aclk(aclk),
     .aresetn(aresetn)
   );
@@ -310,17 +313,22 @@ module check_objects #(parameter SIZE=64) (
   ); 
 
   logic [15:0][SIZE-1:0] t_reg;
+  logic [15:0] red_reg;
   logic delayed_pipe_hcount1_valid;
 
   always_ff @(posedge aclk) begin
     delayed_pipe_hcount1_valid <= pipe_hcount1_valid;
     if(~aresetn || delayed_pipe_hcount1_valid) begin
       t_reg <= RESET_T_REG;
+      red_reg <= 16'b0;
     end
     if(pipe_obj_idx2_valid) begin
       t_reg[pipe_obj_idx2_result] <= invalid_cylinder_hit ? FLOAT_MAX : pipe_t_result;
+      red_reg[pipe_obj_idx2_result] <= hp_red;
     end
   end
+
+  logic red_argmin;
 
   float_multi_argmin #(.SIZE(SIZE)) t_argmin (
     .s_axis_a_tdata(t_reg),
@@ -329,6 +337,8 @@ module check_objects #(parameter SIZE=64) (
     .m_axis_result_tdata(t_argmin_result),
     .m_axis_result_tvalid(t_argmin_valid),
     .m_axis_result_tready(1'b1),
+    .in_tag(red_reg),
+    .out_tag(red_argmin),
     .aclk(aclk),
     .aresetn(aresetn)
   );
@@ -368,17 +378,20 @@ module check_objects #(parameter SIZE=64) (
   );
 
   logic [SIZE-1:0] delayed_t_argmin;
+  logic delayed_red_argmin;
 
   always_ff @(posedge aclk) begin
     normal_axis_tvalid <= t_argmin_valid;
     hit_point_axis_tvalid <= t_argmin_valid;
     delayed_t_argmin <= t_argmin_result;
+    delayed_red_argmin <= red_argmin;
   end
 
   assign hit_point_axis_tdata = selected_hp[2:0];
   assign normal_axis_tdata = selected_hp[5:3];
   assign hit_cylinder = delayed_t_argmin < 10;
   assign hit_sphere = delayed_t_argmin == 10;
+  assign red = delayed_red_argmin;
 
 endmodule
 `default_nettype wire

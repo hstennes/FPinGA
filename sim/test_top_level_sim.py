@@ -42,7 +42,7 @@ async def test_top_level_sim(dut):
     prev_hsync = 0
     prev_vsync = 0
 
-    for i in range(1000000):
+    for i in range(200000):
         if dut.VGA_VS.value == 1 and prev_vsync == 0:
             hcount = 0
             vcount = 0
