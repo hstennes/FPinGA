@@ -107,6 +107,12 @@ def runner():
     sources.append(proj_path / "hdl" / "evt_counter.sv")
     sources.append(proj_path / "hdl" / "counter.sv")
     sources.append(proj_path / "hdl" / "full_renderer.sv")
+    sources.append(proj_path / "hdl" / "camera_input.sv")
+    sources.append(proj_path / "hdl" / "camera.sv")
+    sources.append(proj_path / "hdl" / "ball.sv")
+    sources.append(proj_path / "hdl" / "collision.sv")
+    sources.append(proj_path / "hdl" / "pins.sv")
+    sources.append(proj_path / "hdl" / "divider.sv")
     sources.append(proj_path / "hdl" / "xilinx_true_dual_port_read_first_2_clock_ram.v")
     build_test_args = ["-Wall"]#,"COCOTB_RESOLVE_X=ZEROS"]
     parameters = {} #!!! nice figured it out.

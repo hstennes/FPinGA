@@ -19,6 +19,7 @@ module hit_point #(parameter SIZE=32) (
   output logic normal_axis_tvalid,
   input wire normal_axis_tready,
   output logic invalid_cylinder_hit,
+  output logic red,
   input wire aclk,
   input wire aresetn);
 
@@ -26,6 +27,10 @@ module hit_point #(parameter SIZE=32) (
 
   // localparam [SIZE-1:0] PIN_HEIGHT = 64'h4008000000000000;
   localparam [SIZE-1:0] PIN_HEIGHT = 32'h42f00000;
+
+  localparam [SIZE-1:0] RED_START = 32'h00000000;
+  
+  localparam [SIZE-1:0] RED_END = 32'h00000000;
 
   localparam PIPE_CENTER_LATENCY = 17;
   localparam PIPE_CA_LATENCY = 29;
@@ -68,8 +73,18 @@ module hit_point #(parameter SIZE=32) (
   logic cmp_result;
   logic cmp_valid;
 
+  logic cmpr1_ready;
+  logic cmpr1_result;
+  logic cmpr1_valid;
+
+  logic cmpr2_ready;
+  logic cmpr2_result;
+  logic cmpr2_valid;
+
   logic pipe_invalid_cylinder_hit_ready;
   logic pipe_invalid_cylinder_hit_valid;
+
+  logic pipe_red_ready;
 
   logic pipe_negative_dot_ready;
   logic pipe_negative_dot_result;
@@ -172,6 +187,34 @@ module hit_point #(parameter SIZE=32) (
     .aresetn(aresetn)
   );
 
+  float_lt cmpr1 (
+    .s_axis_a_tdata(RED_START),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(1'b1),
+    .s_axis_b_tdata(dot_result),
+    .s_axis_b_tready(),
+    .s_axis_b_tvalid(dot_valid),
+    .m_axis_result_tdata(cmpr1_result),
+    .m_axis_result_tvalid(cmpr1_valid),
+    .m_axis_result_tready(pipe_red_ready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  float_lt cmpr2 (
+    .s_axis_a_tdata(dot_result),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(dot_valid),
+    .s_axis_b_tdata(RED_END),
+    .s_axis_b_tready(),
+    .s_axis_b_tvalid(1'b1),
+    .m_axis_result_tdata(cmpr2_result),
+    .m_axis_result_tvalid(cmpr2_valid),
+    .m_axis_result_tready(pipe_red_ready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
   axi_pipe #(.LATENCY(PIPE_NEGATIVE_DOT_LATENCY), .SIZE(1)) pipe_negative_dot (
     .s_axis_a_tdata(dot_result[SIZE-1]),
     .s_axis_a_tready(pipe_negative_dot_ready),
@@ -200,6 +243,17 @@ module hit_point #(parameter SIZE=32) (
     .s_axis_a_tvalid(cmp_valid),
     .m_axis_result_tdata(invalid_cylinder_hit),
     .m_axis_result_tvalid(pipe_invalid_cylinder_hit_valid),
+    .m_axis_result_tready(hit_point_axis_tready),
+    .aclk(aclk),
+    .aresetn(aresetn)
+  );
+
+  axi_pipe #(.LATENCY(PIPE_INVALID_LATENCY), .SIZE(1)) pipe_red (
+    .s_axis_a_tdata(cmpr1_result && cmpr2_result),
+    .s_axis_a_tready(pipe_red_ready),
+    .s_axis_a_tvalid(cmpr1_valid),
+    .m_axis_result_tdata(red),
+    .m_axis_result_tvalid(),
     .m_axis_result_tready(hit_point_axis_tready),
     .aclk(aclk),
     .aresetn(aresetn)

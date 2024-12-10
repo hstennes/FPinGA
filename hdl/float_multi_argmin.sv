@@ -8,6 +8,7 @@ module float_multi_argmin #(parameter SIZE=64) (
   output logic [3:0] m_axis_result_tdata,
   input wire m_axis_result_tready,
   output logic m_axis_result_tvalid,
+  input wire [15:0] tag,
   input wire aclk,
   input wire aresetn);
 
@@ -67,10 +68,10 @@ module float_multi_argmin #(parameter SIZE=64) (
   assign m_axis_result_tdata = cmp_41_result[3:0];
 
   float_argmin #(.SIZE(SIZE)) cmp_11 (
-    .s_axis_a_tdata({s_axis_a_tdata[0], 4'b0}),
+    .s_axis_a_tdata({s_axis_a_tdata[0], 4'b0, tag[0]}),
     .s_axis_a_tready(s_axis_a_tready),
     .s_axis_a_tvalid(s_axis_a_tvalid),
-    .s_axis_b_tdata({s_axis_a_tdata[1], 4'b1}),
+    .s_axis_b_tdata({s_axis_a_tdata[1], 4'b1, tag[1]}),
     .s_axis_b_tready(),
     .s_axis_b_tvalid(s_axis_a_tvalid),
     .m_axis_result_tdata(cmp_11_result),
@@ -81,10 +82,10 @@ module float_multi_argmin #(parameter SIZE=64) (
   );
 
   float_argmin #(.SIZE(SIZE)) cmp_12 (
-    .s_axis_a_tdata({s_axis_a_tdata[2], 4'b10}),
+    .s_axis_a_tdata({s_axis_a_tdata[2], 4'b10, tag[2]}),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(s_axis_a_tvalid),
-    .s_axis_b_tdata({s_axis_a_tdata[3], 4'b11}),
+    .s_axis_b_tdata({s_axis_a_tdata[3], 4'b11, tag[3]}),
     .s_axis_b_tready(),
     .s_axis_b_tvalid(s_axis_a_tvalid),
     .m_axis_result_tdata(cmp_12_result),
@@ -95,10 +96,10 @@ module float_multi_argmin #(parameter SIZE=64) (
   );
 
   float_argmin #(.SIZE(SIZE)) cmp_13 (
-    .s_axis_a_tdata({s_axis_a_tdata[4], 4'b100}),
+    .s_axis_a_tdata({s_axis_a_tdata[4], 4'b100, tag[4]}),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(s_axis_a_tvalid),
-    .s_axis_b_tdata({s_axis_a_tdata[5], 4'b101}),
+    .s_axis_b_tdata({s_axis_a_tdata[5], 4'b101, tag[5]}),
     .s_axis_b_tready(),
     .s_axis_b_tvalid(s_axis_a_tvalid),
     .m_axis_result_tdata(cmp_13_result),
@@ -109,10 +110,10 @@ module float_multi_argmin #(parameter SIZE=64) (
   );
 
   float_argmin #(.SIZE(SIZE)) cmp_14 (
-    .s_axis_a_tdata({s_axis_a_tdata[6], 4'b110}),
+    .s_axis_a_tdata({s_axis_a_tdata[6], 4'b110, tag[6]}),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(s_axis_a_tvalid),
-    .s_axis_b_tdata({s_axis_a_tdata[7], 4'b111}),
+    .s_axis_b_tdata({s_axis_a_tdata[7], 4'b111, tag[7]}),
     .s_axis_b_tready(),
     .s_axis_b_tvalid(s_axis_a_tvalid),
     .m_axis_result_tdata(cmp_14_result),
@@ -123,10 +124,10 @@ module float_multi_argmin #(parameter SIZE=64) (
   );
 
   float_argmin #(.SIZE(SIZE)) cmp_15 (
-    .s_axis_a_tdata({s_axis_a_tdata[8], 4'b1000}),
+    .s_axis_a_tdata({s_axis_a_tdata[8], 4'b1000, tag[8]}),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(s_axis_a_tvalid),
-    .s_axis_b_tdata({s_axis_a_tdata[9], 4'b1001}),
+    .s_axis_b_tdata({s_axis_a_tdata[9], 4'b1001, tag[9]}),
     .s_axis_b_tready(),
     .s_axis_b_tvalid(s_axis_a_tvalid),
     .m_axis_result_tdata(cmp_15_result),
@@ -137,10 +138,10 @@ module float_multi_argmin #(parameter SIZE=64) (
   );
 
   float_argmin #(.SIZE(SIZE)) cmp_16 (
-    .s_axis_a_tdata({s_axis_a_tdata[10], 4'b1010}),
+    .s_axis_a_tdata({s_axis_a_tdata[10], 4'b1010, tag[10]}),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(s_axis_a_tvalid),
-    .s_axis_b_tdata({s_axis_a_tdata[11], 4'b1011}),
+    .s_axis_b_tdata({s_axis_a_tdata[11], 4'b1011, tag[11]}),
     .s_axis_b_tready(),
     .s_axis_b_tvalid(s_axis_a_tvalid),
     .m_axis_result_tdata(cmp_16_result),
@@ -151,10 +152,10 @@ module float_multi_argmin #(parameter SIZE=64) (
   );
 
   float_argmin #(.SIZE(SIZE)) cmp_17 (
-    .s_axis_a_tdata({s_axis_a_tdata[12], 4'b1100}),
+    .s_axis_a_tdata({s_axis_a_tdata[12], 4'b1100, tag[12]}),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(s_axis_a_tvalid),
-    .s_axis_b_tdata({s_axis_a_tdata[13], 4'b1101}),
+    .s_axis_b_tdata({s_axis_a_tdata[13], 4'b1101, tag[13]}),
     .s_axis_b_tready(),
     .s_axis_b_tvalid(s_axis_a_tvalid),
     .m_axis_result_tdata(cmp_17_result),
@@ -165,10 +166,10 @@ module float_multi_argmin #(parameter SIZE=64) (
   );
 
   float_argmin #(.SIZE(SIZE)) cmp_18 (
-    .s_axis_a_tdata({s_axis_a_tdata[14], 4'b1110}),
+    .s_axis_a_tdata({s_axis_a_tdata[14], 4'b1110, tag[14]}),
     .s_axis_a_tready(),
     .s_axis_a_tvalid(s_axis_a_tvalid),
-    .s_axis_b_tdata({s_axis_a_tdata[15], 4'b1111}),
+    .s_axis_b_tdata({s_axis_a_tdata[15], 4'b1111, tag[15]}),
     .s_axis_b_tready(),
     .s_axis_b_tvalid(s_axis_a_tvalid),
     .m_axis_result_tdata(cmp_18_result),

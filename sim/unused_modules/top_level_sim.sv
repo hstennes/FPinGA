@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module top_level
+module top_level_sim
   (
    input wire         CLK100MHZ,
    output logic [3:0] VGA_R,
@@ -20,6 +20,8 @@ module top_level
    output logic [7:0] AN,
    output logic [0:0] LED
    );
+
+   localparam SIZE = 32;
 
   // Clock and Reset Signals
   logic          sys_rst_pixel;
@@ -64,6 +66,134 @@ module top_level
     .fc_out(frame_count_vga)
   );
 
+  // START OF SIMULATION STUFF
+
+  logic light_on;
+  logic [15:0] ball_vx;
+  logic [15:0] ball_vy;
+  logic [15:0] ball_vx_fin;
+  logic [15:0] ball_vy_fin;
+  logic cam_valid;
+  logic [10:0] ball_x;
+  logic [9:0] ball_y;
+  logic check_coll;
+  logic [9:0][10:0] pins_x;
+  logic [9:0][9:0] pins_y;
+  logic [9:0][15:0] pins_vx_coll;
+  logic [9:0][15:0] pins_vy_coll;
+  logic [9:0][15:0] pins_vx_pins;
+  logic [9:0][15:0] pins_vy_pins;
+  logic [9:0] pins_hit;
+  logic update_pins;
+  logic end_roll;
+  logic [19:0][5:0] score_p1;
+  logic [19:0][5:0] score_p2;
+  logic player_no;
+  logic roll_no;
+  logic [3:0] round_no;
+  logic [10:0] x_com, x_com_calc; //long term x_com and output from module, resp
+  logic [9:0] y_com, y_com_calc; //long term y_com and output from module, resp
+  logic new_com; //used to know when to update x_com and y_com ...
+  logic ball_vy_neg;
+
+  camera_input ci (
+    .clk_in(clk_pixel),
+    .rst_in(~sys_rst_pixel),
+    .new_com(new_com),
+    .light_on(light_on),
+    .x_com(x_com),
+    .y_com(y_com)
+  );
+
+  camera cam(
+    .clk_in(clk_pixel),
+    .rst_in(~sys_rst_pixel),
+    .valid_in(new_com),
+    .light_in(light_on),
+    .x_in(x_com),
+    .y_in(y_com),
+    .vx_out(ball_vx),
+    .vy_out(ball_vy),
+    .is_vy_neg(ball_vy_neg),
+    .valid_out(cam_valid)
+  );
+
+  ball ball(
+    .clk_in(clk_pixel),
+    .rst_in(~sys_rst_pixel),
+    .valid_in(cam_valid),
+    .initial_speed_x(ball_vx),
+    .initial_speed_y(ball_vy),
+    .is_vy_neg(ball_vy_neg),
+    .ball_x(ball_x),
+    .ball_y(ball_y),
+    .speed_x(ball_vx_fin),
+    .speed_y(ball_vy_fin),
+    .check_collision(check_coll),
+    .done(end_roll)
+  );
+
+  collision coll(
+    .clk_in(clk_pixel),                     
+    .rst_in(~sys_rst_pixel),
+    .valid_in(check_coll), 
+    .ball_x(ball_x),          
+    .ball_y(ball_y),     
+    .pins_x(pins_x),       
+    .pins_y(pins_y),        
+    .pins_vx_in(pins_vx_pins),       
+    .pins_vy_in(pins_vy_pins),        
+    .ball_vx_in(ball_vx_fin),       
+    .ball_vy_in(ball_vy_fin), 
+    .pins_vx_out(pins_vx_coll), 
+    .pins_vy_out(pins_vy_coll), 
+    .pins_hit(pins_hit),
+    .done(update_pins)               
+  );
+
+  pins pins(
+    .clk_in(clk_pixel),
+    .rst_in(~sys_rst_pixel),
+    .valid_in(update_pins),
+    .pins_vx_in(pins_vx_coll),
+    .pins_vy_in(pins_vy_coll),
+    .pins_hit_in(pins_hit),
+    .pins_x(pins_x),
+    .pins_y(pins_y),
+    .pins_vx_out(pins_vx_pins),
+    .pins_vy_out(pins_vy_pins)
+  );
+
+  logic [SIZE-1:0] float_ball_x;
+  logic float_ball_x_valid;
+
+  logic [SIZE-1:0] float_ball_y;
+  logic float_ball_y_valid;
+
+  fixed_to_float convert_ball_x(
+    .s_axis_a_tdata(ball_x),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(1'b1),
+    .m_axis_result_tdata(float_ball_x),
+    .m_axis_result_tready(),
+    .m_axis_result_tvalid(float_ball_x_valid),
+    .aclk(clk_pixel),
+    .aresetn(sys_rst_pixel)
+  );
+
+  fixed_to_float convert_ball_y(
+    .s_axis_a_tdata(ball_y),
+    .s_axis_a_tready(),
+    .s_axis_a_tvalid(1'b1),
+    .m_axis_result_tdata(float_ball_y),
+    .m_axis_result_tready(),
+    .m_axis_result_tvalid(float_ball_y_valid),
+    .aclk(clk_pixel),
+    .aresetn(sys_rst_pixel)
+  );
+
+  // END OF SIMULATION STUFF
+
   logic [10:0] renderer_hcount_in;
   logic [9:0] renderer_vcount_in;
   logic [10:0] renderer_hcount_out;
@@ -90,32 +220,7 @@ module top_level
     .rst_in(~sys_rst_pixel)
   );
 
-  // logic [7:0] r_red;
-  // logic [7:0] r_green;
-  // logic [7:0] r_blue;
-
   logic [23:0] renderer_pixel_out;
-
-  // full_renderer full_render (
-  //   .hcount_axis_tdata(renderer_hcount_in),
-  //   .hcount_axis_tvalid(1'b1),
-  //   .hcount_axis_tready(renderer_ready),
-  //   .vcount_axis_tdata(renderer_vcount_in),
-  //   .vcount_axis_tvalid(1'b1),
-  //   .vcount_axis_tready(),
-  //   .sphere(192'h00000000000000000000000000000000c0a00000c0a00000),
-  //   .cylinders(1920'h3f80000000000000c0c00000c0a00000c1800000000000003f80000000000000c0000000c0a00000c1800000000000003f8000000000000040000000c0a00000c1800000000000003f8000000000000040c00000c0a00000c1800000000000003f80000000000000c0800000c0a00000c1600000000000003f8000000000000000000000c0a00000c1600000000000003f8000000000000040800000c0a00000c1600000000000003f80000000000000c0000000c0a00000c1400000000000003f8000000000000040000000c0a00000c1400000000000003f8000000000000000000000c0a00000c1200000),
-  //   .pixel_axis_tdata(renderer_pixel_out),
-  //   .pixel_axis_tvalid(pixel_valid),
-  //   .pixel_axis_tready(1'b1),
-  //   .aclk(clk_pixel),
-  //   .hcount_out(renderer_hcount_out),
-  //   .vcount_out(renderer_vcount_out),
-  //   .aresetn(sys_rst_pixel)
-  // );
-
-  logic [31:0] valid_counter;
-
   logic [1:0] select_objs;
   assign select_objs = renderer_vcount_in < REGION_DIVIDE ? 2'b11 : 2'b10;
 
@@ -127,7 +232,8 @@ module top_level
     .vcount_axis_tvalid(1'b1),
     .vcount_axis_tready(),
     .select_objs(select_objs),
-    .sphere(192'h0000000000000000000000004310000041f0000043d20000),
+    // .sphere(192'h0000000000000000000000004310000041f0000043d20000),
+    .sphere({96'h0, float_ball_x, 32'h41f00000, float_ball_y}),
     .cylinders(1920'h3f80000000000000000000000000000000000000000000003f8000000000000042c000000000000000000000000000003f80000000000000434000000000000000000000000000003f80000000000000439000000000000000000000000000003f80000000000000424000000000000042700000000000003f80000000000000431000000000000042700000000000003f80000000000000437000000000000042700000000000003f8000000000000042c000000000000042f00000000000003f80000000000000434000000000000042f00000000000003f80000000000000431000000000000043340000),
     .pixel_axis_tdata(renderer_pixel_out),
     .pixel_axis_tvalid(pixel_valid),

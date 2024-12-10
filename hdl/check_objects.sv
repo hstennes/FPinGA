@@ -17,6 +17,7 @@ module check_objects #(parameter SIZE=64) (
   output logic normal_axis_tvalid,
   input wire normal_axis_tready,
   output logic hit_cylinder,
+  output logic red,
   output logic hit_sphere,
   output logic [10:0] hcount_out,
   output logic [9:0] vcount_out,

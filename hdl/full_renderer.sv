@@ -150,7 +150,7 @@ module full_renderer #(parameter SIZE=32) (
 
   check_objects #(.SIZE(SIZE)) check_objects(
     .ray_axis_tdata(ray_data),
-    .select_objs(/*pipe_vcount1_result[0] == 1 ? 2'b01 : 2'b10*/pipe_select_objs_result),
+    .select_objs(/*pipe_vcount1_result[0] == 1 ? 2'b01 : 2'b10*/ pipe_select_objs_result),
     .hcount_axis_tdata(pipe_hcount1_result),
     .vcount_axis_tdata(pipe_vcount1_result),
     .ray_axis_tvalid(ray_valid),
