@@ -42,7 +42,7 @@ async def test_top_level_sim(dut):
     prev_hsync = 0
     prev_vsync = 0
 
-    for i in range(200000):
+    for i in range(500):
         if dut.VGA_VS.value == 1 and prev_vsync == 0:
             hcount = 0
             vcount = 0
@@ -113,6 +113,8 @@ def runner():
     sources.append(proj_path / "hdl" / "collision.sv")
     sources.append(proj_path / "hdl" / "pins.sv")
     sources.append(proj_path / "hdl" / "divider.sv")
+    sources.append(proj_path / "hdl" / "pin_rotate.sv")
+    sources.append(proj_path / "hdl" / "vec_unit.sv")
     sources.append(proj_path / "hdl" / "xilinx_true_dual_port_read_first_2_clock_ram.v")
     build_test_args = ["-Wall"]#,"COCOTB_RESOLVE_X=ZEROS"]
     parameters = {} #!!! nice figured it out.

@@ -32,7 +32,7 @@ module camera (
         .clk_in(clk_in),
         .rst_in(rst_in),
         .dividend_in({21'b0, x_end - x_start}),
-        .divisor_in({16'b0, time_counter-1}),
+        .divisor_in({16'b0, time_counter}),
         .data_valid_in(div_valid_in),
         .quotient_out(divx_out),
         .data_valid_out(divx_valid_out)
@@ -43,7 +43,7 @@ module camera (
         .clk_in(clk_in),
         .rst_in(rst_in),
         .dividend_in({22'b0, dividend_y}),
-        .divisor_in({16'b0, time_counter-1}),
+        .divisor_in({16'b0, time_counter}),
         .data_valid_in(div_valid_in),
         .quotient_out(divy_out),
         .data_valid_out(divy_valid_out)
