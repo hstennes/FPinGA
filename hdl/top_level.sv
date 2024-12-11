@@ -92,8 +92,8 @@ module top_level
   logic [9:0][9:0] pins_y;
   logic [9:0][15:0] pins_vx_coll;
   logic [9:0][15:0] pins_vy_coll;
-  logic [9:0][15:0] pins_vx_pins;
-  logic [9:0][15:0] pins_vy_pins;
+  // logic [9:0][15:0] pins_vx_pins;
+  // logic [9:0][15:0] pins_vy_pins;
   logic [9:0] pins_hit;
   logic update_pins;
   logic end_roll;
@@ -152,8 +152,8 @@ module top_level
     .ball_y(ball_y),     
     .pins_x(pins_x),       
     .pins_y(pins_y),        
-    .pins_vx_in(pins_vx_pins),       
-    .pins_vy_in(pins_vy_pins),        
+    // .pins_vx_in(pins_vx_pins),       
+    // .pins_vy_in(pins_vy_pins),        
     .ball_vx_in(ball_vx_fin),       
     .ball_vy_in(ball_vy_fin), 
     .pins_vx_out(pins_vx_coll), 
@@ -170,9 +170,9 @@ module top_level
     .pins_vy_in(pins_vy_coll),
     .pins_hit_in(pins_hit),
     .pins_x(pins_x),
-    .pins_y(pins_y),
-    .pins_vx_out(pins_vx_pins),
-    .pins_vy_out(pins_vy_pins)
+    .pins_y(pins_y)
+    // .pins_vx_out(pins_vx_pins),
+    // .pins_vy_out(pins_vy_pins)
   );
 
   logic [SIZE-1:0] float_ball_x;
@@ -202,6 +202,36 @@ module top_level
     .aclk(clk_pixel),
     .aresetn(sys_rst_pixel)
   );
+
+  logic [9:0][SIZE-1:0] float_pin_x;
+  logic [9:0][SIZE-1:0] float_pin_y;
+
+  genvar i;
+  generate
+    for(i = 0; i < 10; i = i + 1) begin
+      fixed_to_float convert_pin_x (
+        .s_axis_a_tdata(pins_x[i]),
+        .s_axis_a_tready(),
+        .s_axis_a_tvalid(1'b1),
+        .m_axis_result_tdata(float_pin_x[i]),
+        .m_axis_result_tready(1'b1),
+        .m_axis_result_tvalid(),
+        .aclk(clk_pixel),
+        .aresetn(sys_rst_pixel)
+      );
+
+      fixed_to_float convert_pin_y (
+        .s_axis_a_tdata(pins_y[i]),
+        .s_axis_a_tready(),
+        .s_axis_a_tvalid(1'b1),
+        .m_axis_result_tdata(float_pin_y[i]),
+        .m_axis_result_tready(1'b1),
+        .m_axis_result_tvalid(),
+        .aclk(clk_pixel),
+        .aresetn(sys_rst_pixel)
+      );
+    end
+  endgenerate
 
   logic [2:0][SIZE-1:0] pin_axis;
 
@@ -245,6 +275,9 @@ module top_level
   logic [1:0] select_objs;
   assign select_objs = renderer_vcount_in < REGION_DIVIDE ? 2'b11 : 2'b10;
 
+  logic [1919:0] cylinder_data;
+  assign cylinder_data = {96'h000000003f80000000000000, float_pin_x[0], 32'h00000000, float_pin_y[0], 96'h000000003f80000000000000, float_pin_x[1], 32'h00000000, float_pin_y[1], 96'h000000003f80000000000000, float_pin_x[2], 32'h00000000, float_pin_y[2], 96'h000000003f80000000000000, float_pin_x[3], 32'h00000000, float_pin_y[3], 96'h000000003f80000000000000, float_pin_x[4], 32'h00000000, float_pin_y[4], 96'h000000003f80000000000000, float_pin_x[5], 32'h00000000, float_pin_y[5], 96'h000000003f80000000000000, float_pin_x[6], 32'h00000000, float_pin_y[6], 96'h000000003f80000000000000, float_pin_x[7], 32'h00000000, float_pin_y[7], 96'h000000003f80000000000000, float_pin_x[8], 32'h00000000, float_pin_y[8], 96'h000000003f80000000000000, float_pin_x[9], 32'h00000000, float_pin_y[9]};
+
   full_renderer full_render (
     .hcount_axis_tdata(renderer_hcount_in),
     .hcount_axis_tvalid(1'b1),
@@ -255,9 +288,10 @@ module top_level
     .select_objs(select_objs),
     // .sphere(192'h0000000000000000000000004310000041f0000043d20000),
     .sphere({96'h0, float_ball_x, 32'h41f00000, float_ball_y}),
+    .cylinders(cylinder_data),
     // .cylinders(1920'h3f80000000000000000000000000000000000000000000003f8000000000000042c000000000000000000000000000003f80000000000000434000000000000000000000000000003f80000000000000439000000000000000000000000000003f80000000000000424000000000000042700000000000003f80000000000000431000000000000042700000000000003f80000000000000437000000000000042700000000000003f8000000000000042c000000000000042f00000000000003f80000000000000434000000000000042f00000000000003f80000000000000431000000000000043340000),
     // .cylinders({pin_axis, 1824'h000000000000000000000000000000003f8000000000000042c000000000000000000000000000003f80000000000000434000000000000000000000000000003f80000000000000439000000000000000000000000000003f80000000000000424000000000000042700000000000003f80000000000000431000000000000042700000000000003f80000000000000437000000000000042700000000000003f8000000000000042c000000000000042f00000000000003f80000000000000434000000000000042f00000000000003f80000000000000431000000000000043340000}),
-    .cylinders({1728'h3f80000000000000000000000000000000000000000000003f8000000000000042c000000000000000000000000000003f80000000000000434000000000000000000000000000003f80000000000000439000000000000000000000000000003f80000000000000424000000000000042700000000000003f80000000000000431000000000000042700000000000003f80000000000000437000000000000042700000000000003f8000000000000042c000000000000042f00000000000003f80000000000000434000000000000042f00000, pin_axis, 96'h431000000000000043340000}),
+    // .cylinders({1728'h3f80000000000000000000000000000000000000000000003f8000000000000042c000000000000000000000000000003f80000000000000434000000000000000000000000000003f80000000000000439000000000000000000000000000003f80000000000000424000000000000042700000000000003f80000000000000431000000000000042700000000000003f80000000000000437000000000000042700000000000003f8000000000000042c000000000000042f00000000000003f80000000000000434000000000000042f00000, pin_axis, 96'h431000000000000043340000}),
     .pixel_axis_tdata(renderer_pixel_out),
     .pixel_axis_tvalid(pixel_valid),
     .pixel_axis_tready(1'b1),

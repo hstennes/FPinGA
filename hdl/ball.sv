@@ -12,6 +12,7 @@ module ball (
     output logic [9:0] ball_y,  
     output logic [15:0] speed_x,
     output logic [15:0] speed_y,
+    output logic ball_vy_neg,
     output logic check_collision,
     output logic done
 );
@@ -21,7 +22,7 @@ module ball (
     parameter FRICTION = 0;        // Frictional deceleration in mm/s^2
     // parameter LANE_LENGTH = 1024; // Length of the lane in mm
     parameter TIME_STEP = 1;     // Time step in ms (scaled by 100)
-    parameter PIN_START = 400;
+    parameter PIN_START = 0;
     parameter SCREEN_WIDTH = 1024;
     parameter SCREEN_HEIGHT = 768;
     parameter TIMER_RST = 3000000;
@@ -34,7 +35,7 @@ module ball (
     always @(posedge clk_in) begin
         if (rst_in) begin
             ball_x <= 144;
-            ball_y <= 420;
+            ball_y <= 800;
             speed_x <= 0;
             speed_y <= 0;
             rolling <= 0;
@@ -59,20 +60,26 @@ module ball (
                     check_collision <= 0;
                     done <= 1;
 
-                end else if (speed_y > FRICTION) begin
-                    speed_y <= speed_y - FRICTION;
-                end else begin
-                    speed_y <= 1;
+                end else if (speed_x > FRICTION) begin
+                    speed_x <= speed_x - FRICTION;
+                // end else begin
+                //     speed_x <= 1;
                 end
                 // Update ball position in x and y directions
-                ball_x <= ball_x + speed_x;
+                if (ball_x < SCREEN_WIDTH) begin
+                    ball_x <= ball_x + speed_x;
+                end else begin 
+                    done <= 1;
+                end
                 if (is_vy_neg) begin
                     ball_y <= ball_y - speed_y;
+                    ball_vy_neg <= 1;
                 end else begin
                     ball_y <= ball_y + speed_y;
+                    ball_vy_neg <= 0;
                 end
             
-                if (ball_x > SCREEN_WIDTH - PIN_START) begin
+                if (ball_x > PIN_START) begin
                     check_collision <= 1;    
                 end else begin
                     check_collision <= 0;

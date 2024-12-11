@@ -11,13 +11,11 @@ module divider #(parameter WIDTH = 32) (input wire clk_in,
                 output logic data_valid_out,
                 output logic error_out,
                 output logic busy_out);
-                
   localparam RESTING = 0;
   localparam DIVIDING = 1;
   logic [WIDTH-1:0] quotient, dividend;
   logic [WIDTH-1:0] divisor;
   logic state;
-
   always_ff @(posedge clk_in)begin
     if (rst_in)begin
       quotient <= 0;

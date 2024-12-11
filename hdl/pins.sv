@@ -5,13 +5,14 @@ module pins (
     input wire clk_in,                    
     input wire rst_in,
     input wire valid_in,
+    input wire is_vy_neg,
     input wire [9:0] [15:0] pins_vx_in, 
     input wire [9:0] [15:0] pins_vy_in, 
     input wire [9:0] pins_hit_in,
     output logic [9:0] [10:0] pins_x,     
-    output logic [9:0] [9:0] pins_y,  
-    output logic [9:0] [15:0] pins_vx_out,     
-    output logic [9:0] [15:0] pins_vy_out
+    output logic [9:0] [9:0] pins_y  
+    // output logic [9:0] [15:0] pins_vx_out,     
+    // output logic [9:0] [15:0] pins_vy_out
 );
 
     // Physics constants
@@ -32,8 +33,6 @@ module pins (
 
     always @(posedge clk_in) begin
         if (rst_in) begin
-            pins_vx_out <= 0;
-            pins_vy_out <= 0;
             pins_x[0] = 0; pins_y[0] = 0;  
             pins_x[1] = 96; pins_y[1] = 0;  
             pins_x[2] = 192; pins_y[2] = 0;  
@@ -43,15 +42,32 @@ module pins (
             pins_x[6] = 240; pins_y[6] = 60;  
             pins_x[7] = 96; pins_y[7] = 120;  
             pins_x[8] = 192; pins_y[8] = 120;  
-            pins_x[9] = 144; pins_y[9] = 180;  
+            pins_x[9] = 144; pins_y[9] = 180; 
+            // pins_vx_out <= 0;
+            // pins_vy_out <= 0;
+            // pins_x[0] = SCREEN_WIDTH - 200; pins_y[0] = 300 + 84;  
+            // pins_x[1] = SCREEN_WIDTH - 160; pins_y[1] = 280 + 84;  
+            // pins_x[2] = SCREEN_WIDTH - 160; pins_y[2] = 320 + 84;  
+            // pins_x[3] = SCREEN_WIDTH - 120; pins_y[3] = 260 + 84;  
+            // pins_x[4] = SCREEN_WIDTH - 120; pins_y[4] = 300 + 84;  
+            // pins_x[5] = SCREEN_WIDTH - 120; pins_y[5] = 340 + 84;  
+            // pins_x[6] = SCREEN_WIDTH - 80; pins_y[6] = 240 + 84;  
+            // pins_x[7] = SCREEN_WIDTH - 80; pins_y[7] = 280 + 84;  
+            // pins_x[8] = SCREEN_WIDTH - 80; pins_y[8] = 320 + 84;  
+            // pins_x[9] = SCREEN_WIDTH - 80; pins_y[9] = 360 + 84;  
 
         end else if (valid_in) begin
             for (int i=0; i<10; i=i+1) begin
                 if (pins_hit_in[i] && (pins_x[i] < SCREEN_WIDTH) && (pins_y[i] < SCREEN_HEIGHT)) begin
-                    pins_vx_out[i] <= pins_vx_in - FRICTION;
-                    pins_vy_out[i] <= pins_vy_in - FRICTION;
+                    // pins_vx_out[i] <= pins_vx_in - FRICTION;
+                    // pins_vy_out[i] <= pins_vy_in - FRICTION;
                     pins_x[i] <= pins_x[i] + pins_vx_in[i];
-                    pins_y[i] <= pins_y[i] + pins_vy_in[i];
+
+                    if (is_vy_neg) begin
+                        pins_y[i] <= pins_y[i] - pins_vy_in[i];
+                    end else begin
+                        pins_y[i] <= pins_y[i] + pins_vy_in[i];
+                    end
                 end
             end
         end
