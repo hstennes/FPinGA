@@ -13,7 +13,7 @@ module float_mul_pow2 #(parameter SIZE, POW=1, NEGATE=0) (
   logic [MANT_WIDTH-1:0] mantissa;
 
   assign sign = NEGATE == 1 ? ~in_float[SIZE-1] : in_float[SIZE-1];
-  assign exponent = in_float[SIZE-2 -: EXP_WIDTH] + POW;
+  assign exponent = in_float[SIZE-2 -: EXP_WIDTH] == 0 ? 0 : in_float[SIZE-2 -: EXP_WIDTH] + POW;
   assign mantissa = in_float[MANT_WIDTH-1:0];
 
   assign result = {sign, exponent, mantissa};

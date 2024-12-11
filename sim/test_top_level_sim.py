@@ -34,6 +34,7 @@ async def test_top_level_sim(dut):
     cocotb.start_soon(Clock(dut.CLK100MHZ, 10, units="ns").start())
     await ClockCycles(dut.CLK100MHZ, 3)
     dut.BTNC.value = 1
+    dut.BTNU.value = 0
     await ClockCycles(dut.CLK100MHZ, 3)
     dut.BTNC.value = 0
 

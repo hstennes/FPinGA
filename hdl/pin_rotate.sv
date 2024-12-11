@@ -5,10 +5,13 @@ module pin_rotate #(parameter SIZE) (
   output logic [2:0][SIZE-1:0] pin_axis,
   output logic pin_axis_valid,
   input wire pin_axis_ready,
+  input wire start_falling,
   input wire aclk,
   input wire aresetn);
 
-  parameter TIMER_RST = 1000000;
+  parameter TIMER_RST = 100000;
+
+  logic falling_state;
 
   logic [31:0] timer;
 
@@ -25,13 +28,19 @@ module pin_rotate #(parameter SIZE) (
     if(~aresetn) begin
         timer <= 32'b0;
         pin_rot <= 32'b0;
-    end
-    else begin
-        if(timer == TIMER_RST) begin
-            timer <= 32'b0;
-            pin_rot <= pin_rot + 1;
-        end else begin
-            timer <= timer + 1;
+        falling_state <= 0;
+    end else begin
+        if(start_falling == 1) begin
+          falling_state <= 1;
+        end
+
+        if(falling_state == 1) begin
+          if(timer == TIMER_RST) begin
+              timer <= 32'b0;
+              pin_rot <= pin_rot + 1;
+          end else begin
+              timer <= timer + 1;
+          end
         end
     end
   end

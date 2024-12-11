@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Wed Dec 11 00:34:30 2024
-| Host         : eecs-digital-07 running 64-bit Ubuntu 24.04.1 LTS
+| Date         : Wed Dec 11 11:18:02 2024
+| Host         : eecs-digital-18 running 64-bit Ubuntu 24.04.1 LTS
 | Command      : report_timing -file obj/post_synth_timing.rpt
 | Design       : top_level
 | Device       : 7a100t-csg324
@@ -48,7 +48,7 @@ Slack (MET) :             1.269ns  (required time - arrival time)
                                                      -1.483    -4.549 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.803    -3.746    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.096    -3.650 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=71147, unplaced)     0.584    -3.066    ball/clk_pixel
+                         net (fo=72352, unplaced)     0.584    -3.066    ball/clk_pixel
                          FDRE                                         r  ball/ball_y_reg[1]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.478    -2.588 r  ball/ball_y_reg[1]/Q
@@ -109,7 +109,7 @@ Slack (MET) :             1.269ns  (required time - arrival time)
                                                      -1.293     9.423 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.763    10.185    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.091    10.276 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=71147, unplaced)     0.439    10.715    coll/clk_pixel
+                         net (fo=72352, unplaced)     0.439    10.715    coll/clk_pixel
                          FDRE                                         r  coll/dist_ball_pin_reg[9][17]/C
                          clock pessimism             -0.458    10.257    
                          clock uncertainty           -0.210    10.047    

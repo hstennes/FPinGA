@@ -10,6 +10,7 @@ module top_level_sim
    output logic VGA_HS,
    output logic VGA_VS,
    input wire BTNC,
+   input wire BTNU,
    output logic CA,
    output logic CB,
    output logic CC,
@@ -25,6 +26,7 @@ module top_level_sim
 
   // Clock and Reset Signals
   logic          sys_rst_pixel;
+  logic          reset_sim;
 
   logic          clk_camera;
   logic          clk_pixel;
@@ -35,23 +37,12 @@ module top_level_sim
 
   // clocking wizards to generate the clock speeds we need for our different domains
   // clk_camera: 200MHz, fast enough to comfortably sample the cameera's PCLK (50MHz)
-  // cw_hdmi_clk_wiz wizard_hdmi
-  //   (.sysclk(clk_100_passthrough),
-  //    .clk_pixel(clk_pixel),
-  //    .clk_tmds(clk_5x),
-  //    .reset(0));
-
-  // cw_fast_clk_wiz wizard_migcam
-  //   (.clk_in1(CLK100MHZ),
-  //    .clk_camera(clk_camera),
-  //    .clk_xc(clk_xc),
-  //    .clk_100(clk_100_passthrough),
-  //    .reset(0));
-
   assign clk_pixel = CLK100MHZ;
 
   assign sys_rst_pixel = ~BTNC; //use for resetting hdmi/draw side of logic
   assign LED = BTNC;
+
+  assign reset_sim = BTNU;
 
   // video signal generator signals
   logic          hsync_vga;
@@ -94,8 +85,8 @@ module top_level_sim
   logic [9:0][9:0] pins_y;
   logic [9:0][15:0] pins_vx_coll;
   logic [9:0][15:0] pins_vy_coll;
-  logic [9:0][15:0] pins_vx_pins;
-  logic [9:0][15:0] pins_vy_pins;
+  // logic [9:0][15:0] pins_vx_pins;
+  // logic [9:0][15:0] pins_vy_pins;
   logic [9:0] pins_hit;
   logic update_pins;
   logic end_roll;
@@ -107,11 +98,15 @@ module top_level_sim
   logic [10:0] x_com, x_com_calc; //long term x_com and output from module, resp
   logic [9:0] y_com, y_com_calc; //long term y_com and output from module, resp
   logic new_com; //used to know when to update x_com and y_com ...
+  logic vy_neg;
   logic ball_vy_neg;
+
+  logic [9:0][10:0] prev_pins_x;
+  logic [9:0][9:0] prev_pins_y;
 
   camera_input ci (
     .clk_in(clk_pixel),
-    .rst_in(~sys_rst_pixel),
+    .rst_in(~sys_rst_pixel || reset_sim),
     .new_com(new_com),
     .light_on(light_on),
     .x_com(x_com),
@@ -120,61 +115,64 @@ module top_level_sim
 
   camera cam(
     .clk_in(clk_pixel),
-    .rst_in(~sys_rst_pixel),
+    .rst_in(~sys_rst_pixel || reset_sim),
     .valid_in(new_com),
     .light_in(light_on),
     .x_in(x_com),
     .y_in(y_com),
     .vx_out(ball_vx),
     .vy_out(ball_vy),
-    .is_vy_neg(ball_vy_neg),
+    .is_vy_neg(vy_neg),
     .valid_out(cam_valid)
   );
 
   ball ball(
     .clk_in(clk_pixel),
-    .rst_in(~sys_rst_pixel),
+    .rst_in(~sys_rst_pixel || reset_sim),
     .valid_in(cam_valid),
     .initial_speed_x(ball_vx),
     .initial_speed_y(ball_vy),
-    .is_vy_neg(ball_vy_neg),
+    .is_vy_neg(vy_neg),
     .ball_x(ball_x),
     .ball_y(ball_y),
     .speed_x(ball_vx_fin),
     .speed_y(ball_vy_fin),
+    .ball_vy_neg(ball_vy_neg),
     .check_collision(check_coll),
     .done(end_roll)
   );
 
+  
   collision coll(
     .clk_in(clk_pixel),                     
-    .rst_in(~sys_rst_pixel),
+    .rst_in(~sys_rst_pixel || reset_sim),
     .valid_in(check_coll), 
     .ball_x(ball_x),          
     .ball_y(ball_y),     
     .pins_x(pins_x),       
     .pins_y(pins_y),        
-    .pins_vx_in(pins_vx_pins),       
-    .pins_vy_in(pins_vy_pins),        
+    // .pins_vx_in(pins_vx_pins),       
+    // .pins_vy_in(pins_vy_pins),        
     .ball_vx_in(ball_vx_fin),       
     .ball_vy_in(ball_vy_fin), 
     .pins_vx_out(pins_vx_coll), 
     .pins_vy_out(pins_vy_coll), 
     .pins_hit(pins_hit),
     .done(update_pins)               
-  );
+);
 
   pins pins(
     .clk_in(clk_pixel),
-    .rst_in(~sys_rst_pixel),
+    .rst_in(~sys_rst_pixel || reset_sim),
     .valid_in(update_pins),
+    .is_vy_neg(ball_vy_neg),
     .pins_vx_in(pins_vx_coll),
     .pins_vy_in(pins_vy_coll),
     .pins_hit_in(pins_hit),
     .pins_x(pins_x),
-    .pins_y(pins_y),
-    .pins_vx_out(pins_vx_pins),
-    .pins_vy_out(pins_vy_pins)
+    .pins_y(pins_y)
+    // .pins_vx_out(pins_vx_pins),
+    // .pins_vy_out(pins_vy_pins)
   );
 
   logic [SIZE-1:0] float_ball_x;
@@ -239,11 +237,17 @@ module top_level_sim
 
   pin_rotate #(.SIZE(SIZE)) calc_pin_rotate(
     .pin_axis(pin_axis),
+    .start_falling(~(prev_pins_y[9] == pins_y[9])),
     .pin_axis_valid(),
     .pin_axis_ready(1'b1),
     .aclk(clk_pixel),
-    .aresetn(sys_rst_pixel)
+    .aresetn(~(~sys_rst_pixel || reset_sim))
   );
+
+  always_ff @(posedge clk_pixel) begin
+    prev_pins_x <= pins_x;
+    prev_pins_y <= pins_y;
+  end
 
   // END OF SIMULATION STUFF
 
@@ -278,7 +282,7 @@ module top_level_sim
   assign select_objs = renderer_vcount_in < REGION_DIVIDE ? 2'b11 : 2'b10;
 
   logic [1919:0] cylinder_data;
-  assign cylinder_data = {96'h000000003f80000000000000, float_pin_x[0], 32'h00000000, float_pin_y[0], 96'h000000003f80000000000000, float_pin_x[1], 32'h00000000, float_pin_y[1], 96'h000000003f80000000000000, float_pin_x[2], 32'h00000000, float_pin_y[2], 96'h000000003f80000000000000, float_pin_x[3], 32'h00000000, float_pin_y[3], 96'h000000003f80000000000000, float_pin_x[4], 32'h00000000, float_pin_y[4], 96'h000000003f80000000000000, float_pin_x[5], 32'h00000000, float_pin_y[5], 96'h000000003f80000000000000, float_pin_x[6], 32'h00000000, float_pin_y[6], 96'h000000003f80000000000000, float_pin_x[7], 32'h00000000, float_pin_y[7], 96'h000000003f80000000000000, float_pin_x[8], 32'h00000000, float_pin_y[8], 96'h000000003f80000000000000, float_pin_x[9], 32'h00000000, float_pin_y[9]};
+  assign cylinder_data = {96'h000000003f80000000000000, float_pin_x[0], 32'h00000000, float_pin_y[0], 96'h000000003f80000000000000, float_pin_x[1], 32'h00000000, float_pin_y[1], 96'h000000003f80000000000000, float_pin_x[2], 32'h00000000, float_pin_y[2], 96'h000000003f80000000000000, float_pin_x[3], 32'h00000000, float_pin_y[3], 96'h000000003f80000000000000, float_pin_x[4], 32'h00000000, float_pin_y[4], 96'h000000003f80000000000000, float_pin_x[5], 32'h00000000, float_pin_y[5], 96'h000000003f80000000000000, float_pin_x[6], 32'h00000000, float_pin_y[6], 96'h000000003f80000000000000, float_pin_x[7], 32'h00000000, float_pin_y[7], 96'h000000003f80000000000000, float_pin_x[8], 32'h00000000, float_pin_y[8], pin_axis, float_pin_x[9], 32'h00000000, float_pin_y[9]};
 
   full_renderer full_render (
     .hcount_axis_tdata(renderer_hcount_in),
