@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Wed Dec 11 11:18:00 2024
-| Host         : eecs-digital-18 running 64-bit Ubuntu 24.04.1 LTS
+| Date         : Wed Dec 11 13:30:22 2024
+| Host         : eecs-digital-11 running 64-bit Ubuntu 24.04.1 LTS
 | Command      : report_timing_summary -file obj/post_synth_timing_summary.rpt
 | Design       : top_level
 | Device       : 7a100t-csg324
@@ -53,8 +53,8 @@ Table of Contents
 2. checking constant_clock (0)
 3. checking pulse_width_clock (0)
 4. checking unconstrained_internal_endpoints (0)
-5. checking no_input_delay (2)
-6. checking no_output_delay (14)
+5. checking no_input_delay (8)
+6. checking no_output_delay (29)
 7. checking multiple_clock (0)
 8. checking generated_clocks (0)
 9. checking loops (0)
@@ -84,16 +84,16 @@ Table of Contents
  There are 0 pins that are not constrained for maximum delay due to constant clock.
 
 
-5. checking no_input_delay (2)
+5. checking no_input_delay (8)
 ------------------------------
- There are 2 input ports with no input delay specified. (HIGH)
+ There are 8 input ports with no input delay specified. (HIGH)
 
  There are 0 input ports with no input delay but user has a false path constraint.
 
 
-6. checking no_output_delay (14)
+6. checking no_output_delay (29)
 --------------------------------
- There are 14 ports with no output delay specified. (HIGH)
+ There are 29 ports with no output delay specified. (HIGH)
 
  There are 0 ports with no output delay but user has a false path constraint
 
@@ -138,7 +138,7 @@ Table of Contents
 
     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-      1.269        0.000                      0               153710        0.034        0.000                      0               153710        0.538        0.000                       0                 72369  
+      1.896        0.000                      0               152911        0.034        0.000                      0               152911        0.538        0.000                       0                 72014  
 
 
 All user specified timing constraints are met.
@@ -171,7 +171,7 @@ Clock                      WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Tota
 -----                      -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
 sys_clk_pin                                                                                                                                                              3.000        0.000                       0                     1  
   clk_100_cw_fast                                                                                                                                                        3.000        0.000                       0                     3  
-    clk_pixel_cw_hdmi        1.269        0.000                      0               153710        0.034        0.000                      0               153710        5.754        0.000                       0                 72351  
+    clk_pixel_cw_hdmi        1.896        0.000                      0               152911        0.034        0.000                      0               152911        5.754        0.000                       0                 71996  
     clk_tmds_cw_hdmi                                                                                                                                                     0.538        0.000                       0                     2  
     clkfbout_cw_hdmi                                                                                                                                                    47.845        0.000                       0                     3  
   clk_camera_cw_fast                                                                                                                                                     2.845        0.000                       0                     2  
@@ -258,7 +258,7 @@ High Pulse Width  Slow    MMCME2_ADV/CLKIN1  n/a            2.000         5.000 
 From Clock:  clk_pixel_cw_hdmi
   To Clock:  clk_pixel_cw_hdmi
 
-Setup :            0  Failing Endpoints,  Worst Slack        1.269ns,  Total Violation        0.000ns
+Setup :            0  Failing Endpoints,  Worst Slack        1.896ns,  Total Violation        0.000ns
 Hold  :            0  Failing Endpoints,  Worst Slack        0.034ns,  Total Violation        0.000ns
 PW    :            0  Failing Endpoints,  Worst Slack        5.754ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
@@ -266,16 +266,16 @@ PW    :            0  Failing Endpoints,  Worst Slack        5.754ns,  Total Vio
 
 Max Delay Paths
 --------------------------------------------------------------------------------------
-Slack (MET) :             1.269ns  (required time - arrival time)
-  Source:                 ball/ball_y_reg[1]/C
-                            (rising edge-triggered cell FDRE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
-  Destination:            coll/dist_ball_pin_reg[9][17]/D
-                            (rising edge-triggered cell FDRE clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
+Slack (MET) :             1.896ns  (required time - arrival time)
+  Source:                 ram_addra0/CLK
+                            (rising edge-triggered cell DSP48E1 clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
+  Destination:            renderer_buffer/BRAM_reg_0_0/WEA[0]
+                            (rising edge-triggered cell RAMB36E1 clocked by clk_pixel_cw_hdmi  {rise@0.000ns fall@6.734ns period=13.468ns})
   Path Group:             clk_pixel_cw_hdmi
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            13.468ns  (clk_pixel_cw_hdmi rise@13.468ns - clk_pixel_cw_hdmi rise@0.000ns)
-  Data Path Delay:        11.921ns  (logic 8.308ns (69.694%)  route 3.613ns (30.306%))
-  Logic Levels:           14  (CARRY4=9 DSP48E1=1 LUT2=2 LUT4=1 LUT6=1)
+  Data Path Delay:        10.686ns  (logic 8.562ns (80.126%)  route 2.124ns (19.874%))
+  Logic Levels:           7  (CARRY4=4 DSP48E1=1 LUT2=2)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    -2.753ns = ( 10.715 - 13.468 ) 
     Source Clock Delay      (SCD):    -3.066ns
@@ -302,50 +302,32 @@ Slack (MET) :             1.269ns  (required time - arrival time)
                                                      -1.483    -4.549 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.803    -3.746    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.096    -3.650 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=72352, unplaced)     0.584    -3.066    ball/clk_pixel
-                         FDRE                                         r  ball/ball_y_reg[1]/C
+                         net (fo=71997, unplaced)     0.584    -3.066    clk_pixel
+                         DSP48E1                                      r  ram_addra0/CLK
   -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.478    -2.588 r  ball/ball_y_reg[1]/Q
-                         net (fo=72, unplaced)        0.561    -2.027    ball/ball_y_reg[9]_0[1]
-                         LUT2 (Prop_lut2_I0_O)        0.295    -1.732 r  ball/p_66_in_i_12/O
-                         net (fo=1, unplaced)         0.000    -1.732    ball/p_66_in_i_12_n_0
+                         DSP48E1 (Prop_dsp48e1_CLK_PCOUT[47])
+                                                      5.515     2.449 r  ram_addra0/PCOUT[47]
+                         net (fo=1, unplaced)         0.000     2.449    ram_addra0_n_106
+                         DSP48E1 (Prop_dsp48e1_PCIN[47]_P[2])
+                                                      1.518     3.967 r  ram_addra/P[2]
+                         net (fo=2, unplaced)         0.803     4.770    full_render/pipe_vcount2/P[1]
+                         LUT2 (Prop_lut2_I1_O)        0.124     4.894 r  full_render/pipe_vcount2/BRAM_reg_0_0_i_39/O
+                         net (fo=1, unplaced)         0.000     4.894    full_render/pipe_vcount2/BRAM_reg_0_0_i_39_n_0
                          CARRY4 (Prop_carry4_S[1]_CO[3])
-                                                      0.533    -1.199 r  ball/p_66_in_i_3/CO[3]
-                         net (fo=1, unplaced)         0.000    -1.199    ball/p_66_in_i_3_n_0
+                                                      0.533     5.427 r  full_render/pipe_vcount2/BRAM_reg_0_0_i_6/CO[3]
+                         net (fo=1, unplaced)         0.000     5.427    full_render/pipe_vcount2/BRAM_reg_0_0_i_6_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    -1.082 r  ball/p_66_in_i_2/CO[3]
-                         net (fo=1, unplaced)         0.000    -1.082    ball/p_66_in_i_2_n_0
-                         CARRY4 (Prop_carry4_CI_O[1])
-                                                      0.337    -0.745 r  ball/p_66_in_i_1/O[1]
-                         net (fo=2, unplaced)         0.803     0.058    coll/A[9]
-                         DSP48E1 (Prop_dsp48e1_A[9]_P[1])
-                                                      4.020     4.078 r  coll/p_66_in/P[1]
-                         net (fo=4, unplaced)         0.803     4.881    coll/P[1]
-                         LUT2 (Prop_lut2_I1_O)        0.124     5.005 r  coll/dist_ball_pin[9][3]_i_19/O
-                         net (fo=1, unplaced)         0.000     5.005    coll/dist_ball_pin[9][3]_i_19_n_0
-                         CARRY4 (Prop_carry4_S[1]_CO[3])
-                                                      0.533     5.538 r  coll/dist_ball_pin_reg[9][3]_i_14/CO[3]
-                         net (fo=1, unplaced)         0.000     5.538    coll/dist_ball_pin_reg[9][3]_i_14_n_0
-                         CARRY4 (Prop_carry4_CI_O[1])
-                                                      0.337     5.875 r  coll/dist_ball_pin_reg[9][7]_i_14/O[1]
-                         net (fo=1, unplaced)         0.997     6.872    coll/p_67_out[5]
-                         LUT6 (Prop_lut6_I0_O)        0.306     7.178 r  coll/dist_ball_pin[9][7]_i_12/O
-                         net (fo=1, unplaced)         0.449     7.627    pins/dist_ball_pin_reg[9][7]_0
-                         LUT4 (Prop_lut4_I3_O)        0.124     7.751 r  pins/dist_ball_pin[9][7]_i_8/O
-                         net (fo=1, unplaced)         0.000     7.751    pins/dist_ball_pin[9][7]_i_8_n_0
-                         CARRY4 (Prop_carry4_S[1]_CO[3])
-                                                      0.533     8.284 r  pins/dist_ball_pin_reg[9][7]_i_1/CO[3]
-                         net (fo=1, unplaced)         0.000     8.284    pins/dist_ball_pin_reg[9][7]_i_1_n_0
+                                                      0.117     5.544 r  full_render/pipe_vcount2/BRAM_reg_0_0_i_5/CO[3]
+                         net (fo=1, unplaced)         0.000     5.544    full_render/pipe_vcount2/BRAM_reg_0_0_i_5_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     8.401 r  pins/dist_ball_pin_reg[9][11]_i_1/CO[3]
-                         net (fo=1, unplaced)         0.000     8.401    pins/dist_ball_pin_reg[9][11]_i_1_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117     8.518 r  pins/dist_ball_pin_reg[9][15]_i_1/CO[3]
-                         net (fo=1, unplaced)         0.000     8.518    pins/dist_ball_pin_reg[9][15]_i_1_n_0
-                         CARRY4 (Prop_carry4_CI_O[1])
-                                                      0.337     8.855 r  pins/dist_ball_pin_reg[9][19]_i_1/O[1]
-                         net (fo=1, unplaced)         0.000     8.855    coll/dist_ball_pin_reg[9][19]_0[17]
-                         FDRE                                         r  coll/dist_ball_pin_reg[9][17]/D
+                                                      0.117     5.661 r  full_render/pipe_vcount2/BRAM_reg_0_0_i_4/CO[3]
+                         net (fo=1, unplaced)         0.000     5.661    full_render/pipe_vcount2/BRAM_reg_0_0_i_4_n_0
+                         CARRY4 (Prop_carry4_CI_O[3])
+                                                      0.331     5.992 f  full_render/pipe_vcount2/BRAM_reg_0_0_i_3/O[3]
+                         net (fo=31, unplaced)        0.518     6.510    full_render/lam/pixel/ram_addra1_out[0]
+                         LUT2 (Prop_lut2_I1_O)        0.307     6.817 r  full_render/lam/pixel/BRAM_reg_0_0_i_24/O
+                         net (fo=32, unplaced)        0.803     7.620    renderer_buffer/BRAM_reg_0_3_0[0]
+                         RAMB36E1                                     r  renderer_buffer/BRAM_reg_0_0/WEA[0]
   -------------------------------------------------------------------    -------------------
 
                          (clock clk_pixel_cw_hdmi rise edge)
@@ -363,16 +345,17 @@ Slack (MET) :             1.269ns  (required time - arrival time)
                                                      -1.293     9.423 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.763    10.185    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.091    10.276 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=72352, unplaced)     0.439    10.715    coll/clk_pixel
-                         FDRE                                         r  coll/dist_ball_pin_reg[9][17]/C
+                         net (fo=71997, unplaced)     0.439    10.715    renderer_buffer/clk_pixel
+                         RAMB36E1                                     r  renderer_buffer/BRAM_reg_0_0/CLKARDCLK
                          clock pessimism             -0.458    10.257    
                          clock uncertainty           -0.210    10.047    
-                         FDRE (Setup_fdre_C_D)        0.076    10.123    coll/dist_ball_pin_reg[9][17]
+                         RAMB36E1 (Setup_ramb36e1_CLKARDCLK_WEA[0])
+                                                     -0.532     9.515    renderer_buffer/BRAM_reg_0_0
   -------------------------------------------------------------------
-                         required time                         10.123    
-                         arrival time                          -8.855    
+                         required time                          9.515    
+                         arrival time                          -7.620    
   -------------------------------------------------------------------
-                         slack                                  1.269    
+                         slack                                  1.896    
 
 
 
@@ -412,7 +395,7 @@ Slack (MET) :             0.034ns  (arrival time - required time)
                                                      -0.478    -1.357 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.338    -1.018    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.026    -0.992 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=72352, unplaced)     0.114    -0.878    full_render/check_objects/pipe_hcount1/clk_pixel
+                         net (fo=71997, unplaced)     0.114    -0.878    full_render/check_objects/pipe_hcount1/clk_pixel
                          FDRE                                         r  full_render/check_objects/pipe_hcount1/a_pipe_reg[0][0]/C
   -------------------------------------------------------------------    -------------------
                          FDRE (Prop_fdre_C_Q)         0.147    -0.731 r  full_render/check_objects/pipe_hcount1/a_pipe_reg[0][0]/Q
@@ -435,7 +418,7 @@ Slack (MET) :             0.034ns  (arrival time - required time)
                                                      -0.644    -1.190 r  wizard_hdmi/mmcm_adv_inst/CLKOUT0
                          net (fo=1, unplaced)         0.356    -0.833    wizard_hdmi/clk_pixel_cw_hdmi
                          BUFG (Prop_bufg_I_O)         0.029    -0.804 r  wizard_hdmi/clkout1_buf/O
-                         net (fo=72352, unplaced)     0.259    -0.545    full_render/check_objects/pipe_hcount1/clk_pixel
+                         net (fo=71997, unplaced)     0.259    -0.545    full_render/check_objects/pipe_hcount1/clk_pixel
                          SRLC32E                                      r  full_render/check_objects/pipe_hcount1/a_pipe_reg[32][0]_srl32___full_render_check_objects_pipe_hcount1_valid_pipe_reg_r_1652/CLK
                          clock pessimism             -0.188    -0.733    
                          SRLC32E (Hold_srlc32e_CLK_D)

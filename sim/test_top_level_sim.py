@@ -117,6 +117,8 @@ def runner():
     sources.append(proj_path / "hdl" / "pin_rotate.sv")
     sources.append(proj_path / "hdl" / "vec_unit.sv")
     sources.append(proj_path / "hdl" / "xilinx_true_dual_port_read_first_2_clock_ram.v")
+    sources.append(proj_path / "hdl" / "lab05_ssc.sv")
+    sources.append(proj_path / "hdl" / "score.sv")
     build_test_args = ["-Wall"]#,"COCOTB_RESOLVE_X=ZEROS"]
     parameters = {} #!!! nice figured it out.
     sys.path.append(str(proj_path / "sim"))

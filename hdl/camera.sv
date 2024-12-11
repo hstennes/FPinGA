@@ -2,6 +2,11 @@
 `default_nettype none
 
 module camera (
+    input wire rst_sim,
+    input wire setspeed,
+    input wire setspeed_x,
+    input wire setspeed_y,
+    input wire neg,
     input wire clk_in,
     input wire rst_in,
     input wire valid_in,
@@ -26,13 +31,14 @@ module camera (
     logic x_done, y_done;  // Flags to track when each division finishes
     logic [31:0] timer;
     logic [9:0] dividend_y;
+    logic pressed;
 
     // Divider for X-axis
     divider div_x(
         .clk_in(clk_in),
         .rst_in(rst_in),
-        .dividend_in({21'b0, x_end - x_start}),
-        .divisor_in({16'b0, time_counter-1}),
+        .dividend_in({21'b0, x_end}),
+        .divisor_in({16'b0, time_counter}),
         .data_valid_in(div_valid_in),
         .quotient_out(divx_out),
         .data_valid_out(divx_valid_out)
@@ -43,7 +49,7 @@ module camera (
         .clk_in(clk_in),
         .rst_in(rst_in),
         .dividend_in({22'b0, dividend_y}),
-        .divisor_in({16'b0, time_counter-1}),
+        .divisor_in({16'b0, time_counter}),
         .data_valid_in(div_valid_in),
         .quotient_out(divy_out),
         .data_valid_out(divy_valid_out)
@@ -51,7 +57,7 @@ module camera (
 
     // Main logic
     always_ff @(posedge clk_in) begin
-        if (rst_in) begin
+        if (rst_in || rst_sim) begin
             // Reset all states
             x_start <= 0;
             x_end <= 0;
@@ -67,48 +73,76 @@ module camera (
             y_done <= 0;
 
         end else if (valid_in) begin
-            if (light_in) begin
-                // Capture first and last positions
-                if (time_counter == 0) begin
-                    x_start <= x_in;
-                    y_start <= y_in;
-                end
-                x_end <= x_in;
-                y_end <= y_in;
-                time_counter <= time_counter + 1;
-            end else if (time_counter > 0 && calc) begin
-                // Light turned off: Trigger calculations
-                div_valid_in <= 1;
-                if (y_start < y_end) begin
-                    dividend_y <= y_end - y_start;
-                    is_vy_neg <= 0;
-                end else begin
-                    dividend_y <= y_start - y_end;
-                    is_vy_neg <= 1;
-                end
-                calc <= 0;
-                x_done <= 0;  // Reset done flags
-                y_done <= 0;
+            if (setspeed) begin
+                pressed <= 1;
+            end else begin
+                pressed <= 0;
             end
-        end
-
-        // Wait for dividers to finish their calculations
-        if (divx_valid_out && !x_done) begin
-            vx_out <= divx_out[15:0];
-            x_done <= 1;  // Mark X calculation as done
-        end
-        if (divy_valid_out && !y_done) begin
-            vy_out <= divy_out[15:0];
-            y_done <= 1;  // Mark Y calculation as done
-        end
-
-        // Assert valid_out only when both divisions are complete
-        if (x_done && y_done) begin
+            if (setspeed_x && setspeed && !pressed) begin
+                if (vx_out > 5) begin
+                    vx_out <= 0;
+                end else begin
+                    vx_out <= vx_out + 1;
+                end
+            end     
+            if (setspeed_y && setspeed && !pressed) begin
+                if (vy_out > 5) begin
+                    vy_out <= 0;
+                end else begin
+                    vy_out <= vy_out + 1;
+                end
+            end
+            if (neg) begin
+                is_vy_neg <= 1;
+            end else begin
+                is_vy_neg <= 0;
+            end
             valid_out <= 1;
-            div_valid_in <= 0;  // Stop sending valid signal to dividers
-            // calc <= 1;  // Ready for next calculation
-            time_counter <= 0;  // Reset time counter for the next sequence
         end
+            
+
+        //     if (light_in) begin
+        //         // Capture first and last positions
+        //         if (time_counter == 0) begin
+        //             x_start <= x_in;
+        //             y_start <= y_in;
+        //         end
+        //         x_end <= x_in;
+        //         y_end <= y_in;
+        //         time_counter <= time_counter + 1;
+        //     end else if (time_counter > 0 && calc) begin
+        //         // Light turned off: Trigger calculations
+        //         div_valid_in <= 1;
+        //         if (y_start < y_end) begin
+        //             dividend_y <= y_end - y_start;
+        //             is_vy_neg <= 0;
+        //         end else begin
+        //             dividend_y <= y_start - y_end;
+        //             is_vy_neg <= 1;
+        //         end
+        //         calc <= 0;
+        //         x_done <= 0;  // Reset done flags
+        //         y_done <= 0;
+        //     end
+        // end
+
+        // // Wait for dividers to finish their calculations
+        // if (divx_valid_out && !x_done) begin
+        //     vx_out <= divx_out[15:0];
+        //     x_done <= 1;  // Mark X calculation as done
+        // end
+        // if (divy_valid_out && !y_done) begin
+        //     vy_out <= divy_out[15:0];
+        //     y_done <= 1;  // Mark Y calculation as done
+        // end
+
+        // // Assert valid_out only when both divisions are complete
+        // if (x_done && y_done) begin
+        //     valid_out <= 1;
+        //     div_valid_in <= 0;  // Stop sending valid signal to dividers
+        //     // calc <= 1;  // Ready for next calculation
+        //     time_counter <= 0;  // Reset time counter for the next sequence
+        // end
 
     end
 

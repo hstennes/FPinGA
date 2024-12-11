@@ -1,7 +1,5 @@
-`timescale 1ns / 1ps
-`default_nettype none
-
 module collision (
+    input wire rst_sim,
     input wire clk_in,
     input wire rst_in,
     input wire valid_in,
@@ -39,8 +37,8 @@ module collision (
     logic [9:0][15:0] pins_vy_in;
     // logic [19:0] dist_pin;
 
-    always @(posedge clk_in or posedge rst_in) begin
-        if (rst_in) begin
+    always @(posedge clk_in) begin
+        if (rst_in || rst_sim) begin
             pins_hit <= 10'b0;
             pins_vx_out <= '0;
             pins_vy_out <= '0;
@@ -54,28 +52,15 @@ module collision (
         if (valid_in) begin
             if(state == CALC_DIST_BALL) begin
                 done <= 0;
-
                 for (int i = 0; i < 10; i++) begin
-                    if (ball_x >= pins_x[i] && ball_y >= pins_y[i]) begin
-                        dist_ball_pin[i] <= (ball_x - pins_x[i]) * (ball_x - pins_x[i]) +
-                                            (ball_y - pins_y[i]) * (ball_y - pins_y[i]);
-                    end else if (ball_x < pins_x[i] && ball_y >= pins_y[i]) begin
-                        dist_ball_pin[i] <= (pins_x[i] - ball_x) * (pins_x[i] - ball_x) +
-                                            (ball_y - pins_y[i]) * (ball_y - pins_y[i]);
-                    end else if (ball_x >= pins_x[i] && ball_y < pins_y[i]) begin
-                        dist_ball_pin[i] <= (pins_x[i] - ball_x) * (pins_x[i] - ball_x) +
-                                            (pins_y[i] - ball_y) * (pins_y[i] - ball_y);
-                    end else begin
-                        dist_ball_pin[i] <= (ball_x - pins_x[i]) * (ball_x - pins_x[i]) +
-                                            (ball_y - pins_y[i]) * (ball_y - pins_y[i]);
-                    end
+                    dist_ball_pin[i] <= (ball_x - pins_x[i]) * (ball_x - pins_x[i]) +
+                                        (ball_y - pins_y[i]) * (ball_y - pins_y[i]);
                 end
                 state <= CALC_COLL_BALL;
 
             end else if (state == CALC_COLL_BALL) begin 
                 for (int i = 0; i < 10; i++) begin
                     if (dist_ball_pin[i] <= (BALL_RADIUS + PIN_RADIUS) * (BALL_RADIUS + PIN_RADIUS)) begin
-
                         pins_vx_out[i] <= (2 * BALL_MASS * ball_vx_in) / (BALL_MASS + PIN_MASS) - 
                                         (pins_vx_in[i] * (BALL_MASS - PIN_MASS)) / (BALL_MASS + PIN_MASS);
                         pins_vy_out[i] <= (2 * BALL_MASS * ball_vy_in) / (BALL_MASS + PIN_MASS) - 
@@ -87,32 +72,16 @@ module collision (
 
             end else if (state == CALC_DIST_PIN) begin
                 for (int i = 0; i < 10; i++) begin
-                    for (int j = i+1; j < 10; j++) begin
-                        if (pins_x[j] >= pins_x[i] && pins_y[j] >= pins_y[i]) begin
-                            dist_pin[i][j] <= (pins_x[j] - pins_x[i]) * (pins_x[j] - pins_x[i]) +
-                                                (pins_y[j] - pins_y[i]) * (pins_y[j] - pins_y[i]);
-
-                        end else if (pins_x[j] < pins_x[i] && pins_y[j] >= pins_y[i]) begin
-                            dist_pin[i][j] <= (pins_x[i] - pins_x[j]) * (pins_x[i] - pins_x[j]) +
-                                                (pins_y[j] - pins_y[i]) * (pins_y[j] - pins_y[i]);
-
-                        end else if (pins_x[j] >= pins_x[i] && pins_y[j] < pins_y[i]) begin
-                            dist_pin[i][j] <= (pins_x[j] - pins_x[i]) * (pins_x[j] - pins_x[i]) +
-                                                (pins_y[i] - pins_y[j]) * (pins_y[i] - pins_y[j]);
-
-                        end else begin
-                            dist_pin[i][j] <= (pins_x[i] - pins_x[j]) * (pins_x[i] - pins_x[j]) +
-                                              (pins_y[i] - pins_y[j]) * (pins_y[i] - pins_y[j]);
-                        end
-                        // dist_pin[i][j] <= (pins_x[i] - pins_x[j]) * (pins_x[i] - pins_x[j]) +
-                                    // (pins_y[i] - pins_y[j]) * (pins_y[i] - pins_y[j]);
+                    for (int j = i + 1; j < 10; j++) begin
+                        dist_pin[i][j] <= (pins_x[i] - pins_x[j]) * (pins_x[i] - pins_x[j]) +
+                                    (pins_y[j] - pins_y[i]) * (pins_y[j] - pins_y[i]);
                     end
                 end
                 state <= CALC_COLL_PIN;
 
             end else if (state == CALC_COLL_PIN) begin
                 for (int i = 0; i < 10; i++) begin
-                    for (int j = i+1; j < 10; j++) begin
+                    for (int j = i + 1; j < 10; j++) begin
                         if ((dist_pin[i][j] <= (PIN_RADIUS + PIN_RADIUS) * (PIN_RADIUS + PIN_RADIUS)) && (i!=j) && (pins_x[i] < SCREEN_WIDTH) && (pins_y[i] < SCREEN_HEIGHT)) begin
                             pins_vx_out[i] <= pins_vx_in[j];
                             pins_vx_out[j] <= pins_vx_in[i];

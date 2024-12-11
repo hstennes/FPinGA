@@ -9,17 +9,10 @@ module top_level_sim
    output logic [3:0] VGA_B,
    output logic VGA_HS,
    output logic VGA_VS,
-   input wire BTNC,
-   input wire BTNU,
-   output logic CA,
-   output logic CB,
-   output logic CC,
-   output logic CD,
-   output logic CE,
-   output logic CF,
-   output logic CG,
-   output logic [7:0] AN,
-   output logic [0:0] LED
+   input wire [4:0] btn,
+   output logic [3:0]  ss0_an,//anode control for upper four digits of seven-seg display
+   output logic [3:0]  ss1_an,//anode control for lower four digits of seven-seg display
+   output logic [6:0]  ss0_c //cathode controls for the segments of upper four digits
    );
 
    localparam SIZE = 32;
@@ -35,14 +28,26 @@ module top_level_sim
 
   logic          clk_100_passthrough;
 
+  //SIMULATION SIGNALS
+
+  logic choose_x;
+  logic start_round;
+  logic setspeed;
+  logic setspeed_x;
+  logic setspeed_y;
+  logic neg;
+  logic [6:0] ss_c;
+  logic rst_sim;
+
+  //END SIMULATION SIGNALS
+
   // clocking wizards to generate the clock speeds we need for our different domains
   // clk_camera: 200MHz, fast enough to comfortably sample the cameera's PCLK (50MHz)
   assign clk_pixel = CLK100MHZ;
 
-  assign sys_rst_pixel = ~BTNC; //use for resetting hdmi/draw side of logic
-  assign LED = BTNC;
+  assign sys_rst_pixel = ~btn[0]; //use for resetting hdmi/draw side of logic
 
-  assign reset_sim = BTNU;
+  assign reset_sim = btn[4];
 
   // video signal generator signals
   logic          hsync_vga;
@@ -72,6 +77,26 @@ module top_level_sim
 
   // START OF SIMULATION STUFF
 
+  assign choose_x = btn[1];
+  assign start_round = btn[2];
+  assign setspeed = btn[3];
+  assign setspeed_x = sw[0];
+  assign setspeed_y = sw[1];
+  assign neg = sw[2];
+
+  assign rst_sim = 0;
+
+  lab05_ssc mssc(.clk_in(clk_pixel),
+                 .rst_in(sys_rst_pixel),
+                 .lt_in(ball_vx[7:0]),
+                 .ut_in(ball_vy[7:0]),
+                 .channel_sel_in(2'b0),
+                 .cat_out(ss_c),
+                 .an_out({ss0_an, ss1_an})
+  );
+
+  assign ss0_c = ss_c;
+
   logic light_on;
   logic [15:0] ball_vx;
   logic [15:0] ball_vy;
@@ -100,11 +125,15 @@ module top_level_sim
   logic new_com; //used to know when to update x_com and y_com ...
   logic vy_neg;
   logic ball_vy_neg;
-
+  
   logic [9:0][10:0] prev_pins_x;
   logic [9:0][9:0] prev_pins_y;
 
+
   camera_input ci (
+    .rst_sim(rst_sim),
+    .hcount(hcount_vga),
+    .vcount(vcount_vga),
     .clk_in(clk_pixel),
     .rst_in(~sys_rst_pixel || reset_sim),
     .new_com(new_com),
@@ -114,6 +143,11 @@ module top_level_sim
   );
 
   camera cam(
+    .rst_sim(rst_sim),
+    .setspeed_x(setspeed_x),
+    .setspeed_y(setspeed_y),
+    .setspeed(setspeed),
+    .neg(neg),
     .clk_in(clk_pixel),
     .rst_in(~sys_rst_pixel || reset_sim),
     .valid_in(new_com),
@@ -127,11 +161,14 @@ module top_level_sim
   );
 
   ball ball(
+    .rst_sim(rst_sim),
+    .start_round(start_round),
+    .choose_x(choose_x),
     .clk_in(clk_pixel),
     .rst_in(~sys_rst_pixel || reset_sim),
-    .valid_in(cam_valid),
+    .valid_in(cam_valid && !end_roll),
     .initial_speed_x(ball_vx),
-    .initial_speed_y(ball_vy),
+    .initial_speed_y(ball_vy*2),
     .is_vy_neg(vy_neg),
     .ball_x(ball_x),
     .ball_y(ball_y),
@@ -144,9 +181,10 @@ module top_level_sim
 
   
   collision coll(
+    .rst_sim(rst_sim),
     .clk_in(clk_pixel),                     
     .rst_in(~sys_rst_pixel || reset_sim),
-    .valid_in(check_coll), 
+    .valid_in(check_coll && !end_roll), 
     .ball_x(ball_x),          
     .ball_y(ball_y),     
     .pins_x(pins_x),       
@@ -162,9 +200,10 @@ module top_level_sim
 );
 
   pins pins(
+    .rst_sim(rst_sim),
     .clk_in(clk_pixel),
     .rst_in(~sys_rst_pixel || reset_sim),
-    .valid_in(update_pins),
+    .valid_in(update_pins && !end_roll),
     .is_vy_neg(ball_vy_neg),
     .pins_vx_in(pins_vx_coll),
     .pins_vy_in(pins_vy_coll),
@@ -173,6 +212,24 @@ module top_level_sim
     .pins_y(pins_y)
     // .pins_vx_out(pins_vx_pins),
     // .pins_vy_out(pins_vy_pins)
+  );
+
+  logic [19:0][5:0] s1;
+  logic [19:0][5:0] s2;
+  logic p;
+  logic c;
+  logic [3:0] r;
+  score score(
+    .rst_sim(rst_sim),
+    .clk_in(clk_pixel),
+    .rst_in(~sys_rst_pixel || reset_sim),
+    .valid_in(update_pins && !end_roll),
+    .pin_hit(pins_hit),
+    .score_p1(s1),
+    .score_p2(s2),
+    .player(p),
+    .chance(c),
+    .round(r)
   );
 
   logic [SIZE-1:0] float_ball_x;

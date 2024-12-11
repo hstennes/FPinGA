@@ -46,10 +46,25 @@ module lab05_ssc #(parameter COUNT_TO = 100000)
   assign cat_out = ~led_out;
   assign an_out = ~segment_state;
 
+  // always_comb begin
+  //   case(segment_state)
+  //     8'b0000_0001:   led_out = symbol_cat[0];
+  //     8'b0000_0010:   led_out = symbol_cat[1];
+  //     8'b0000_0100:   led_out = 7'b0000000;
+  //     8'b0000_1000:   led_out = bto7s_led_out;
+  //     8'b0001_0000:   led_out = bto7s_led_out;
+  //     8'b0010_0000:   led_out = 7'b0000000;
+  //     8'b0100_0000:   led_out = bto7s_led_out;
+  //     8'b1000_0000:   led_out = bto7s_led_out;
+  //     default:        led_out = 7'b0000000;
+  //   endcase
+  // end
+
+  
   always_comb begin
     case(segment_state)
-      8'b0000_0001:   led_out = symbol_cat[0];
-      8'b0000_0010:   led_out = symbol_cat[1];
+      8'b0000_0001:   led_out = bto7s_led_out;
+      8'b0000_0010:   led_out = bto7s_led_out;
       8'b0000_0100:   led_out = 7'b0000000;
       8'b0000_1000:   led_out = bto7s_led_out;
       8'b0001_0000:   led_out = bto7s_led_out;
@@ -62,7 +77,7 @@ module lab05_ssc #(parameter COUNT_TO = 100000)
 
   always_comb begin
     case(segment_state)
-      8'b0000_0001:   routed_vals = 4'b0;
+      8'b0000_0001:   routed_vals = {1'b0, segment_state[2:0]};
       8'b0000_0010:   routed_vals = 4'b0;
       8'b0000_0100:   routed_vals = 4'b0;
       8'b0000_1000:   routed_vals = lt_in[3:0];

@@ -2,6 +2,7 @@
 `default_nettype none
 
 module pins (
+    input wire rst_sim,
     input wire clk_in,                    
     input wire rst_in,
     input wire valid_in,
@@ -32,7 +33,21 @@ module pins (
     logic [31:0] timer;
 
     always @(posedge clk_in) begin
-        if (rst_in) begin
+        if (rst_in || rst_sim) begin
+            // pins_vx_out <= 0;
+            // pins_vy_out <= 0;
+            
+            // pins_x[0] = 0; pins_y[0] = 0;  
+            // pins_x[1] = 32; pins_y[1] = 0;  
+            // pins_x[2] = 64; pins_y[2] = 0;  
+            // pins_x[3] = 96; pins_y[3] = 0;  
+            // pins_x[4] = 16; pins_y[4] = 20;  
+            // pins_x[5] = 48; pins_y[5] = 20;  
+            // pins_x[6] = 80; pins_y[6] = 20;  
+            // pins_x[7] = 32; pins_y[7] = 40;  
+            // pins_x[8] = 64; pins_y[8] = 40;  
+            // pins_x[9] = 48; pins_y[9] = 60;
+
             pins_x[0] = 0; pins_y[0] = 0;  
             pins_x[1] = 96; pins_y[1] = 0;  
             pins_x[2] = 192; pins_y[2] = 0;  
@@ -43,30 +58,18 @@ module pins (
             pins_x[7] = 96; pins_y[7] = 120;  
             pins_x[8] = 192; pins_y[8] = 120;  
             pins_x[9] = 144; pins_y[9] = 180; 
-            // pins_vx_out <= 0;
-            // pins_vy_out <= 0;
-            // pins_x[0] = SCREEN_WIDTH - 200; pins_y[0] = 300 + 84;  
-            // pins_x[1] = SCREEN_WIDTH - 160; pins_y[1] = 280 + 84;  
-            // pins_x[2] = SCREEN_WIDTH - 160; pins_y[2] = 320 + 84;  
-            // pins_x[3] = SCREEN_WIDTH - 120; pins_y[3] = 260 + 84;  
-            // pins_x[4] = SCREEN_WIDTH - 120; pins_y[4] = 300 + 84;  
-            // pins_x[5] = SCREEN_WIDTH - 120; pins_y[5] = 340 + 84;  
-            // pins_x[6] = SCREEN_WIDTH - 80; pins_y[6] = 240 + 84;  
-            // pins_x[7] = SCREEN_WIDTH - 80; pins_y[7] = 280 + 84;  
-            // pins_x[8] = SCREEN_WIDTH - 80; pins_y[8] = 320 + 84;  
-            // pins_x[9] = SCREEN_WIDTH - 80; pins_y[9] = 360 + 84;  
 
         end else if (valid_in) begin
             for (int i=0; i<10; i=i+1) begin
                 if (pins_hit_in[i] && (pins_x[i] < SCREEN_WIDTH) && (pins_y[i] < SCREEN_HEIGHT)) begin
                     // pins_vx_out[i] <= pins_vx_in - FRICTION;
                     // pins_vy_out[i] <= pins_vy_in - FRICTION;
-                    pins_x[i] <= pins_x[i] + pins_vx_in[i];
+                    pins_y[i] <= pins_y[i] - pins_vy_in[i];
 
                     if (is_vy_neg) begin
-                        pins_y[i] <= pins_y[i] - pins_vy_in[i];
+                        pins_x[i] <= pins_x[i] - pins_vx_in[i];
                     end else begin
-                        pins_y[i] <= pins_y[i] + pins_vy_in[i];
+                        pins_x[i] <= pins_x[i] + pins_vx_in[i];
                     end
                 end
             end
